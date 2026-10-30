@@ -1,7 +1,6 @@
 package com.xxsx.fantasyearth;
 
 import net.minecraft.ChatFormatting;
-import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
@@ -71,12 +70,7 @@ public final class ArcaneSkill {
         player.swing(InteractionHand.MAIN_HAND, true);
         ArcanaPower.startSkillCooldown(player, level);
         ArcaneNetwork.broadcastVisual(player, ArcaneVisualAction.forFocus(focus));
-        level.sendParticles(switch (focus) {
-                    case ATTUNEMENT -> ParticleTypes.REVERSE_PORTAL;
-                    case BODY_WARD -> ParticleTypes.WITCH;
-                    case BREATH_WARD -> ParticleTypes.BUBBLE_POP;
-                }, player.getX(), player.getY() + 1.0D, player.getZ(),
-                24, 0.75D, 0.9D, 0.75D, 0.03D);
+        ArcaneVfx.focusCast(level, player.position(), focus);
         level.playSound(null, player.blockPosition(), SoundEvents.ENCHANTMENT_TABLE_USE,
                 SoundSource.PLAYERS, 0.85F, 0.92F + focus.id() * 0.12F);
         player.sendSystemMessage(Component.translatable(

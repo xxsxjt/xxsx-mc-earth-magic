@@ -2,6 +2,7 @@ package com.xxsx.fantasyearth.entity;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleTypes;
+import com.xxsx.fantasyearth.FantasyEarthParticles;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.effect.MobEffectInstance;
@@ -51,7 +52,7 @@ public final class CrystalArmoredSpiderEntity extends Spider {
     public void aiStep() {
         super.aiStep();
         if (level().isClientSide() && tickCount % 10 == 0) {
-            level().addParticle(ParticleTypes.ENCHANT, getRandomX(0.75D), getY(0.55D),
+            level().addParticle(FantasyEarthParticles.CRYSTAL_SHARD.get(), getRandomX(0.75D), getY(0.55D),
                     getRandomZ(0.75D), 0.0D, 0.012D, 0.0D);
         }
     }

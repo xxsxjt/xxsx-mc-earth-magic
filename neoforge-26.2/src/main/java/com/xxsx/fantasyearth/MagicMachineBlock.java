@@ -84,7 +84,7 @@ public class MagicMachineBlock extends Block implements EntityBlock {
         int[] node = nodes[random.nextInt(nodes.length)];
         double x = pos.getX() + 0.5D + node[0] * 0.82D;
         double z = pos.getZ() + 0.5D + node[1] * 0.82D;
-        level.addParticle(random.nextBoolean() ? ParticleTypes.ENCHANT : ParticleTypes.REVERSE_PORTAL,
+        level.addParticle(random.nextBoolean() ? FantasyEarthParticles.RUNE_SPARK.get() : FantasyEarthParticles.AETHER_MOTE.get(),
                 x, pos.getY() + 1.05D, z, -node[0] * 0.01D, 0.006D, -node[1] * 0.01D);
     }
 
@@ -189,12 +189,9 @@ public class MagicMachineBlock extends Block implements EntityBlock {
                 item(FantasyEarth.RITUAL_CHALK::get, 1), item(FantasyEarth.RUNE_INK::get, 1),
                 40, 150, out(FantasyEarth.DORMANT_RITUAL_CORE::get, 1)));
 
-        recipes.add(r("core_activation", Kind.RITUAL_PEDESTAL,
+        recipes.add(catalyst("core_activation", Kind.RITUAL_PEDESTAL,
                 item(FantasyEarth.DORMANT_RITUAL_CORE::get, 1), item(FantasyEarth.CRYSTALLIZED_MANA_SALT::get, 1),
                 45, 200, out(FantasyEarth.AETHER_CRYSTAL::get, 2)));
-        recipes.add(r("core_sealing", Kind.RITUAL_PEDESTAL,
-                item(FantasyEarth.AETHER_GLASS::get, 1), item(FantasyEarth.CRYSTALLIZED_MANA_SALT::get, 2),
-                50, 180, out(FantasyEarth.DORMANT_RITUAL_CORE::get, 1)));
         recipes.add(r("substrate_condensation", Kind.RITUAL_PEDESTAL,
                 tagged(EarthMaterialTags.AETHER_CRYSTAL_SUBSTRATES, () -> Items.AMETHYST_SHARD, 1),
                 item(FantasyEarth.CRYSTALLIZED_MANA_SALT::get, 1), 48, 190,
@@ -205,7 +202,13 @@ public class MagicMachineBlock extends Block implements EntityBlock {
     private static Recipe r(String id, Kind kind, Input primary, Input reagent, int minField,
                             int processTicks, Output... outputs) {
         return new Recipe(id, kind, primary, reagent,
-                "recipe.fantasy_earth.machine." + id, minField, processTicks, List.of(outputs));
+                "recipe.fantasy_earth.machine." + id, minField, processTicks, List.of(outputs), false);
+    }
+
+    private static Recipe catalyst(String id, Kind kind, Input primary, Input reagent, int minField,
+                                   int processTicks, Output... outputs) {
+        return new Recipe(id, kind, primary, reagent,
+                "recipe.fantasy_earth.machine." + id, minField, processTicks, List.of(outputs), true);
     }
 
     private static Input item(Supplier<? extends ItemLike> item, int count) {
@@ -221,7 +224,7 @@ public class MagicMachineBlock extends Block implements EntityBlock {
     }
 
     public record Recipe(String id, Kind kind, Input primary, Input reagent, String noteKey,
-                         int minField, int processTicks, List<Output> outputs) {
+                         int minField, int processTicks, List<Output> outputs, boolean catalyst) {
         public boolean matches(ItemStack primaryStack, ItemStack reagentStack) {
             return primary.matchesWithCount(primaryStack) && reagent.matchesWithCount(reagentStack);
         }

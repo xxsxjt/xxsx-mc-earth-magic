@@ -1,6 +1,7 @@
 package com.xxsx.fantasyearth.client.model;
 
 import com.xxsx.fantasyearth.FantasyEarth;
+import com.xxsx.fantasyearth.client.CreatureMotion;
 import com.xxsx.fantasyearth.client.renderer.FamiliarRenderState;
 import net.minecraft.client.model.EntityModel;
 import net.minecraft.client.model.geom.ModelLayerLocation;
@@ -89,38 +90,73 @@ public final class AetherFoxModel extends EntityModel<FamiliarRenderState> {
                 PartPose.offset(x, 18.0F, z));
     }
 
-    @Override
-    public void setupAnim(FamiliarRenderState state) {
+    @Override    public void setupAnim(FamiliarRenderState state) {
         super.setupAnim(state);
+        float age = state.ageInTicks;
         float walk = state.walkAnimationPos;
         float speed = Math.min(state.walkAnimationSpeed, 1.0F);
-        head.yRot = state.yRot * Mth.DEG_TO_RAD;
-        head.xRot = state.xRot * Mth.DEG_TO_RAD;
-        legs[0].xRot = Mth.cos(walk * 0.68F) * 1.1F * speed;
-        legs[1].xRot = Mth.cos(walk * 0.68F + Mth.PI) * 1.1F * speed;
+        float idle = CreatureMotion.idleBlend(speed);
+        float breathe = CreatureMotion.breathe(age, 0.11F);
+        float alert = state.aggressive ? 1.0F : 0.0F;
+        float wind = CreatureMotion.windUp(state.attackProgress);
+        float strike = CreatureMotion.strike(state.attackProgress);
+
+        head.yRot = CreatureMotion.clampLook(state.yRot * Mth.DEG_TO_RAD, 0.85F);
+        head.xRot = CreatureMotion.clampLook(state.xRot * Mth.DEG_TO_RAD, 0.5F) + breathe * 0.02F - wind * 0.12F;
+        head.zRot = CreatureMotion.wave(age, 0.045F, 0.0F) * 0.03F + alert * 0.04F;
+
+        float earFlickLeft = CreatureMotion.twitch(age, 0.13F, 1.7F, 0.20F);
+        float earFlickRight = CreatureMotion.twitch(age, 0.10F, 4.3F, 0.20F);
+        leftEarFin.zRot = -0.15F - earFlickLeft - alert * 0.05F;
+        rightEarFin.zRot = 0.15F + earFlickRight + alert * 0.05F;
+        leftEarFin.xRot = -0.10F * alert - CreatureMotion.twitch(age, 0.07F, 0.6F, 0.12F);
+        rightEarFin.xRot = -0.10F * alert - CreatureMotion.twitch(age, 0.08F, 2.2F, 0.12F);
+        leftEarFin.zScale = 1.0F + breathe * 0.05F;
+        rightEarFin.zScale = leftEarFin.zScale;
+
+        legs[0].xRot = CreatureMotion.gait(walk, 0.0F, 1.05F, speed);
+        legs[1].xRot = CreatureMotion.gait(walk, Mth.PI, 1.05F, speed);
         legs[2].xRot = legs[1].xRot;
         legs[3].xRot = legs[0].xRot;
-        float tail = Mth.sin(state.ageInTicks * 0.10F) * (0.25F + state.stability * 0.16F);
-        leftTail.yRot = 0.22F + tail;
-        rightTail.yRot = -0.22F - tail;
-        leftTailMid.yRot = 0.12F + tail * 0.45F;
-        rightTailMid.yRot = -0.12F - tail * 0.45F;
-        leftEarFin.zScale = 1.0F + Mth.sin(state.ageInTicks * 0.18F) * 0.06F;
-        rightEarFin.zScale = leftEarFin.zScale;
-        body.y = 15.0F + Mth.sin(state.ageInTicks * 0.08F) * 0.05F;
-        float attack = Mth.sin(state.attackProgress * Mth.PI);
-        head.xRot -= attack * 0.52F;
-        body.xRot = -attack * 0.10F;
-        legs[0].xRot -= attack * 0.38F;
-        legs[1].xRot -= attack * 0.38F;
+        legs[0].zRot = -0.03F - Math.max(0.0F, legs[0].xRot) * 0.05F;
+        legs[1].zRot = 0.03F + Math.max(0.0F, legs[1].xRot) * 0.05F;
+        legs[2].zRot = -legs[1].zRot;
+        legs[3].zRot = -legs[0].zRot;
+
+        body.y = 15.0F + breathe * 0.06F + Mth.cos(walk * 1.33F) * 0.05F * speed;
+        body.xRot = -alert * 0.02F + Mth.sin(walk * 0.67F) * 0.015F * speed - strike * 0.10F;
+        body.zRot = CreatureMotion.wave(age, 0.05F, 1.1F) * 0.012F * idle;
+        body.yScale = 1.0F + breathe * 0.015F;
+        body.xScale = 1.0F - breathe * 0.008F;
+
+        float tailWave = CreatureMotion.wave(age, 0.10F, 0.0F) * (0.22F + state.stability * 0.18F);
+        leftTail.yRot = 0.22F + tailWave;
+        rightTail.yRot = -0.22F - tailWave;
+        leftTailMid.yRot = 0.12F + tailWave * 0.55F;
+        rightTailMid.yRot = -0.12F - tailWave * 0.55F;
+        leftTail.xRot = 0.35F + breathe * 0.03F - alert * 0.10F + wind * 0.22F;
+        rightTail.xRot = leftTail.xRot;
+        leftTailMid.xRot = 0.12F + CreatureMotion.wave(age, 0.14F, 0.9F) * 0.05F;
+        rightTailMid.xRot = leftTailMid.xRot;
+
+        head.xRot -= strike * 0.45F;
+        legs[0].xRot -= strike * 0.34F;
+        legs[1].xRot -= strike * 0.34F;
+        body.z -= strike * 0.55F;
+
         if (state.sitting) {
             body.xRot = 0.18F;
+            body.y = 15.0F;
             legs[0].xRot = -0.10F;
             legs[1].xRot = -0.10F;
             legs[2].xRot = -1.08F;
             legs[3].xRot = -1.08F;
+            legs[0].zRot = -0.10F;
+            legs[1].zRot = 0.10F;
             leftTail.xRot = 0.92F;
             rightTail.xRot = 0.92F;
+            leftTail.yRot = 0.34F + tailWave * 0.5F;
+            rightTail.yRot = -0.34F - tailWave * 0.5F;
         }
     }
 }

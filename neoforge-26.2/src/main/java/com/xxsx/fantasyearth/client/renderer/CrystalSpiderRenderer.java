@@ -25,6 +25,7 @@ public final class CrystalSpiderRenderer extends MobRenderer<CrystalArmoredSpide
                                    float partialTick) {
         super.extractRenderState(entity, state, partialTick);
         state.attackProgress = entity.getAttackAnim(partialTick);
+        state.aggressive = entity.getTarget() != null;
     }
 
     @Override

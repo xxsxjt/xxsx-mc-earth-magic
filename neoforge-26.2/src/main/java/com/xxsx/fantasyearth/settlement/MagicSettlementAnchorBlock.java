@@ -1,6 +1,7 @@
 package com.xxsx.fantasyearth.settlement;
 
 import com.xxsx.fantasyearth.FantasyEarth;
+import com.xxsx.fantasyearth.FantasyEarthParticles;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.network.chat.Component;
@@ -50,8 +51,13 @@ public final class MagicSettlementAnchorBlock extends Block implements EntityBlo
     @Override
     public void animateTick(BlockState state, Level level, BlockPos pos, RandomSource random) {
         if (random.nextInt(3) == 0) {
-            level.addParticle(ParticleTypes.WITCH, pos.getX() + 0.5D, pos.getY() + 1.08D,
-                    pos.getZ() + 0.5D, 0.0D, 0.025D, 0.0D);
+            level.addParticle(random.nextBoolean()
+                            ? FantasyEarthParticles.AETHER_MOTE.get()
+                            : FantasyEarthParticles.WARD_RUNE.get(),
+                    pos.getX() + 0.5D + (random.nextDouble() - 0.5D) * 0.9D,
+                    pos.getY() + 1.08D,
+                    pos.getZ() + 0.5D + (random.nextDouble() - 0.5D) * 0.9D,
+                    0.0D, 0.018D, 0.0D);
         }
     }
 }

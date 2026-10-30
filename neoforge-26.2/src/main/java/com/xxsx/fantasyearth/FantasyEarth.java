@@ -175,6 +175,12 @@ public class FantasyEarth {
     public static final DeferredHolder<Feature<?>, MagicSettlementFeature> ACADEMY_OUTPOST_FEATURE =
             FEATURES.register("academy_outpost", () -> new MagicSettlementFeature(
                     NoneFeatureConfiguration.CODEC, MagicSettlementFeature.Type.ACADEMY_OUTPOST));
+    public static final DeferredHolder<Feature<?>, MagicSettlementFeature> DWARVEN_DELVING_FEATURE =
+            FEATURES.register("dwarven_delving", () -> new MagicSettlementFeature(
+                    NoneFeatureConfiguration.CODEC, MagicSettlementFeature.Type.DWARVEN_DELVING));
+    public static final DeferredHolder<Feature<?>, MagicSettlementFeature> ELVEN_GROVE_FEATURE =
+            FEATURES.register("elven_grove", () -> new MagicSettlementFeature(
+                    NoneFeatureConfiguration.CODEC, MagicSettlementFeature.Type.ELVEN_GROVE));
 
     public FantasyEarth(IEventBus modBus) {
         registerLegacyAliases();
@@ -184,6 +190,7 @@ public class FantasyEarth {
         BLOCK_ENTITY_TYPES.register(modBus);
         MENUS.register(modBus);
         FEATURES.register(modBus);
+        FantasyEarthParticles.PARTICLE_TYPES.register(modBus);
         modBus.addListener(ArcaneNetwork::registerPayloads);
         modBus.addListener(this::registerEntityAttributes);
         modBus.addListener(this::registerSpawnPlacements);

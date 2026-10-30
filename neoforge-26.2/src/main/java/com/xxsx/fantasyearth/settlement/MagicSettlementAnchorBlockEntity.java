@@ -80,8 +80,10 @@ public final class MagicSettlementAnchorBlockEntity extends BlockEntity {
     }
 
     private int expectedSpawnCount() {
-        return MagicSettlementFeature.Type.byId(settlementType) == MagicSettlementFeature.Type.GOBLIN_EXCHANGE
-                ? 3 : 4;
+        return switch (MagicSettlementFeature.Type.byId(settlementType)) {
+            case GOBLIN_EXCHANGE -> 3;
+            case WITCH_HAMLET, ACADEMY_OUTPOST, DWARVEN_DELVING, ELVEN_GROVE -> 4;
+        };
     }
 
     private void spawnNextResident(ServerLevel level, BlockPos pos) {
@@ -108,6 +110,24 @@ public final class MagicSettlementAnchorBlockEntity extends BlockEntity {
                     case 0 -> spawnResident(level, pos.offset(-2, 1, 0), pos, ArcaneSettlerEntity.Role.ACADEMY_RESEARCHER);
                     case 1 -> spawnResident(level, pos.offset(2, 1, 0), pos, ArcaneSettlerEntity.Role.ACADEMY_RESEARCHER);
                     case 2 -> spawnResident(level, pos.offset(0, 1, 3), pos, ArcaneSettlerEntity.Role.GOBLIN_APPRAISER);
+                    case 3 -> spawnFamiliar(level, pos.offset(-3, 1, 3), FantasyEarth.AETHER_FOX.get());
+                    default -> { }
+                }
+            }
+            case DWARVEN_DELVING -> {
+                switch (spawnIndex) {
+                    case 0 -> spawnResident(level, pos.offset(-2, 1, 0), pos, ArcaneSettlerEntity.Role.GOBLIN_APPRAISER);
+                    case 1 -> spawnResident(level, pos.offset(2, 1, 0), pos, ArcaneSettlerEntity.Role.GOBLIN_APPRAISER);
+                    case 2 -> spawnResident(level, pos.offset(0, 1, 2), pos, ArcaneSettlerEntity.Role.ACADEMY_RESEARCHER);
+                    case 3 -> spawnFamiliar(level, pos.offset(3, 1, 3), FantasyEarth.MANA_WISP.get());
+                    default -> { }
+                }
+            }
+            case ELVEN_GROVE -> {
+                switch (spawnIndex) {
+                    case 0 -> spawnResident(level, pos.offset(-2, 1, 0), pos, ArcaneSettlerEntity.Role.HEDGE_WITCH);
+                    case 1 -> spawnResident(level, pos.offset(2, 1, 0), pos, ArcaneSettlerEntity.Role.HEDGE_WITCH);
+                    case 2 -> spawnResident(level, pos.offset(0, 1, 2), pos, ArcaneSettlerEntity.Role.ACADEMY_RESEARCHER);
                     case 3 -> spawnFamiliar(level, pos.offset(-3, 1, 3), FantasyEarth.AETHER_FOX.get());
                     default -> { }
                 }

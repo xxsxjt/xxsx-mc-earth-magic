@@ -1,0 +1,6 @@
+{
+  "type": "neoforge:add_features",
+  "biomes": "#minecraft:is_forest",
+  "features": ["fantasy_earth:elven_grove"],
+  "step": "surface_structures"
+}

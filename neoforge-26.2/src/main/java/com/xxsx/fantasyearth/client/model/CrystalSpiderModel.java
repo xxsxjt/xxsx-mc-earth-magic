@@ -1,6 +1,7 @@
 package com.xxsx.fantasyearth.client.model;
 
 import com.xxsx.fantasyearth.FantasyEarth;
+import com.xxsx.fantasyearth.client.CreatureMotion;
 import com.xxsx.fantasyearth.client.renderer.CrystalSpiderRenderState;
 import net.minecraft.client.model.EntityModel;
 import net.minecraft.client.model.geom.ModelLayerLocation;
@@ -75,32 +76,48 @@ public final class CrystalSpiderModel extends EntityModel<CrystalSpiderRenderSta
     }
 
     @Override
-    public void setupAnim(CrystalSpiderRenderState state) {
+        public void setupAnim(CrystalSpiderRenderState state) {
         super.setupAnim(state);
-        head.yRot = state.yRot * Mth.DEG_TO_RAD * 0.45F;
-        head.xRot = state.xRot * Mth.DEG_TO_RAD * 0.35F;
+        float age = state.ageInTicks;
         float walk = state.walkAnimationPos;
         float speed = Math.min(state.walkAnimationSpeed, 1.0F);
+        float idle = CreatureMotion.idleBlend(speed);
+        float breathe = CreatureMotion.breathe(age, 0.10F);
+        float alert = state.aggressive ? 1.0F : 0.0F;
+        float wind = CreatureMotion.windUp(state.attackProgress);
+        float strike = CreatureMotion.strike(state.attackProgress);
+
+        head.yRot = CreatureMotion.clampLook(state.yRot * Mth.DEG_TO_RAD * 0.55F, 0.45F);
+        head.xRot = CreatureMotion.clampLook(state.xRot * Mth.DEG_TO_RAD * 0.45F, 0.35F)
+                + breathe * 0.02F - wind * 0.12F;
+        head.zRot = CreatureMotion.wave(age, 0.05F, 0.9F) * 0.02F;
+
         for (int i = 0; i < legs.length; i++) {
             boolean left = i >= 4;
             int row = i % 4;
-            float phase = walk * 0.75F + row * 0.7F + (left ? Mth.PI : 0.0F);
-            float baseYaw = (0.85F - row * 0.18F) * (left ? -1.0F : 1.0F);
-            legs[i].zRot = (left ? 0.42F : -0.42F) + Mth.cos(phase) * 0.24F * speed;
-            legs[i].yRot = baseYaw + Mth.sin(phase) * 0.16F * speed;
-            lowerLegs[i].zRot = (left ? 0.52F : -0.52F) + Mth.sin(phase + 0.45F) * 0.11F * speed;
+            float phase = walk * 0.78F + row * 0.95F + (left ? Mth.PI : 0.0F);
+            float baseYaw = (0.95F - row * 0.20F) * (left ? -1.0F : 1.0F);
+            float reach = 0.22F + 0.06F * Mth.cos(age * 0.05F + row);
+            legs[i].zRot = (left ? 0.40F : -0.40F) + Mth.cos(phase) * reach * speed;
+            legs[i].yRot = baseYaw + Mth.sin(phase) * 0.18F * speed;
+            lowerLegs[i].zRot = (left ? 0.54F : -0.54F) + Mth.sin(phase + 0.5F) * 0.14F * speed
+                    + (left ? 1.0F : -1.0F) * strike * 0.18F;
         }
-        float pulse = 1.0F + Mth.sin(state.ageInTicks * 0.18F) * 0.05F;
+
+        float pulse = 1.0F + CreatureMotion.breathe(age, 0.18F) * 0.05F;
         crystals.xScale = pulse;
         crystals.yScale = pulse;
         crystals.zScale = pulse;
-        abdomen.y = 15.0F + Mth.sin(state.ageInTicks * 0.07F) * 0.04F;
-        float attack = Mth.sin(state.attackProgress * Mth.PI);
-        head.z -= attack * 1.6F;
-        head.xRot -= attack * 0.30F;
-        abdomen.z += attack * 0.8F;
+        crystals.yRot = CreatureMotion.wave(age, 0.03F, 0.0F) * 0.12F;
+
+        abdomen.y = 15.0F + breathe * 0.05F + Mth.cos(walk * 0.9F) * 0.06F * speed - strike * 0.25F;
+        abdomen.xRot = -alert * 0.04F + Mth.sin(walk * 0.9F) * 0.02F * speed - wind * 0.10F;
+        abdomen.zRot = CreatureMotion.wave(age, 0.04F, 2.2F) * 0.015F * idle;
+
+        head.z -= strike * 1.2F;
+        head.xRot -= strike * 0.28F;
         for (int i = 0; i < legs.length; i++) {
-            legs[i].zRot += (i >= 4 ? 1.0F : -1.0F) * attack * 0.16F;
+            legs[i].zRot += (i >= 4 ? 1.0F : -1.0F) * wind * 0.12F;
         }
     }
 }

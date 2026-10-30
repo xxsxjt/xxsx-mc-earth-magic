@@ -137,7 +137,9 @@ public class MagicMachineBlockEntity extends BaseContainerBlockEntity {
         changed = true;
         machine.emitWorkingEffects(level, pos);
         if (machine.progress >= machine.machineProcessTime()) {
-            machine.consumeInput(SLOT_PRIMARY, recipe.primary().count());
+            if (!recipe.catalyst()) {
+                machine.consumeInput(SLOT_PRIMARY, recipe.primary().count());
+            }
             machine.consumeInput(SLOT_REAGENT, recipe.reagent().count());
             machine.insertOutputs(recipe.outputStacks());
             AetherChunkField.disturb(level, pos, Math.max(1.0D, requiredField / (machine.structureTier > 0 ? 10.0D : 8.0D)));
@@ -376,14 +378,18 @@ public class MagicMachineBlockEntity extends BaseContainerBlockEntity {
         if (!(level instanceof ServerLevel serverLevel) || level.getGameTime() % 10L != 0L) {
             return;
         }
-        var particle = switch (kind()) {
-            case ALCHEMY_TABLE -> ParticleTypes.WITCH;
-            case RUNE_CARVING_TABLE -> ParticleTypes.ENCHANT;
-            case RITUAL_PEDESTAL -> ParticleTypes.REVERSE_PORTAL;
-        };
-        serverLevel.sendParticles(particle, pos.getX() + 0.5D, pos.getY() + 1.03D, pos.getZ() + 0.5D,
-                kind() == MagicMachineBlock.Kind.RITUAL_PEDESTAL ? 3 : 1,
-                0.24D, 0.12D, 0.24D, 0.008D);
+        double x = pos.getX() + 0.5D;
+        double y = pos.getY() + 1.03D;
+        double z = pos.getZ() + 0.5D;
+        switch (kind()) {
+            case ALCHEMY_TABLE -> ArcaneVfx.moteBurst(serverLevel, x, y, z, 1, 0.22D);
+            case RUNE_CARVING_TABLE -> ArcaneVfx.sparkBurst(serverLevel, x, y, z, 1, 0.20D);
+            case RITUAL_PEDESTAL -> {
+                ArcaneVfx.moteBurst(serverLevel, x, y, z, 2, 0.24D);
+                ArcaneVfx.runeRingAround(serverLevel, new net.minecraft.world.phys.Vec3(x, pos.getY() + 0.2D, z),
+                        0.85D, 1, 0.0D);
+            }
+        }
     }
 
     private void emitCompletionEffects(Level level, BlockPos pos) {
@@ -392,18 +398,22 @@ public class MagicMachineBlockEntity extends BaseContainerBlockEntity {
         }
         switch (kind()) {
             case ALCHEMY_TABLE -> {
+                ArcaneVfx.moteBurst(serverLevel, pos.getX() + 0.5D, pos.getY() + 1.08D, pos.getZ() + 0.5D, 12, 0.34D);
                 serverLevel.sendParticles(ParticleTypes.WITCH, pos.getX() + 0.5D, pos.getY() + 1.08D, pos.getZ() + 0.5D,
-                        12, 0.34D, 0.20D, 0.34D, 0.02D);
+                        3, 0.24D, 0.14D, 0.24D, 0.01D);
                 serverLevel.playSound(null, pos, SoundEvents.BREWING_STAND_BREW, SoundSource.BLOCKS, 0.7F, 1.15F);
             }
             case RUNE_CARVING_TABLE -> {
-                serverLevel.sendParticles(ParticleTypes.ENCHANT, pos.getX() + 0.5D, pos.getY() + 1.08D, pos.getZ() + 0.5D,
-                        18, 0.38D, 0.20D, 0.38D, 0.025D);
+                ArcaneVfx.sparkBurst(serverLevel, pos.getX() + 0.5D, pos.getY() + 1.08D, pos.getZ() + 0.5D, 18, 0.38D);
+                ArcaneVfx.runeRingAround(serverLevel, new net.minecraft.world.phys.Vec3(
+                        pos.getX() + 0.5D, pos.getY() + 0.1D, pos.getZ() + 0.5D), 0.78D, 6, 0.0D);
                 serverLevel.playSound(null, pos, SoundEvents.ENCHANTMENT_TABLE_USE, SoundSource.BLOCKS, 0.75F, 1.35F);
             }
             case RITUAL_PEDESTAL -> {
-                serverLevel.sendParticles(ParticleTypes.REVERSE_PORTAL, pos.getX() + 0.5D, pos.getY() + 1.15D, pos.getZ() + 0.5D,
-                        24, 0.55D, 0.35D, 0.55D, 0.025D);
+                ArcaneVfx.moteBurst(serverLevel, pos.getX() + 0.5D, pos.getY() + 1.15D, pos.getZ() + 0.5D, 16, 0.55D);
+                ArcaneVfx.runeRing(serverLevel, new net.minecraft.world.phys.Vec3(
+                        pos.getX() + 0.5D, pos.getY() + 0.15D, pos.getZ() + 0.5D), 1.15D, 10);
+                ArcaneVfx.sparkBurst(serverLevel, pos.getX() + 0.5D, pos.getY() + 1.15D, pos.getZ() + 0.5D, 8, 0.4D);
                 serverLevel.playSound(null, pos, SoundEvents.AMETHYST_BLOCK_RESONATE, SoundSource.BLOCKS, 0.9F, 0.8F);
             }
         }

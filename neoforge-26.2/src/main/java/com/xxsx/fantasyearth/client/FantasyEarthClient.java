@@ -10,6 +10,10 @@ import com.xxsx.fantasyearth.client.renderer.ArcaneSettlerRenderer;
 import com.xxsx.fantasyearth.client.renderer.CrystalSpiderRenderer;
 import com.xxsx.fantasyearth.client.renderer.FamiliarRenderer;
 import com.xxsx.fantasyearth.client.renderer.RunicWatcherRenderer;
+import com.xxsx.fantasyearth.client.particle.AetherMoteParticle;
+import com.xxsx.fantasyearth.client.particle.CrystalShardParticle;
+import com.xxsx.fantasyearth.client.particle.RuneSparkParticle;
+import com.xxsx.fantasyearth.client.particle.WardRuneParticle;
 import com.xxsx.fantasyearth.FantasyEarth;
 import com.xxsx.fantasyearth.ArcaneActionPayload;
 import com.xxsx.fantasyearth.ArcaneFocus;
@@ -18,12 +22,14 @@ import com.xxsx.fantasyearth.ArcaneVisualPayload;
 import com.mojang.blaze3d.platform.InputConstants;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
+import com.xxsx.fantasyearth.FantasyEarthParticles;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.neoforge.client.event.ClientTickEvent;
 import net.neoforged.neoforge.client.event.EntityRenderersEvent;
 import net.neoforged.neoforge.client.event.RegisterGuiLayersEvent;
 import net.neoforged.neoforge.client.event.RegisterKeyMappingsEvent;
 import net.neoforged.neoforge.client.event.RegisterMenuScreensEvent;
+import net.neoforged.neoforge.client.event.RegisterParticleProvidersEvent;
 import net.neoforged.neoforge.client.network.ClientPacketDistributor;
 import net.neoforged.neoforge.client.network.event.RegisterClientPayloadHandlersEvent;
 import net.neoforged.neoforge.common.NeoForge;
@@ -54,6 +60,7 @@ public final class FantasyEarthClient {
         modBus.addListener(FantasyEarthClient::registerGuiLayers);
         modBus.addListener(FantasyEarthClient::registerPayloadHandlers);
         modBus.addListener(FantasyEarthClient::registerKeyMappings);
+        modBus.addListener(FantasyEarthClient::registerParticleProviders);
         NeoForge.EVENT_BUS.addListener(FantasyEarthClient::clientTick);
         NeoForge.EVENT_BUS.addListener(ArcanePlayerAnimations::renderPlayer);
     }
@@ -100,6 +107,13 @@ public final class FantasyEarthClient {
         event.registerCategory(CATEGORY);
         event.register(OPEN_ATTUNEMENT);
         event.register(ACTIVATE_ARCANE_SKILL);
+    }
+
+    private static void registerParticleProviders(RegisterParticleProvidersEvent event) {
+        event.registerSpriteSet(FantasyEarthParticles.AETHER_MOTE.get(), AetherMoteParticle.Provider::new);
+        event.registerSpriteSet(FantasyEarthParticles.RUNE_SPARK.get(), RuneSparkParticle.Provider::new);
+        event.registerSpriteSet(FantasyEarthParticles.CRYSTAL_SHARD.get(), CrystalShardParticle.Provider::new);
+        event.registerSpriteSet(FantasyEarthParticles.WARD_RUNE.get(), WardRuneParticle.Provider::new);
     }
 
     private static void clientTick(ClientTickEvent.Post event) {

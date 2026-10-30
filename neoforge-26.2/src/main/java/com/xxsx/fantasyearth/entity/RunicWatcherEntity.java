@@ -2,6 +2,7 @@ package com.xxsx.fantasyearth.entity;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleTypes;
+import com.xxsx.fantasyearth.FantasyEarthParticles;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.util.RandomSource;
@@ -57,7 +58,9 @@ public final class RunicWatcherEntity extends Monster {
     public void aiStep() {
         super.aiStep();
         if (this.level().isClientSide() && this.tickCount % 10 == 0) {
-            this.level().addParticle(ParticleTypes.WITCH,
+            this.level().addParticle(this.tickCount % 20 == 0
+                            ? FantasyEarthParticles.AETHER_MOTE.get()
+                            : FantasyEarthParticles.RUNE_SPARK.get(),
                     this.getRandomX(0.55D), this.getY(0.58D), this.getRandomZ(0.55D),
                     0.0D, 0.015D, 0.0D);
         }

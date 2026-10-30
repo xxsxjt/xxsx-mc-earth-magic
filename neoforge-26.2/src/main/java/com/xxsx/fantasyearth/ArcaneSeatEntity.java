@@ -80,14 +80,15 @@ public class ArcaneSeatEntity extends Entity {
         double y = this.sourcePos.getY() + 0.24D;
         double z = this.sourcePos.getZ() + 0.5D;
         if (this.tickCount % 8 == 0) {
-            serverLevel.sendParticles(ParticleTypes.PORTAL, x, y + 0.08D, z, 4, 0.38D, 0.14D, 0.38D, 0.01D);
+            ArcaneVfx.moteBurst(serverLevel, x, y + 0.08D, z, 3, 0.30D);
         }
         if (this.tickCount % 32 == 0) {
-            serverLevel.sendParticles(ParticleTypes.WITCH, x, y + 0.32D, z, 2, 0.20D, 0.22D, 0.20D, 0.005D);
+            ArcaneVfx.sparkBurst(serverLevel, x, y + 0.32D, z, 2, 0.18D);
         }
         if (this.tickCount % 20 == 0
                 && ArcaneFocusMatBlock.performSeatedFocus(serverLevel, this.sourcePos, player, true)) {
-            serverLevel.sendParticles(ParticleTypes.REVERSE_PORTAL, x, y + 0.35D, z, 10, 0.45D, 0.35D, 0.45D, 0.02D);
+            ArcaneVfx.runeRing(serverLevel, new net.minecraft.world.phys.Vec3(x, y + 0.05D, z), 0.85D, 8);
+            ArcaneVfx.moteBurst(serverLevel, x, y + 0.35D, z, 8, 0.40D);
             serverLevel.playSound(null, this.sourcePos, SoundEvents.ENCHANTMENT_TABLE_USE,
                     SoundSource.PLAYERS, 0.7F, 1.1F);
         }

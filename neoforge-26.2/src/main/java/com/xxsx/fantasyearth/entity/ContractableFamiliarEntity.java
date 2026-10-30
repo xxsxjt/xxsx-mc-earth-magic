@@ -6,6 +6,7 @@ import com.xxsx.fantasyearth.MagicJourney;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleOptions;
 import net.minecraft.core.particles.ParticleTypes;
+import com.xxsx.fantasyearth.FantasyEarthParticles;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
@@ -127,8 +128,8 @@ public abstract class ContractableFamiliarEntity extends TamableAnimal {
                     stack.consume(1, player);
                     setStability(getStability() + 1);
                     if (level() instanceof ServerLevel serverLevel) {
-                        serverLevel.sendParticles(ParticleTypes.WITCH, getX(), getY() + getBbHeight() * 0.7D,
-                                getZ(), 8, 0.35D, 0.3D, 0.35D, 0.02D);
+                        com.xxsx.fantasyearth.ArcaneVfx.moteBurst(serverLevel,
+                                getX(), getY() + getBbHeight() * 0.7D, getZ(), 8, 0.32D);
                     }
                     player.sendSystemMessage(Component.translatable(
                             "message.fantasy_earth.familiar.stability", getStability(), MAX_STABILITY));
@@ -278,20 +279,22 @@ public abstract class ContractableFamiliarEntity extends TamableAnimal {
     }
 
     public enum Kind {
-        AETHER_FOX(ParticleTypes.PORTAL, 14),
-        RUNE_WOLF(ParticleTypes.ENCHANT, 13),
-        MANA_WISP(ParticleTypes.WITCH, 9);
+        AETHER_FOX(14),
+        RUNE_WOLF(13),
+        MANA_WISP(9);
 
-        private final ParticleOptions particle;
         private final int particleInterval;
 
-        Kind(ParticleOptions particle, int particleInterval) {
-            this.particle = particle;
+        Kind(int particleInterval) {
             this.particleInterval = particleInterval;
         }
 
         public ParticleOptions particle() {
-            return particle;
+            return switch (this) {
+                case AETHER_FOX -> FantasyEarthParticles.AETHER_MOTE.get();
+                case RUNE_WOLF -> FantasyEarthParticles.RUNE_SPARK.get();
+                case MANA_WISP -> FantasyEarthParticles.CRYSTAL_SHARD.get();
+            };
         }
 
         public int particleInterval() {

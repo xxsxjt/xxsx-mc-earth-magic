@@ -1,7 +1,7 @@
 {
   "display_name": "settlement.fantasy_earth.elven_grove",
   "culture": "elven",
-  "generation_status": "catalog_only",
+  "generation_status": "enabled",
   "weight": 3,
   "min_distance_chunks": 48,
   "biomes": ["#minecraft:is_forest"],

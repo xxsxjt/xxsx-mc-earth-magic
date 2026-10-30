@@ -142,26 +142,47 @@ public final class ArcanePractice {
     }
 
     public static void emitFocusChange(ServerLevel level, BlockPos pos, ArcaneFocus focus, boolean supported) {
-        var particle = switch (focus) {
-            case ATTUNEMENT -> ParticleTypes.REVERSE_PORTAL;
-            case BODY_WARD -> ParticleTypes.ENCHANT;
-            case BREATH_WARD -> ParticleTypes.BUBBLE_POP;
-        };
-        level.sendParticles(particle,
-                pos.getX() + 0.5D, pos.getY() + (supported ? 0.55D : 1.05D), pos.getZ() + 0.5D,
-                supported ? 16 : 9, 0.44D, supported ? 0.30D : 0.48D, 0.44D, 0.025D);
+        double x = pos.getX() + 0.5D;
+        double y = pos.getY() + (supported ? 0.55D : 1.05D);
+        double z = pos.getZ() + 0.5D;
+        int count = supported ? 16 : 9;
+        double spread = supported ? 0.44D : 0.30D;
+        switch (focus) {
+            case ATTUNEMENT -> ArcaneVfx.moteBurst(level, x, y, z, count, spread);
+            case BODY_WARD -> ArcaneVfx.sparkBurst(level, x, y, z, count, spread);
+            case BREATH_WARD -> {
+                ArcaneVfx.moteBurst(level, x, y, z, count, spread);
+                ArcaneVfx.shardBurst(level, x, y, z, Math.max(3, count / 3), spread * 0.7D);
+            }
+        }
+        level.sendParticles(ParticleTypes.ENCHANT,
+                x, y, z, supported ? 6 : 3, spread, spread * 0.5D, spread, 0.01D);
     }
 
     private static void emitPractice(ServerLevel level, BlockPos pos, ArcaneFocus focus, Support support) {
-        var particle = switch (focus) {
-            case ATTUNEMENT -> ParticleTypes.REVERSE_PORTAL;
-            case BODY_WARD -> ParticleTypes.WITCH;
-            case BREATH_WARD -> ParticleTypes.BUBBLE_POP;
-        };
         boolean supported = support == Support.FOCUS_MAT;
-        level.sendParticles(particle,
-                pos.getX() + 0.5D, pos.getY() + (supported ? 0.55D : 1.0D), pos.getZ() + 0.5D,
-                supported ? 14 : 8, 0.42D, supported ? 0.28D : 0.52D, 0.42D, 0.018D);
+        double x = pos.getX() + 0.5D;
+        double y = pos.getY() + (supported ? 0.55D : 1.0D);
+        double z = pos.getZ() + 0.5D;
+        int count = supported ? 14 : 8;
+        double spread = supported ? 0.42D : 0.52D;
+        switch (focus) {
+            case ATTUNEMENT -> {
+                ArcaneVfx.moteBurst(level, x, y, z, count, spread);
+                ArcaneVfx.runeRingAround(level, new net.minecraft.world.phys.Vec3(x, pos.getY() + 0.1D, z),
+                        0.72D, supported ? 8 : 5, 0.0D);
+            }
+            case BODY_WARD -> {
+                ArcaneVfx.sparkBurst(level, x, y, z, count, spread);
+                ArcaneVfx.shardBurst(level, x, y, z, Math.max(3, count / 4), spread * 0.6D);
+            }
+            case BREATH_WARD -> {
+                ArcaneVfx.moteBurst(level, x, y, z, count, spread);
+                ArcaneVfx.shardBurst(level, x, y, z, Math.max(3, count / 4), spread * 0.6D);
+            }
+        }
+        level.sendParticles(ParticleTypes.ENCHANT, x, y, z, supported ? 5 : 2,
+                spread, spread * 0.5D, spread, 0.008D);
         level.playSound(null, pos, SoundEvents.ENCHANTMENT_TABLE_USE, SoundSource.PLAYERS,
                 supported ? 0.70F : 0.46F, supported ? 1.10F : 0.92F);
     }

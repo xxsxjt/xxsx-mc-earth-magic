@@ -1,6 +1,7 @@
 package com.xxsx.fantasyearth.client.model;
 
 import com.xxsx.fantasyearth.FantasyEarth;
+import com.xxsx.fantasyearth.client.CreatureMotion;
 import com.xxsx.fantasyearth.client.renderer.ArcaneSettlerRenderState;
 import net.minecraft.client.model.EntityModel;
 import net.minecraft.client.model.geom.ModelLayerLocation;
@@ -30,6 +31,7 @@ public final class ArcaneSettlerModel extends EntityModel<ArcaneSettlerRenderSta
     private final ModelPart witchPack;
     private final ModelPart goblinPack;
     private final ModelPart researcherPack;
+    private final ModelPart coatSkirt;
 
     public ArcaneSettlerModel(ModelPart root) {
         super(root, RenderTypes::entityCutout);
@@ -45,6 +47,7 @@ public final class ArcaneSettlerModel extends EntityModel<ArcaneSettlerRenderSta
         this.witchPack = root.getChild("witch_pack");
         this.goblinPack = root.getChild("goblin_pack");
         this.researcherPack = root.getChild("researcher_pack");
+        this.coatSkirt = this.body.getChild("coat_skirt");
     }
 
     public static LayerDefinition createBodyLayer() {
@@ -132,32 +135,91 @@ public final class ArcaneSettlerModel extends EntityModel<ArcaneSettlerRenderSta
     }
 
     @Override
-    public void setupAnim(ArcaneSettlerRenderState state) {
+        public void setupAnim(ArcaneSettlerRenderState state) {
         super.setupAnim(state);
-        this.head.yRot = state.yRot * Mth.DEG_TO_RAD;
-        this.head.xRot = state.xRot * Mth.DEG_TO_RAD;
+        float age = state.ageInTicks;
         float walk = state.walkAnimationPos;
         float speed = Math.min(state.walkAnimationSpeed, 1.0F);
-        this.rightLeg.xRot = Mth.cos(walk * 0.6662F) * 1.0F * speed;
-        this.leftLeg.xRot = Mth.cos(walk * 0.6662F + Mth.PI) * 1.0F * speed;
+        float idle = CreatureMotion.idleBlend(speed);
+        float breathe = CreatureMotion.breathe(age, 0.08F);
+
+        this.head.yRot = CreatureMotion.clampLook(state.yRot * Mth.DEG_TO_RAD, 0.9F);
+        this.head.xRot = CreatureMotion.clampLook(state.xRot * Mth.DEG_TO_RAD, 0.6F) + breathe * 0.015F;
+        this.head.zRot = CreatureMotion.wave(age, 0.035F, 0.8F) * 0.02F;
+
+        this.rightLeg.xRot = CreatureMotion.gait(walk, 0.0F, 1.0F, speed);
+        this.leftLeg.xRot = CreatureMotion.gait(walk, Mth.PI, 1.0F, speed);
+        this.rightLeg.zRot = -0.02F - Math.max(0.0F, this.rightLeg.xRot) * 0.03F;
+        this.leftLeg.zRot = 0.02F + Math.max(0.0F, this.leftLeg.xRot) * 0.03F;
+
+        this.body.y = breathe * 0.04F;
+        this.body.zRot = CreatureMotion.wave(age, 0.03F, 1.3F) * 0.012F * idle;
+        this.body.yScale = 1.0F + breathe * 0.008F;
+        this.body.xRot = Mth.sin(walk * 0.67F) * 0.01F * speed;
+
+        this.coatSkirt.xRot = Mth.sin(walk * 0.67F) * 0.05F * speed
+                + CreatureMotion.wave(age, 0.05F, 2.0F) * 0.012F * idle;
+        this.coatSkirt.zRot = CreatureMotion.wave(age, 0.04F, 0.5F) * 0.014F * idle;
+
         if (state.trading) {
             this.rightArm.xRot = -0.72F;
             this.leftArm.xRot = -0.72F;
             this.rightArm.yRot = -0.28F;
             this.leftArm.yRot = 0.28F;
+            this.rightArm.zRot = -0.06F;
+            this.leftArm.zRot = 0.06F;
         } else {
             this.rightArm.xRot = this.leftLeg.xRot * 0.65F;
             this.leftArm.xRot = this.rightLeg.xRot * 0.65F;
             this.rightArm.yRot = 0.0F;
             this.leftArm.yRot = 0.0F;
+            this.rightArm.zRot = -0.02F;
+            this.leftArm.zRot = 0.02F;
+            applyRoleIdle(state, age, idle);
         }
+
         this.witchHat.visible = state.role == 0;
         this.witchPack.visible = state.role == 0;
         this.goblinEars.visible = state.role == 1;
         this.goblinPack.visible = state.role == 1;
         this.lens.visible = state.role == 2;
         this.researcherPack.visible = state.role == 2;
-        this.lens.xScale = 1.0F + Mth.sin(state.ageInTicks * 0.18F) * 0.08F;
-        this.body.yRot = Mth.sin(state.ageInTicks * 0.03F) * 0.015F;
+        this.lens.xScale = 1.0F + CreatureMotion.breathe(age, 0.18F) * 0.08F;
+        this.lens.yScale = this.lens.xScale;
+        this.lens.zScale = this.lens.xScale;
+        this.witchHat.zRot = CreatureMotion.wave(age, 0.04F, 0.2F) * 0.025F * idle;
+    }
+
+    private void applyRoleIdle(ArcaneSettlerRenderState state, float age, float idle) {
+        if (idle <= 0.01F) {
+            return;
+        }
+        switch (state.role) {
+            case 0 -> {
+                float stir = CreatureMotion.wave(age, 0.075F, 0.0F);
+                float circle = CreatureMotion.wave(age, 0.075F, Mth.HALF_PI);
+                this.leftArm.xRot += (-0.78F + stir * 0.10F) * idle;
+                this.leftArm.zRot += (0.18F + circle * 0.10F) * idle;
+                this.rightArm.xRot += -0.28F * idle;
+                this.head.xRot += 0.10F * idle;
+            }
+            case 1 -> {
+                float rub = CreatureMotion.wave(age, 0.32F, 0.0F);
+                this.rightArm.xRot += (-0.68F + rub * 0.05F) * idle;
+                this.leftArm.xRot += (-0.68F - rub * 0.05F) * idle;
+                this.rightArm.yRot += -0.24F * idle;
+                this.leftArm.yRot += 0.24F * idle;
+                this.rightArm.zRot += 0.12F * idle;
+                this.leftArm.zRot += -0.12F * idle;
+            }
+            case 2 -> {
+                this.rightArm.xRot += -1.12F * idle;
+                this.rightArm.yRot += CreatureMotion.wave(age, 0.045F, 0.0F) * 0.34F * idle;
+                this.rightArm.zRot += -0.18F * idle;
+                this.head.yRot += CreatureMotion.wave(age, 0.045F, 0.6F) * 0.22F * idle;
+            }
+            default -> {
+            }
+        }
     }
 }

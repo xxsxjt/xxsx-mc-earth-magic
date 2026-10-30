@@ -1,6 +1,7 @@
 package com.xxsx.fantasyearth.client.model;
 
 import com.xxsx.fantasyearth.FantasyEarth;
+import com.xxsx.fantasyearth.client.CreatureMotion;
 import com.xxsx.fantasyearth.client.renderer.RunicWatcherRenderState;
 import net.minecraft.client.model.EntityModel;
 import net.minecraft.client.model.geom.ModelLayerLocation;
@@ -21,6 +22,7 @@ public final class RunicWatcherModel extends EntityModel<RunicWatcherRenderState
     private final ModelPart head;
     private final ModelPart lens;
     private final ModelPart torso;
+    private final ModelPart chestRune;
     private final ModelPart rightArm;
     private final ModelPart leftArm;
     private final ModelPart rightLeg;
@@ -33,6 +35,7 @@ public final class RunicWatcherModel extends EntityModel<RunicWatcherRenderState
         this.head = root.getChild("head");
         this.lens = this.head.getChild("lens");
         this.torso = root.getChild("torso");
+        this.chestRune = this.torso.getChild("chest_rune");
         this.rightArm = root.getChild("right_arm");
         this.leftArm = root.getChild("left_arm");
         this.rightLeg = root.getChild("right_leg");
@@ -55,11 +58,14 @@ public final class RunicWatcherModel extends EntityModel<RunicWatcherRenderState
                 CubeListBuilder.create().texOffs(0, 52).addBox(-2.0F, -2.0F, -0.8F, 4.0F, 4.0F, 1.0F),
                 PartPose.offset(0.0F, -3.8F, -4.0F));
 
-        root.addOrReplaceChild("torso",
+        PartDefinition torso = root.addOrReplaceChild("torso",
                 CubeListBuilder.create()
                         .texOffs(0, 16).addBox(-5.0F, 0.0F, -3.0F, 10.0F, 11.0F, 6.0F)
                         .texOffs(32, 16).addBox(-5.0F, 1.0F, -3.5F, 10.0F, 4.0F, 1.0F, rim),
                 PartPose.offset(0.0F, 5.0F, 0.0F));
+        torso.addOrReplaceChild("chest_rune",
+                CubeListBuilder.create().texOffs(0, 52).addBox(-2.0F, -2.0F, -0.6F, 4.0F, 4.0F, 1.0F),
+                PartPose.offset(0.0F, 6.0F, -3.1F));
 
         root.addOrReplaceChild("right_arm",
                 CubeListBuilder.create().texOffs(0, 34).addBox(-4.0F, -2.0F, -2.5F, 5.0F, 13.0F, 5.0F),
@@ -85,34 +91,54 @@ public final class RunicWatcherModel extends EntityModel<RunicWatcherRenderState
     }
 
     @Override
-    public void setupAnim(RunicWatcherRenderState state) {
+        public void setupAnim(RunicWatcherRenderState state) {
         super.setupAnim(state);
+        float age = state.ageInTicks;
         float walk = state.walkAnimationPos;
         float speed = Math.min(state.walkAnimationSpeed, 1.0F);
-        float age = state.ageInTicks;
+        float idle = CreatureMotion.idleBlend(speed);
+        float breathe = CreatureMotion.breathe(age, 0.06F);
+        float alert = state.aggressive ? 1.0F : 0.0F;
+        float wind = CreatureMotion.windUp(state.attackProgress);
+        float strike = CreatureMotion.strike(state.attackProgress);
 
-        this.head.yRot = state.yRot * Mth.DEG_TO_RAD;
-        this.head.xRot = state.xRot * Mth.DEG_TO_RAD;
-        this.torso.yRot = Mth.sin(age * 0.035F) * 0.035F;
-        this.rightLeg.xRot = Mth.cos(walk * 0.6662F) * 1.05F * speed;
-        this.leftLeg.xRot = Mth.cos(walk * 0.6662F + Mth.PI) * 1.05F * speed;
+        this.head.yRot = CreatureMotion.clampLook(state.yRot * Mth.DEG_TO_RAD, 0.85F);
+        this.head.xRot = CreatureMotion.clampLook(state.xRot * Mth.DEG_TO_RAD, 0.5F)
+                - alert * 0.06F + breathe * 0.012F - wind * 0.22F;
+        this.head.zRot = CreatureMotion.wave(age, 0.03F, 0.3F) * 0.02F;
 
-        float attack = Mth.sin(state.attackProgress * Mth.PI);
-        float combatLift = state.aggressive ? -0.48F : 0.0F;
-        this.rightArm.xRot = Mth.cos(walk * 0.6662F + Mth.PI) * 0.7F * speed + combatLift;
-        this.leftArm.xRot = Mth.cos(walk * 0.6662F) * 0.7F * speed + combatLift;
-        this.rightArm.xRot -= attack * 1.35F;
-        this.leftArm.xRot -= attack * 1.05F;
-        this.torso.xRot = attack * 0.16F;
-        this.rightArm.zRot = -0.08F - (state.aggressive ? 0.22F : 0.0F);
-        this.leftArm.zRot = 0.08F + (state.aggressive ? 0.22F : 0.0F);
+        this.torso.yRot = CreatureMotion.wave(age, 0.035F, 0.0F) * 0.04F
+                + Mth.sin(walk * 0.67F) * 0.05F * speed;
+        this.torso.xRot = -alert * 0.03F - strike * 0.12F;
+        this.torso.zRot = CreatureMotion.wave(age, 0.028F, 1.4F) * 0.02F * idle;
 
-        float pylonSwing = Mth.sin(age * 0.095F) * 0.12F;
-        this.rightPylon.zRot = -0.28F - pylonSwing;
-        this.leftPylon.zRot = 0.28F + pylonSwing;
-        float pulse = 1.0F + Mth.sin(age * 0.22F) * (0.06F + (1.0F - state.integrity) * 0.05F);
+        this.rightLeg.xRot = CreatureMotion.gait(walk, 0.0F, 1.05F, speed);
+        this.leftLeg.xRot = CreatureMotion.gait(walk, Mth.PI, 1.05F, speed);
+        this.rightLeg.zRot = -0.02F - Math.max(0.0F, this.rightLeg.xRot) * 0.03F;
+        this.leftLeg.zRot = 0.02F + Math.max(0.0F, this.leftLeg.xRot) * 0.03F;
+
+        float combatLift = alert * -0.48F;
+        this.rightArm.xRot = CreatureMotion.gait(walk, Mth.PI, 0.7F, speed) + combatLift
+                - wind * 1.25F + strike * 0.55F;
+        this.leftArm.xRot = CreatureMotion.gait(walk, 0.0F, 0.7F, speed) + combatLift
+                - wind * 1.05F + strike * 0.45F;
+        this.rightArm.zRot = -0.08F - alert * 0.22F + CreatureMotion.wave(age, 0.05F, 0.2F) * 0.02F * idle;
+        this.leftArm.zRot = 0.08F + alert * 0.22F - CreatureMotion.wave(age, 0.05F, 1.6F) * 0.02F * idle;
+
+        float pylonSwing = CreatureMotion.wave(age, 0.095F, 0.0F) * 0.12F;
+        this.rightPylon.zRot = -0.28F - pylonSwing - strike * 0.35F;
+        this.leftPylon.zRot = 0.28F + pylonSwing + strike * 0.35F;
+        this.rightPylon.yRot = CreatureMotion.wave(age, 0.06F, 0.8F) * 0.18F;
+        this.leftPylon.yRot = -this.rightPylon.yRot;
+
+        float pulse = 1.0F + CreatureMotion.breathe(age, 0.22F) * (0.06F + (1.0F - state.integrity) * 0.05F)
+                + strike * 0.30F;
         this.lens.xScale = pulse;
         this.lens.yScale = pulse;
         this.lens.zScale = pulse;
+        this.chestRune.xScale = 1.0F + CreatureMotion.breathe(age, 0.16F) * 0.10F;
+        this.chestRune.yScale = this.chestRune.xScale;
+        this.chestRune.zScale = this.chestRune.xScale;
+        this.chestRune.yRot = age * 0.05F;
     }
 }
