@@ -3,7 +3,13 @@ package com.xxsx.fantasyearth.settlement;
 import com.mojang.serialization.Codec;
 import com.xxsx.fantasyearth.FantasyEarth;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.resources.Identifier;
+import net.minecraft.world.Container;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 import net.minecraft.world.level.WorldGenLevel;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.levelgen.feature.Feature;
@@ -59,11 +65,20 @@ public final class MagicSettlementFeature extends Feature<NoneFeatureConfigurati
         fillFloor(level, center, 4, Blocks.MOSS_BLOCK.defaultBlockState());
         buildHut(level, center.offset(-3, 0, 2), Blocks.DARK_OAK_PLANKS.defaultBlockState(), Blocks.MANGROVE_SLAB.defaultBlockState());
         buildHut(level, center.offset(3, 0, 2), Blocks.SPRUCE_PLANKS.defaultBlockState(), Blocks.DARK_OAK_SLAB.defaultBlockState());
+        level.setBlock(center.offset(-3, 0, 2), FantasyEarth.ALCHEMY_TABLE.get().defaultBlockState(), UPDATE_FLAGS);
+        level.setBlock(center.offset(3, 0, 2), FantasyEarth.RUNE_CARVING_TABLE.get().defaultBlockState(), UPDATE_FLAGS);
+        level.setBlock(center.offset(-2, 0, 1), FantasyEarth.ARCANE_FOCUS_MAT.get().defaultBlockState(), UPDATE_FLAGS);
+        level.setBlock(center.offset(2, 0, 1), FantasyEarth.AETHER_CRYSTAL_CLUSTER.get().defaultBlockState(), UPDATE_FLAGS);
         level.setBlock(center.offset(-2, 0, -2), Blocks.CAULDRON.defaultBlockState(), UPDATE_FLAGS);
         level.setBlock(center.offset(2, 0, -2), Blocks.BREWING_STAND.defaultBlockState(), UPDATE_FLAGS);
+        stock(level, center.offset(-4, 0, 2), new ItemStack(FantasyEarth.ARCANE_DUST.get(), 12),
+                new ItemStack(FantasyEarth.RUNE_INK.get(), 8), new ItemStack(FantasyEarth.CRYSTALLIZED_MANA_SALT.get(), 3));
+        stock(level, center.offset(4, 0, 2), new ItemStack(FantasyEarth.RITUAL_CHALK.get(), 8),
+                new ItemStack(FantasyEarth.AETHER_GLASS.get(), 4), new ItemStack(Items.AMETHYST_SHARD, 6));
         for (int x = -3; x <= 3; x += 2) {
             level.setBlock(center.offset(x, 0, -3), Blocks.RED_MUSHROOM.defaultBlockState(), UPDATE_FLAGS);
         }
+        placeBoard(level, center.offset(0, 0, -3));
         cornerLights(level, center, 4, Blocks.SOUL_LANTERN.defaultBlockState());
     }
 
@@ -73,9 +88,17 @@ public final class MagicSettlementFeature extends Feature<NoneFeatureConfigurati
             level.setBlock(center.offset(x, 0, 2), Blocks.BARREL.defaultBlockState(), UPDATE_FLAGS);
             level.setBlock(center.offset(x, 0, -2), Blocks.COPPER_BLOCK.weathering().unaffected().defaultBlockState(), UPDATE_FLAGS);
         }
+        stock(level, center.offset(-3, 0, 2), new ItemStack(FantasyEarth.RUNE_COPPER_PLATE.get(), 4),
+                new ItemStack(FantasyEarth.ARCANE_DUST.get(), 8));
+        stock(level, center.offset(0, 0, 2), new ItemStack(FantasyEarth.AETHER_CRYSTAL.get(), 2),
+                new ItemStack(FantasyEarth.FAMILIAR_CONTRACT.get(), 1));
+        stock(level, center.offset(3, 0, 2), new ItemStack(FantasyEarth.RUNE_INK.get(), 6),
+                new ItemStack(FantasyEarth.CRYSTALLIZED_MANA_SALT.get(), 2));
+        level.setBlock(center.offset(0, 0, -1), FantasyEarth.AETHER_CRYSTAL_CLUSTER.get().defaultBlockState(), UPDATE_FLAGS);
         line(level, center.offset(-4, 0, 4), 9, true, Blocks.RAIL.defaultBlockState());
         buildCanopy(level, center.offset(-2, 0, 0), Blocks.WOOL.orange().defaultBlockState());
         buildCanopy(level, center.offset(2, 0, 0), Blocks.WOOL.gray().defaultBlockState());
+        placeBoard(level, center.offset(0, 0, -3));
         cornerLights(level, center, 4, Blocks.LANTERN.defaultBlockState());
     }
 
@@ -93,6 +116,15 @@ public final class MagicSettlementFeature extends Feature<NoneFeatureConfigurati
         buildCanopy(level, center.offset(3, 0, 1), Blocks.WOOL.blue().defaultBlockState());
         level.setBlock(center.offset(0, 0, -3), Blocks.ENCHANTING_TABLE.defaultBlockState(), UPDATE_FLAGS);
         level.setBlock(center.offset(0, 0, 3), Blocks.LECTERN.defaultBlockState(), UPDATE_FLAGS);
+        level.setBlock(center.offset(-2, 0, 2), FantasyEarth.ALCHEMY_TABLE.get().defaultBlockState(), UPDATE_FLAGS);
+        level.setBlock(center.offset(2, 0, 2), FantasyEarth.RUNE_CARVING_TABLE.get().defaultBlockState(), UPDATE_FLAGS);
+        level.setBlock(center.offset(0, 0, 1), FantasyEarth.RITUAL_PEDESTAL.get().defaultBlockState(), UPDATE_FLAGS);
+        level.setBlock(center.offset(0, 0, -1), FantasyEarth.AETHER_CRYSTAL_CLUSTER.get().defaultBlockState(), UPDATE_FLAGS);
+        stock(level, center.offset(-4, 0, 0), new ItemStack(FantasyEarth.ARCANE_DUST.get(), 16),
+                new ItemStack(FantasyEarth.ARCANE_INITIATION_NOTES.get(), 1));
+        stock(level, center.offset(4, 0, 0), new ItemStack(FantasyEarth.RITUAL_CHALK.get(), 12),
+                new ItemStack(FantasyEarth.AETHER_CRYSTAL.get(), 3));
+        placeBoard(level, center.offset(4, 0, -3));
     }
 
     private static void fillFloor(WorldGenLevel level, BlockPos center, int radius, BlockState state) {
@@ -148,6 +180,23 @@ public final class MagicSettlementFeature extends Feature<NoneFeatureConfigurati
     private static void line(WorldGenLevel level, BlockPos start, int length, boolean alongX, BlockState state) {
         for (int i = 0; i < length; i++) {
             level.setBlock(start.offset(alongX ? i : 0, 0, alongX ? 0 : i), state, UPDATE_FLAGS);
+        }
+    }
+
+    private static void stock(WorldGenLevel level, BlockPos pos, ItemStack... items) {
+        level.setBlock(pos, Blocks.BARREL.defaultBlockState(), UPDATE_FLAGS);
+        if (level.getBlockEntity(pos) instanceof Container container) {
+            for (int slot = 0; slot < Math.min(container.getContainerSize(), items.length); slot++) {
+                container.setItem(slot, items[slot].copy());
+            }
+        }
+    }
+
+    private static void placeBoard(WorldGenLevel level, BlockPos pos) {
+        Block board = BuiltInRegistries.BLOCK.getValue(
+                Identifier.fromNamespaceAndPath("earth_on_minecraft", "settlement_board"));
+        if (board != null && board != Blocks.AIR) {
+            level.setBlock(pos, board.defaultBlockState(), UPDATE_FLAGS);
         }
     }
 

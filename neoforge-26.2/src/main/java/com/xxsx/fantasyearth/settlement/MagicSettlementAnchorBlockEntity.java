@@ -88,26 +88,26 @@ public final class MagicSettlementAnchorBlockEntity extends BlockEntity {
         switch (MagicSettlementFeature.Type.byId(settlementType)) {
             case WITCH_HAMLET -> {
                 switch (spawnIndex) {
-                    case 0 -> spawnResident(level, pos.offset(-3, 1, 0), ArcaneSettlerEntity.Role.HEDGE_WITCH);
-                    case 1 -> spawnResident(level, pos.offset(3, 1, 0), ArcaneSettlerEntity.Role.HEDGE_WITCH);
-                    case 2 -> spawnResident(level, pos.offset(0, 1, -2), ArcaneSettlerEntity.Role.GOBLIN_APPRAISER);
+                    case 0 -> spawnResident(level, pos.offset(-3, 1, 0), pos, ArcaneSettlerEntity.Role.HEDGE_WITCH);
+                    case 1 -> spawnResident(level, pos.offset(3, 1, 0), pos, ArcaneSettlerEntity.Role.HEDGE_WITCH);
+                    case 2 -> spawnResident(level, pos.offset(0, 1, -2), pos, ArcaneSettlerEntity.Role.GOBLIN_APPRAISER);
                     case 3 -> spawnFamiliar(level, pos.offset(3, 1, 3), FantasyEarth.MANA_WISP.get());
                     default -> { }
                 }
             }
             case GOBLIN_EXCHANGE -> {
                 switch (spawnIndex) {
-                    case 0 -> spawnResident(level, pos.offset(-2, 1, 0), ArcaneSettlerEntity.Role.GOBLIN_APPRAISER);
-                    case 1 -> spawnResident(level, pos.offset(2, 1, 0), ArcaneSettlerEntity.Role.GOBLIN_APPRAISER);
-                    case 2 -> spawnResident(level, pos.offset(0, 1, 3), ArcaneSettlerEntity.Role.HEDGE_WITCH);
+                    case 0 -> spawnResident(level, pos.offset(-2, 1, 0), pos, ArcaneSettlerEntity.Role.GOBLIN_APPRAISER);
+                    case 1 -> spawnResident(level, pos.offset(2, 1, 0), pos, ArcaneSettlerEntity.Role.GOBLIN_APPRAISER);
+                    case 2 -> spawnResident(level, pos.offset(0, 1, 3), pos, ArcaneSettlerEntity.Role.HEDGE_WITCH);
                     default -> { }
                 }
             }
             case ACADEMY_OUTPOST -> {
                 switch (spawnIndex) {
-                    case 0 -> spawnResident(level, pos.offset(-2, 1, 0), ArcaneSettlerEntity.Role.ACADEMY_RESEARCHER);
-                    case 1 -> spawnResident(level, pos.offset(2, 1, 0), ArcaneSettlerEntity.Role.ACADEMY_RESEARCHER);
-                    case 2 -> spawnResident(level, pos.offset(0, 1, 3), ArcaneSettlerEntity.Role.GOBLIN_APPRAISER);
+                    case 0 -> spawnResident(level, pos.offset(-2, 1, 0), pos, ArcaneSettlerEntity.Role.ACADEMY_RESEARCHER);
+                    case 1 -> spawnResident(level, pos.offset(2, 1, 0), pos, ArcaneSettlerEntity.Role.ACADEMY_RESEARCHER);
+                    case 2 -> spawnResident(level, pos.offset(0, 1, 3), pos, ArcaneSettlerEntity.Role.GOBLIN_APPRAISER);
                     case 3 -> spawnFamiliar(level, pos.offset(-3, 1, 3), FantasyEarth.AETHER_FOX.get());
                     default -> { }
                 }
@@ -121,13 +121,20 @@ public final class MagicSettlementAnchorBlockEntity extends BlockEntity {
         FantasyEarth.LOGGER.info("Initialized magic settlement {} at {}", settlementType, pos);
     }
 
-    private static void spawnResident(ServerLevel level, BlockPos pos, ArcaneSettlerEntity.Role role) {
+    private static void spawnResident(ServerLevel level, BlockPos pos, BlockPos settlementAnchor,
+                                      ArcaneSettlerEntity.Role role) {
         ArcaneSettlerEntity resident = FantasyEarth.ARCANE_SETTLER.get().create(level, EntitySpawnReason.STRUCTURE);
         if (resident == null) {
             return;
         }
         BlockPos spawnPos = findOpenSpawn(level, pos);
         resident.setRole(role);
+        resident.getPersistentData().putString("EarthOnMinecraftResidentRole",
+                "fantasy_earth:" + role.name().toLowerCase(java.util.Locale.ROOT));
+        resident.getPersistentData().putString("EarthOnMinecraftSettlementProfile", "earth_on_minecraft:arcane_settlement");
+        resident.getPersistentData().putInt("EarthOnMinecraftSettlementAnchorX", settlementAnchor.getX());
+        resident.getPersistentData().putInt("EarthOnMinecraftSettlementAnchorY", settlementAnchor.getY());
+        resident.getPersistentData().putInt("EarthOnMinecraftSettlementAnchorZ", settlementAnchor.getZ());
         resident.snapTo(spawnPos.getX() + 0.5D, spawnPos.getY(), spawnPos.getZ() + 0.5D,
                 level.getRandom().nextFloat() * 360.0F, 0.0F);
         resident.setPersistenceRequired();
