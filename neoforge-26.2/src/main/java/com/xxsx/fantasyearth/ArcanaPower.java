@@ -83,6 +83,10 @@ public final class ArcanaPower {
         return true;
     }
 
+    public static boolean canSpendMana(Player player, double amount) {
+        return getCurrentMana(player) + 0.0001D >= Math.max(0.0D, amount);
+    }
+
     public static int getMagicResearchLevel(Player player) {
         return Math.max(0, data(player).getIntOr(MAGIC_RESEARCH_LEVEL, 0));
     }

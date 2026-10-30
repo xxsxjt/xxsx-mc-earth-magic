@@ -17,21 +17,28 @@ public final class ArcaneSkill {
 
     public static boolean activate(ServerLevel level, ServerPlayer player) {
         ArcaneFocus focus = ArcanaPower.getArcaneFocus(player);
-        if (!focus.isUnlocked(player)) {
-            player.sendSystemMessage(Component.translatable(
-                    "message.fantasy_earth.skill.requires_research")
-                    .withStyle(ChatFormatting.RED));
+        SpellExecutor.Plan plan = SpellExecutor.plan(player, level, focus);
+        if (!plan.accepted()) {
+            String key = switch (plan.errorCode()) {
+                case "requires_research" -> "message.fantasy_earth.skill.requires_research";
+                case "cooldown" -> "message.fantasy_earth.skill.cooldown";
+                case "mana_low" -> "message.fantasy_earth.skill.no_mana";
+                default -> "message.fantasy_earth.skill.graph_invalid";
+            };
+            long remaining = ArcanaPower.getSkillCooldownTicks(player, level);
+            if ("cooldown".equals(plan.errorCode())) {
+                player.sendSystemMessage(Component.translatable(key, (remaining + 19L) / 20L)
+                        .withStyle(ChatFormatting.YELLOW));
+            } else if ("mana_low".equals(plan.errorCode())) {
+                player.sendSystemMessage(Component.translatable(key, ArcanaPower.format(plan.manaCost()))
+                        .withStyle(ChatFormatting.RED));
+            } else {
+                player.sendSystemMessage(Component.translatable(key, plan.message())
+                        .withStyle(ChatFormatting.RED));
+            }
             return false;
         }
-        long remaining = ArcanaPower.getSkillCooldownTicks(player, level);
-        if (remaining > 0L) {
-            player.sendSystemMessage(Component.translatable(
-                    "message.fantasy_earth.skill.cooldown", (remaining + 19L) / 20L)
-                    .withStyle(ChatFormatting.YELLOW));
-            return false;
-        }
-
-        double cost = focus == ArcaneFocus.BODY_WARD ? 12.0D : 10.0D;
+        double cost = plan.manaCost();
         if (!ArcanaPower.trySpendMana(player, cost)) {
             player.sendSystemMessage(Component.translatable(
                     "message.fantasy_earth.skill.no_mana", ArcanaPower.format(cost))

@@ -193,6 +193,7 @@ public class FantasyEarth {
         NeoForge.EVENT_BUS.addListener(ArcanaPassiveEffects::onFall);
         NeoForge.EVENT_BUS.addListener(ArcanaPassiveEffects::onBreathe);
         NeoForge.EVENT_BUS.addListener(MagicSettlementCatalog::register);
+        NeoForge.EVENT_BUS.addListener(SpellGraphLoader::register);
         TAB_ITEMS.add(FIELD_ARCANE_NOTEBOOK);
         TAB_ITEMS.add(ARCANE_INITIATION_NOTES);
         TAB_ITEMS.add(ARCANE_BODY_WARD_NOTES);

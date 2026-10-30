@@ -91,6 +91,7 @@
   "message.fantasy_earth.skill.requires_research": "The selected circuit has not been researched, so its spell cannot be used.",
   "message.fantasy_earth.skill.cooldown": "The spell circuit is cooling down. Wait %s seconds.",
   "message.fantasy_earth.skill.no_mana": "Not enough mana; this spell costs %s.",
+  "message.fantasy_earth.skill.graph_invalid": "Ward spell graph failed validation: %s. No mana was spent.",
   "message.fantasy_earth.skill.activated.attunement": "Aether Pulse completes, spending %s mana to sharpen senses and movement.",
   "message.fantasy_earth.skill.activated.body_ward": "Arcane Ward unfolds, spending %s mana for temporary protection.",
   "message.fantasy_earth.skill.activated.breath_ward": "The breathing circuit closes, spending %s mana to restore underwater respiration.",

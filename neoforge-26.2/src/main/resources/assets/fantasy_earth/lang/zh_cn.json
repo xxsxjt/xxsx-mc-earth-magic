@@ -91,6 +91,7 @@
   "message.fantasy_earth.skill.requires_research": "当前回路尚未完成研究，不能施展对应法术。",
   "message.fantasy_earth.skill.cooldown": "法术回路仍在冷却，需要等待 %s 秒。",
   "message.fantasy_earth.skill.no_mana": "法力不足：本次施法需要 %s 法力。",
+  "message.fantasy_earth.skill.graph_invalid": "护盾术式图校验失败：%s。没有扣除法力。",
   "message.fantasy_earth.skill.activated.attunement": "以太脉冲完成，消耗 %s 法力并强化感知与移动。",
   "message.fantasy_earth.skill.activated.body_ward": "奥术护盾展开，消耗 %s 法力并获得短时防护。",
   "message.fantasy_earth.skill.activated.breath_ward": "呼吸回路闭合，消耗 %s 法力并恢复水下换气。",

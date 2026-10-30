@@ -11,6 +11,8 @@ public final class ArcanaBalanceRegression {
         verifyInvalidValuesAreBounded();
         verifyExperienceCurve();
         verifyJourneyMask();
+        verifySharedEnergyContract();
+        verifySpellGraphs();
     }
 
     private static void verifyMonotonicAndCapped() {
@@ -73,6 +75,58 @@ public final class ArcanaBalanceRegression {
         require(JourneyProgress.count(mask, total) == total, "journey total mismatch");
         require(JourneyProgress.sanitize(mask | (1 << 20), total) == mask,
                 "journey mask kept unknown bits");
+    }
+
+    private static void verifySharedEnergyContract() {
+        close(0.0D, AetherLedger.clampField(Double.NaN));
+        close(100.0D, AetherLedger.clampField(99999.0D));
+        close(0.0D, AetherLedger.clampDisturbance(-5.0D));
+        close(45.0D, AetherLedger.clampDisturbance(99999.0D));
+        close(100.0D, AetherLedger.extractableField(100.0D, 0.0D));
+        close(77.5D, AetherLedger.extractableField(100.0D, 45.0D));
+        close(0.0D, AetherLedger.extractableField(0.0D, 0.0D));
+        close(0.9D, AetherLedger.manaValueOfAeu(10.0D));
+        close(111.111111D, AetherLedger.aeuCostOfMana(10.0D));
+        require(AetherLedger.CONTRACT_VERSION == 1, "contract version changed without migration");
+        require(AetherLedger.report(100.0D, 45.0D).extractableField() > 0.0D,
+                "dense field must still provide flux after disturbance");
+        require(AetherLedger.report(0.0D, 45.0D).isDepleted(), "empty field must report depletion");
+    }
+
+    private static void verifySpellGraphs() {
+        require(SpellCatalog.graphs().size() == 3, "magic graph catalog changed without a test update");
+        SpellGraph ward = SpellCatalog.ward();
+        SpellGraph.Validation validation = ward.validate();
+        require(validation.valid(), "arcane ward graph invalid: " + validation.errorCode() + " " + validation.message());
+        close(12.0D, ward.manaCost());
+        close(0.0D, ward.energyCostAeu());
+        require(ward.requires(SpellSource.PLAYER_MANA), "ward graph lost its player mana source");
+        require(!ward.requires(SpellSource.AETHER_CRYSTAL),
+                "the ward graph must not declare a crystal it does not consume");
+        for (SpellGraph graph : SpellCatalog.graphs().values()) {
+            require(graph.validate().valid(), "built-in magic graph invalid: " + graph.id());
+            require(graph.energyCostAeu() + graph.manaCost() > 0.0D,
+                    "magic graph must not be free: " + graph.id());
+        }
+        SpellGraph badPort = new SpellGraph("fantasy_earth:bad_port", java.util.List.of(
+                SpellSource.PLAYER_MANA),
+                java.util.List.of(
+                        new SpellGraph.SpellNodeInstance(SpellNode.WARD_EFFECT, "energy", 0.0D, 10.0D),
+                        new SpellGraph.SpellNodeInstance(SpellNode.AETHER_DISTURBANCE_SINK, "target", 0.0D, 0.0D)));
+        require(!badPort.validate().valid(), "ward effect accepted an energy port");
+        require("invalid_input_port".equals(badPort.validate().errorCode()), "bad magic port produced wrong error");
+        SpellGraph noSink = new SpellGraph("fantasy_earth:no_sink", java.util.List.of(
+                SpellSource.PLAYER_MANA),
+                java.util.List.of(
+                        new SpellGraph.SpellNodeInstance(SpellNode.WARD_EFFECT, "target", 0.0D, 10.0D)));
+        require(!noSink.validate().valid(), "graph without aether sink was accepted");
+        SpellGraph free = new SpellGraph("fantasy_earth:free", java.util.List.of(
+                SpellSource.PLAYER_MANA),
+                java.util.List.of(
+                        new SpellGraph.SpellNodeInstance(SpellNode.SELF_TARGET, "control", 0.0D, 0.0D),
+                        new SpellGraph.SpellNodeInstance(SpellNode.WARD_EFFECT, "target", 0.0D, 0.0D),
+                        new SpellGraph.SpellNodeInstance(SpellNode.AETHER_DISTURBANCE_SINK, "target", 0.0D, 0.0D)));
+        require("free_spell".equals(free.validate().errorCode()), "zero-cost magic graph was accepted");
     }
 
     private static void close(double expected, double actual) {
