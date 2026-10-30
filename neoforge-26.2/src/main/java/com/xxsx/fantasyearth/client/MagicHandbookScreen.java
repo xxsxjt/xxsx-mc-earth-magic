@@ -304,8 +304,8 @@ public class MagicHandbookScreen extends Screen {
                             "Aether Pulse, Arcane Ward and Breathing Circuit are separate active effects; research notes no longer cast them for free."),
                     page("Links", "5. Optional integrations", PURPLE,
                             earthLoaded
-                                    ? "Earth on Minecraft connected: geology catalysts, mana conductors and crystal substrates work directly in arcane facilities."
-                                    : "Earth on Minecraft not installed: vanilla fallback materials keep the magic route playable.",
+                                    ? "Earth on Minecraft connected: geology catalysts, mana conductors and crystal substrates work directly in arcane facilities; arcane anchors, stations and residents also register with its settlement board."
+                                    : "Earth on Minecraft not installed: vanilla fallback materials keep the magic route playable, and settlements stay fully standalone.",
                             humanLoaded
                                     ? "Earth Human connected: wards and attunement affect fatigue, breathing and body-part recovery."
                                     : "Earth Human not installed: magic progression remains available without realistic-human mechanics.",
@@ -336,8 +336,8 @@ public class MagicHandbookScreen extends Screen {
                         "研究负责解锁，调律负责成长，主动法术负责即时效果；三者不会再由同一次右键混合执行。"),
                 page("边界", "5. 与玄幻和本体的关系", PURPLE,
                         earthLoaded
-                                ? "已连接《我的地球》：地质催化物、导能材料和晶体基底可以直接放入奥术设施。"
-                                : "未安装《我的地球》：当前使用原版材料回退路线，魔幻内容仍可独立游玩。",
+                                ? "已连接《我的地球》：地质催化物、导能材料和晶体基底可以直接放入奥术设施；奥术锚点、设施与居民也会登记到它的聚落告示板。"
+                                : "未安装《我的地球》：当前使用原版材料回退路线，魔幻内容与聚落仍可独立游玩。",
                         humanLoaded
                                 ? "已连接《地球人》：调律与护身会联动疲劳、呼吸和全身部位恢复。"
                                 : "未安装《地球人》：魔法属性仍生效，但不会出现真实人体状态联动。",
