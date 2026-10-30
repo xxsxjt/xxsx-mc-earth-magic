@@ -167,9 +167,9 @@ public class MagicHandbookScreen extends Screen {
     @Override
     public void onClose() {
         if (this.minecraft != null) {
-            this.minecraft.gui.setScreen(null);
+            this.minecraft.setScreen(null);
         } else {
-            Minecraft.getInstance().gui.setScreen(null);
+            Minecraft.getInstance().setScreen(null);
         }
     }
 

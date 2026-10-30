@@ -1,16 +1,16 @@
 plugins {
     id 'java-library'
-    id 'net.neoforged.moddev' version '2.0.140'
+    id 'net.neoforged.moddev' version '2.0.148'
 }
 
 version = '0.7.0-alpha.10'
 group = 'com.xxsx.fantasyearth'
-base.archivesName = 'fantasy-earth-neoforge-26.2'
+base.archivesName = 'fantasy-earth-neoforge-26.1.2'
 
 java.toolchain.languageVersion = JavaLanguageVersion.of(25)
 
 neoForge {
-    version = '26.2.0.7-beta'
+    version = '26.1.2.124'
 
     runs {
         client {
@@ -20,6 +20,11 @@ neoForge {
         server {
             server()
             gameDirectory = project.file('runs/server')
+            programArgument('--nogui')
+        }
+        serverSmoke {
+            server()
+            gameDirectory = project.file('runs/server-smoke')
             programArgument('--nogui')
         }
     }
@@ -38,7 +43,7 @@ repositories {
 }
 
 dependencies {
-    compileOnly 'mezz.jei:jei-26.2-neoforge-api:30.7.0.40'
+    compileOnly 'mezz.jei:jei-26.1.2-neoforge-api:29.53.0.112'
 }
 
 jar {

@@ -202,7 +202,7 @@ public class FantasyEarth {
         if (FMLEnvironment.getDist() == Dist.CLIENT) {
             FantasyEarthClient.register(modBus);
         }
-        LOGGER.info("[Fantasy Earth] NeoForge 26.2 module loaded");
+        LOGGER.info("[Fantasy Earth] NeoForge 26.1.2 module loaded");
     }
 
     private static DeferredBlock<MagicMachineBlock> machineBlock(String id, MagicMachineBlock.Kind kind, MapColor color,

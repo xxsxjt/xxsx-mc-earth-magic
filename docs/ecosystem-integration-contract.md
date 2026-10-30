@@ -10,7 +10,7 @@ Every integration remains optional. Fantasy Earth must retain a complete vanilla
 
 ## Version line
 
-`0.1.16` of Earth on Minecraft targets Minecraft 26.1.2 / NeoForge 26.1.2.124, while Fantasy Earth targets Minecraft 26.2. The two builds cannot be combined until both sides share one version line; no combined runtime test has been performed. Interface names below are verified against Earth on Minecraft source only, not against a running pair.
+Both Earth on Minecraft `0.1.16` and Fantasy Earth now target Minecraft 26.1.2 / NeoForge 26.1.2.124. Interface names below are verified against Earth on Minecraft source and against this build loading in a 26.1.2 dev server; a combined client/server run with both mods is still pending.
 
 ## Earth on Minecraft material surface
 

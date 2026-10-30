@@ -86,7 +86,7 @@ public final class MagicSettlementFeature extends Feature<NoneFeatureConfigurati
         fillFloor(level, center, 4, Blocks.MUD_BRICKS.defaultBlockState());
         for (int x = -3; x <= 3; x += 3) {
             level.setBlock(center.offset(x, 0, 2), Blocks.BARREL.defaultBlockState(), UPDATE_FLAGS);
-            level.setBlock(center.offset(x, 0, -2), Blocks.COPPER_BLOCK.weathering().unaffected().defaultBlockState(), UPDATE_FLAGS);
+            level.setBlock(center.offset(x, 0, -2), Blocks.COPPER_BLOCK.defaultBlockState(), UPDATE_FLAGS);
         }
         stock(level, center.offset(-3, 0, 2), new ItemStack(FantasyEarth.RUNE_COPPER_PLATE.get(), 4),
                 new ItemStack(FantasyEarth.ARCANE_DUST.get(), 8));
@@ -96,8 +96,8 @@ public final class MagicSettlementFeature extends Feature<NoneFeatureConfigurati
                 new ItemStack(FantasyEarth.CRYSTALLIZED_MANA_SALT.get(), 2));
         level.setBlock(center.offset(0, 0, -1), FantasyEarth.AETHER_CRYSTAL_CLUSTER.get().defaultBlockState(), UPDATE_FLAGS);
         line(level, center.offset(-4, 0, 4), 9, true, Blocks.RAIL.defaultBlockState());
-        buildCanopy(level, center.offset(-2, 0, 0), Blocks.WOOL.orange().defaultBlockState());
-        buildCanopy(level, center.offset(2, 0, 0), Blocks.WOOL.gray().defaultBlockState());
+        buildCanopy(level, center.offset(-2, 0, 0), Blocks.ORANGE_WOOL.defaultBlockState());
+        buildCanopy(level, center.offset(2, 0, 0), Blocks.GRAY_WOOL.defaultBlockState());
         placeBoard(level, center.offset(0, 0, -3));
         cornerLights(level, center, 4, Blocks.LANTERN.defaultBlockState());
     }
@@ -113,7 +113,7 @@ public final class MagicSettlementFeature extends Feature<NoneFeatureConfigurati
         for (int z = -3; z <= 3; z++) {
             level.setBlock(center.offset(-3, 0, z), Blocks.BOOKSHELF.defaultBlockState(), UPDATE_FLAGS);
         }
-        buildCanopy(level, center.offset(3, 0, 1), Blocks.WOOL.blue().defaultBlockState());
+        buildCanopy(level, center.offset(3, 0, 1), Blocks.BLUE_WOOL.defaultBlockState());
         level.setBlock(center.offset(0, 0, -3), Blocks.ENCHANTING_TABLE.defaultBlockState(), UPDATE_FLAGS);
         level.setBlock(center.offset(0, 0, 3), Blocks.LECTERN.defaultBlockState(), UPDATE_FLAGS);
         level.setBlock(center.offset(-2, 0, 2), FantasyEarth.ALCHEMY_TABLE.get().defaultBlockState(), UPDATE_FLAGS);
@@ -152,7 +152,7 @@ public final class MagicSettlementFeature extends Feature<NoneFeatureConfigurati
     private static void buildCanopy(WorldGenLevel level, BlockPos center, BlockState cloth) {
         for (int x : new int[]{-1, 1}) {
             for (int z : new int[]{-1, 1}) {
-                column(level, center.offset(x, 0, z), 3, Blocks.COPPER_GRATE.weathering().unaffected().defaultBlockState());
+                column(level, center.offset(x, 0, z), 3, Blocks.COPPER_GRATE.defaultBlockState());
             }
         }
         for (int x = -1; x <= 1; x++) {

@@ -26,7 +26,7 @@ public final class ArcaneFocusHud {
 
     public static void render(GuiGraphicsExtractor graphics, DeltaTracker deltaTracker) {
         Minecraft minecraft = Minecraft.getInstance();
-        if (minecraft.player == null || minecraft.gui.screen() != null
+        if (minecraft.player == null || minecraft.screen != null
                 || !(minecraft.player.getVehicle() instanceof ArcaneSeatEntity seat)) {
             return;
         }

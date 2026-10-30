@@ -13,7 +13,7 @@ import net.minecraft.world.level.Level;
 public final class ManaWispEntity extends ContractableFamiliarEntity {
     public ManaWispEntity(EntityType<? extends ManaWispEntity> type, Level level) {
         super(type, level, Kind.MANA_WISP);
-        this.moveControl = new FlyingMoveControl<>(this, 12, true);
+        this.moveControl = new FlyingMoveControl(this, 12, true);
         setNoGravity(true);
     }
 

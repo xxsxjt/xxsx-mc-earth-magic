@@ -6,8 +6,8 @@ It has its own starter materials, world generation, progression, creatures, sett
 
 Initial target:
 
-- Minecraft: 26.2
-- Loader: NeoForge 26.2.0.7-beta
+- Minecraft: 26.1.2
+- Loader: NeoForge 26.1.2.124
 - Java: 25
 - Current mod id: `fantasy_earth`
 - Current version: `0.7.0-alpha.10`
@@ -109,7 +109,7 @@ Texture note: facilities use per-face exterior textures, distinct active states 
 
 Mana note: this mod shares the versioned `earth_arcana.*` player-data contract with `xuanhuan_earth`. Magic-route and qi-route bonuses add together when both mods are present, but each mod writes only its own contribution and remains fully playable alone. Aether-field recovery is intentionally separate from xuanhuan qi: magic reads crystal, ritual, rune and alchemy structures, while xuanhuan reads veins, springs, spirit soil and arrays.
 
-Build artifact: `fantasy-earth-neoforge-26.2-0.7.0-alpha.10.jar`.
+Build artifact: `fantasy-earth-neoforge-26.1.2-0.7.0-alpha.10.jar`.
 
 Build:
 

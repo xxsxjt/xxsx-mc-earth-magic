@@ -112,7 +112,7 @@ public final class FantasyEarthClient {
         }
         while (ACTIVATE_ARCANE_SKILL.consumeClick()) {
             Minecraft minecraft = Minecraft.getInstance();
-            if (minecraft.player != null && minecraft.getConnection() != null && minecraft.gui.screen() == null) {
+            if (minecraft.player != null && minecraft.getConnection() != null && minecraft.screen == null) {
                 requestActivateArcaneSkill();
             }
         }
@@ -121,8 +121,8 @@ public final class FantasyEarthClient {
     private static void handleArcaneStatus(ArcaneStatusPayload payload, IPayloadContext context) {
         context.enqueueWork(() -> {
             arcaneStatus = payload;
-            if (payload.openScreen() && !(Minecraft.getInstance().gui.screen() instanceof ArcaneAttunementScreen)) {
-                Minecraft.getInstance().gui.setScreen(new ArcaneAttunementScreen());
+            if (payload.openScreen() && !(Minecraft.getInstance().screen instanceof ArcaneAttunementScreen)) {
+                Minecraft.getInstance().setScreen(new ArcaneAttunementScreen());
             }
         });
     }
@@ -163,6 +163,6 @@ public final class FantasyEarthClient {
         if (Minecraft.getInstance().getConnection() != null) {
             requestAttunementRefresh();
         }
-        Minecraft.getInstance().gui.setScreen(new MagicHandbookScreen());
+        Minecraft.getInstance().setScreen(new MagicHandbookScreen());
     }
 }
