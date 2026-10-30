@@ -51,8 +51,8 @@ public final class RunicWatcherModel extends EntityModel<RunicWatcherRenderState
 
         PartDefinition head = root.addOrReplaceChild("head",
                 CubeListBuilder.create()
-                        .texOffs(0, 0).addBox(-4.0F, -7.0F, -4.0F, 8.0F, 7.0F, 8.0F)
-                        .texOffs(32, 0).addBox(-4.0F, -7.0F, -4.0F, 8.0F, 7.0F, 8.0F, rim),
+                        .texOffs(0, 0).addBox(-4.5F, -8.0F, -4.5F, 9.0F, 8.0F, 9.0F)
+                        .texOffs(32, 0).addBox(-4.5F, -8.0F, -4.5F, 9.0F, 8.0F, 9.0F, rim),
                 PartPose.offset(0.0F, 5.0F, 0.0F));
         head.addOrReplaceChild("lens",
                 CubeListBuilder.create().texOffs(0, 52).addBox(-2.0F, -2.0F, -0.8F, 4.0F, 4.0F, 1.0F),
@@ -60,7 +60,7 @@ public final class RunicWatcherModel extends EntityModel<RunicWatcherRenderState
 
         PartDefinition torso = root.addOrReplaceChild("torso",
                 CubeListBuilder.create()
-                        .texOffs(0, 16).addBox(-5.0F, 0.0F, -3.0F, 10.0F, 11.0F, 6.0F)
+                        .texOffs(0, 16).addBox(-5.5F, 0.0F, -3.0F, 11.0F, 12.0F, 6.0F)
                         .texOffs(32, 16).addBox(-5.0F, 1.0F, -3.5F, 10.0F, 4.0F, 1.0F, rim),
                 PartPose.offset(0.0F, 5.0F, 0.0F));
         torso.addOrReplaceChild("chest_rune",

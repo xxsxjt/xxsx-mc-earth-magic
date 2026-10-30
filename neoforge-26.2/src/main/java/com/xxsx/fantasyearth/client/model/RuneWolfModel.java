@@ -63,13 +63,13 @@ public final class RuneWolfModel extends EntityModel<FamiliarRenderState> {
 
         PartDefinition head = root.addOrReplaceChild("head", CubeListBuilder.create()
                         .texOffs(0, 0).addBox(-3.5F, -3.5F, -4.5F, 7.0F, 7.0F, 7.0F)
-                        .texOffs(30, 0).addBox(-2.0F, -0.4F, -8.5F, 4.0F, 3.0F, 5.0F),
+                        .texOffs(30, 0).addBox(-2.0F, -0.4F, -9.0F, 4.0F, 3.0F, 6.0F),
                 PartPose.offset(0.0F, 11.5F, -7.0F));
         head.addOrReplaceChild("left_ear", CubeListBuilder.create().texOffs(48, 0)
-                        .addBox(-1.0F, -2.5F, -1.0F, 2.0F, 5.0F, 2.0F),
+                        .addBox(-1.0F, -2.5F, -1.0F, 2.0F, 6.0F, 2.0F),
                 PartPose.offsetAndRotation(-2.1F, -5.3F, -0.8F, 0.0F, 0.0F, -0.06F));
         head.addOrReplaceChild("right_ear", CubeListBuilder.create().texOffs(58, 0)
-                        .addBox(-1.0F, -2.5F, -1.0F, 2.0F, 5.0F, 2.0F),
+                        .addBox(-1.0F, -2.5F, -1.0F, 2.0F, 6.0F, 2.0F),
                 PartPose.offsetAndRotation(2.1F, -5.3F, -0.8F, 0.0F, 0.0F, 0.06F));
         head.addOrReplaceChild("lens", CubeListBuilder.create().texOffs(70, 0)
                         .addBox(-1.5F, -1.5F, -0.6F, 3.0F, 3.0F, 1.0F),
@@ -97,7 +97,7 @@ public final class RuneWolfModel extends EntityModel<FamiliarRenderState> {
                         .addBox(-1.0F, 0.0F, -1.0F, 2.0F, 6.0F, 2.0F),
                 PartPose.offset(x, 16.5F, z));
         leg.addOrReplaceChild("paw", CubeListBuilder.create().texOffs(pawU, 68)
-                        .addBox(-1.5F, -0.5F, -2.5F, 3.0F, 2.0F, 4.0F),
+                        .addBox(-1.6F, -0.5F, -2.7F, 3.2F, 2.2F, 4.4F),
                 PartPose.offset(0.0F, 5.5F, -0.2F));
     }
 

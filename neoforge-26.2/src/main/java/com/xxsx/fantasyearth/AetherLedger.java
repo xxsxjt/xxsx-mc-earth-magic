@@ -10,6 +10,7 @@ package com.xxsx.fantasyearth;
 public final class AetherLedger {
     public static final int CONTRACT_VERSION = 1;
     public static final double AEU_PER_KILOJOULE = 1.0D;
+    public static final double AEU_PER_FIELD_LEVEL = 10.0D;
     public static final double AEU_PER_MANA = 10.0D;
     public static final double CAPTURE_EFFICIENCY = 0.80D;
     public static final double RELEASE_EFFICIENCY = 0.90D;
@@ -37,6 +38,14 @@ public final class AetherLedger {
 
     public static double extractableField(double fieldLevel, double disturbance) {
         return Math.max(0.0D, clampField(fieldLevel) - clampDisturbance(disturbance) * 0.5D);
+    }
+
+    public static double availableAeu(double fieldLevel, double disturbance) {
+        return extractableField(fieldLevel, disturbance) * AEU_PER_FIELD_LEVEL;
+    }
+
+    public static double disturbanceForAeu(double aeu) {
+        return Math.max(0.0D, aeu) * 0.07D;
     }
 
     public static double manaValueOfAeu(double aeu) {

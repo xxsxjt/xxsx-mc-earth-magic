@@ -53,10 +53,10 @@ public final class AetherFoxModel extends EntityModel<FamiliarRenderState> {
                         .texOffs(30, 0).addBox(-2.0F, -0.5F, -8.0F, 4.0F, 3.0F, 4.0F),
                 PartPose.offset(0.0F, 12.0F, -6.0F));
         head.addOrReplaceChild("left_ear_fin", CubeListBuilder.create().texOffs(48, 0)
-                        .addBox(0.0F, -6.0F, -1.0F, 5.0F, 6.0F, 1.0F),
+                        .addBox(0.0F, -7.0F, -1.0F, 5.0F, 7.0F, 1.0F),
                 PartPose.offsetAndRotation(1.0F, -3.0F, -1.0F, 0.0F, -0.18F, -0.15F));
         head.addOrReplaceChild("right_ear_fin", CubeListBuilder.create().texOffs(60, 0)
-                        .addBox(-5.0F, -6.0F, -1.0F, 5.0F, 6.0F, 1.0F),
+                        .addBox(-5.0F, -7.0F, -1.0F, 5.0F, 7.0F, 1.0F),
                 PartPose.offsetAndRotation(-1.0F, -3.0F, -1.0F, 0.0F, 0.18F, 0.15F));
         leg(root, "front_right_leg", 0, 48, -2.5F, -4.0F);
         leg(root, "front_left_leg", 12, 48, 2.5F, -4.0F);
@@ -69,7 +69,7 @@ public final class AetherFoxModel extends EntityModel<FamiliarRenderState> {
                         .addBox(-2.5F, -2.5F, 0.0F, 5.0F, 5.0F, 7.0F),
                 PartPose.offsetAndRotation(0.0F, 0.0F, 6.3F, 0.12F, 0.12F, 0.0F));
         leftTailMid.addOrReplaceChild("tip", CubeListBuilder.create().texOffs(0, 84)
-                        .addBox(-3.0F, -3.0F, 0.0F, 6.0F, 6.0F, 6.0F),
+                        .addBox(-3.0F, -3.0F, 0.0F, 6.0F, 6.0F, 7.0F),
                 PartPose.offsetAndRotation(0.0F, 0.0F, 6.3F, 0.10F, 0.10F, 0.0F));
 
         PartDefinition rightTail = root.addOrReplaceChild("right_tail", CubeListBuilder.create().texOffs(24, 64)
@@ -79,7 +79,7 @@ public final class AetherFoxModel extends EntityModel<FamiliarRenderState> {
                         .addBox(-2.5F, -2.5F, 0.0F, 5.0F, 5.0F, 7.0F),
                 PartPose.offsetAndRotation(0.0F, 0.0F, 6.3F, 0.12F, -0.12F, 0.0F));
         rightTailMid.addOrReplaceChild("tip", CubeListBuilder.create().texOffs(26, 84)
-                        .addBox(-3.0F, -3.0F, 0.0F, 6.0F, 6.0F, 6.0F),
+                        .addBox(-3.0F, -3.0F, 0.0F, 6.0F, 6.0F, 7.0F),
                 PartPose.offsetAndRotation(0.0F, 0.0F, 6.3F, 0.10F, -0.10F, 0.0F));
         return LayerDefinition.create(mesh, 128, 128);
     }

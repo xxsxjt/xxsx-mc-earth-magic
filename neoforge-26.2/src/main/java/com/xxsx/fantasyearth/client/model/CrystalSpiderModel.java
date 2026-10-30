@@ -43,7 +43,7 @@ public final class CrystalSpiderModel extends EntityModel<CrystalSpiderRenderSta
                         .texOffs(28, 0).addBox(-3.0F, -1.0F, -7.0F, 6.0F, 3.0F, 3.0F),
                 PartPose.offset(0.0F, 16.0F, -4.0F));
         PartDefinition abdomen = root.addOrReplaceChild("abdomen", CubeListBuilder.create()
-                        .texOffs(0, 16).addBox(-6.0F, -4.0F, -4.0F, 12.0F, 8.0F, 11.0F)
+                        .texOffs(0, 16).addBox(-6.5F, -4.5F, -4.0F, 13.0F, 9.0F, 12.0F)
                         .texOffs(48, 16).addBox(-6.5F, -4.5F, -3.5F, 13.0F, 5.0F, 10.0F, new CubeDeformation(0.22F)),
                 PartPose.offset(0.0F, 15.0F, 2.0F));
         PartDefinition crystals = abdomen.addOrReplaceChild("crystals", CubeListBuilder.create(),
@@ -65,11 +65,11 @@ public final class CrystalSpiderModel extends EntityModel<CrystalSpiderRenderSta
             float roll = left ? 0.42F : -0.42F;
             PartDefinition leg = root.addOrReplaceChild("leg_" + i,
                     CubeListBuilder.create().texOffs(row * 20, 52)
-                            .addBox(left ? 0.0F : -6.0F, -1.0F, -1.0F, 6.0F, 2.0F, 2.0F),
+                            .addBox(left ? 0.0F : -7.0F, -1.0F, -1.0F, 7.0F, 2.0F, 2.0F),
                     PartPose.offsetAndRotation(left ? 4.0F : -4.0F, 17.0F, z, 0.0F, yaw, roll));
             leg.addOrReplaceChild("lower", CubeListBuilder.create().texOffs(row * 20, 60)
-                            .addBox(left ? 0.0F : -7.0F, -1.0F, -1.0F, 7.0F, 2.0F, 2.0F),
-                    PartPose.offsetAndRotation(left ? 5.7F : -5.7F, 0.0F, 0.0F,
+                            .addBox(left ? 0.0F : -8.0F, -1.0F, -1.0F, 8.0F, 2.0F, 2.0F),
+                    PartPose.offsetAndRotation(left ? 6.7F : -6.7F, 0.0F, 0.0F,
                             0.0F, 0.0F, left ? 0.52F : -0.52F));
         }
         return LayerDefinition.create(mesh, 96, 80);

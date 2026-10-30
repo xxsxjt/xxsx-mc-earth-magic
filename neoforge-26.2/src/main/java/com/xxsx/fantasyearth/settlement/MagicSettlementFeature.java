@@ -49,7 +49,7 @@ public final class MagicSettlementFeature extends Feature<NoneFeatureConfigurati
             return false;
         }
         Pose pose = new Pose(center, random.nextInt(4));
-        int variant = random.nextInt(3);
+        int variant = random.nextInt(4);
         Palette palette = Palette.pick(type, random);
         prepareSite(level, center, type.radius());
         switch (type) {
@@ -59,6 +59,7 @@ public final class MagicSettlementFeature extends Feature<NoneFeatureConfigurati
             case DWARVEN_DELVING -> buildDwarvenDelving(level, pose, variant, palette, random);
             case ELVEN_GROVE -> buildElvenGrove(level, pose, variant, palette, random);
         }
+        scatterGrowth(level, pose, type.radius(), random);
         level.setBlock(center, FantasyEarth.SETTLEMENT_ANCHOR.get().defaultBlockState(), UPDATE_FLAGS);
         if (level.getBlockEntity(center) instanceof MagicSettlementAnchorBlockEntity anchor) {
             anchor.configure(type.id());
@@ -93,13 +94,16 @@ public final class MagicSettlementFeature extends Feature<NoneFeatureConfigurati
                 level.setBlock(pose.at(3, -2), Blocks.BREWING_STAND.defaultBlockState(), UPDATE_FLAGS);
                 level.setBlock(pose.at(3, 1), FantasyEarth.ALCHEMY_TABLE.get().defaultBlockState(), UPDATE_FLAGS);
             }
-            default -> {
+            case 2 -> {
                 stoneCircle(level, pose, 2, palette, random);
                 level.setBlock(pose.at(-3, 1), FantasyEarth.RUNE_CARVING_TABLE.get().defaultBlockState(), UPDATE_FLAGS);
                 level.setBlock(pose.at(3, 1), Blocks.CAULDRON.defaultBlockState(), UPDATE_FLAGS);
                 level.setBlock(pose.at(0, -2), FantasyEarth.AETHER_CRYSTAL_CLUSTER.get().defaultBlockState(), UPDATE_FLAGS);
             }
+            default -> ruin(level, pose, palette, random, 3);
         }
+        perimeterFence(level, pose, 4, palette, random, 3);
+        paths(level, pose, palette, random);
         if (variant != 1) {
             level.setBlock(pose.at(-2, 1), FantasyEarth.ARCANE_FOCUS_MAT.get().defaultBlockState(), UPDATE_FLAGS);
         }
@@ -131,12 +135,15 @@ public final class MagicSettlementFeature extends Feature<NoneFeatureConfigurati
                 }
                 level.setBlock(pose.at(0, 3), FantasyEarth.RUNE_CARVING_TABLE.get().defaultBlockState(), UPDATE_FLAGS);
             }
-            default -> {
+            case 2 -> {
                 gate(level, pose, 0, 3, palette, 4);
                 line(level, pose, -1, 3, 5, false, Blocks.RAIL.defaultBlockState());
                 level.setBlock(pose.at(-3, -1), FantasyEarth.ALCHEMY_TABLE.get().defaultBlockState(), UPDATE_FLAGS);
             }
+            default -> ruin(level, pose, palette, random, 3);
         }
+        perimeterFence(level, pose, 4, palette, random, 5);
+        paths(level, pose, palette, random);
         level.setBlock(pose.at(0, -2), FantasyEarth.AETHER_CRYSTAL_CLUSTER.get().defaultBlockState(), UPDATE_FLAGS);
         stock(level, pose.at(-3, 2), random,
                 new ItemStack(FantasyEarth.RUNE_COPPER_PLATE.get(), 2 + random.nextInt(4)),
@@ -169,12 +176,18 @@ public final class MagicSettlementFeature extends Feature<NoneFeatureConfigurati
                 level.setBlock(pose.at(3, 2), FantasyEarth.RITUAL_PEDESTAL.get().defaultBlockState(), UPDATE_FLAGS);
                 level.setBlock(pose.at(-3, 3), Blocks.LECTERN.defaultBlockState(), UPDATE_FLAGS);
             }
-            default -> {
+            case 2 -> {
                 stoneCircle(level, pose, 3, palette, random);
                 level.setBlock(pose.at(0, 1), Blocks.ENCHANTING_TABLE.defaultBlockState(), UPDATE_FLAGS);
                 level.setBlock(pose.at(-3, -1), FantasyEarth.RUNE_CARVING_TABLE.get().defaultBlockState(), UPDATE_FLAGS);
             }
+            default -> {
+                ruin(level, pose, palette, random, 4);
+                level.setBlock(pose.at(0, 0), Blocks.ENCHANTING_TABLE.defaultBlockState(), UPDATE_FLAGS);
+            }
         }
+        perimeterFence(level, pose, 5, palette, random, 6);
+        paths(level, pose, palette, random);
         level.setBlock(pose.at(2, 2), FantasyEarth.ALCHEMY_TABLE.get().defaultBlockState(), UPDATE_FLAGS);
         level.setBlock(pose.at(0, -1), FantasyEarth.AETHER_CRYSTAL_CLUSTER.get().defaultBlockState(), UPDATE_FLAGS);
         stock(level, pose.at(-4, 0), random,
@@ -203,11 +216,17 @@ public final class MagicSettlementFeature extends Feature<NoneFeatureConfigurati
                 }
                 line(level, pose, -3, 2, 7, true, Blocks.RAIL.defaultBlockState());
             }
-            default -> {
+            case 2 -> {
                 storehouse(level, pose, palette, random);
                 level.setBlock(pose.at(3, 0), FantasyEarth.RITUAL_PEDESTAL.get().defaultBlockState(), UPDATE_FLAGS);
             }
+            default -> {
+                ruin(level, pose, palette, random, 4);
+                orePile(level, pose, -3, 2, random);
+            }
         }
+        perimeterFence(level, pose, 5, palette, random, 5);
+        paths(level, pose, palette, random);
         level.setBlock(pose.at(-4, -3), FantasyEarth.AETHER_CRYSTAL_CLUSTER.get().defaultBlockState(), UPDATE_FLAGS);
         stock(level, pose.at(-4, 2), random,
                 new ItemStack(FantasyEarth.RUNE_COPPER_PLATE.get(), 2 + random.nextInt(4)),
@@ -232,11 +251,17 @@ public final class MagicSettlementFeature extends Feature<NoneFeatureConfigurati
                 level.setBlock(pose.at(0, 0), Blocks.LECTERN.defaultBlockState(), UPDATE_FLAGS);
                 level.setBlock(pose.at(2, 2), FantasyEarth.ALCHEMY_TABLE.get().defaultBlockState(), UPDATE_FLAGS);
             }
-            default -> {
+            case 2 -> {
                 moonObservatory(level, pose, random);
                 level.setBlock(pose.at(0, 0), FantasyEarth.RITUAL_PEDESTAL.get().defaultBlockState(), UPDATE_FLAGS);
             }
+            default -> {
+                ruin(level, pose, palette, random, 4);
+                garden(level, pose, 0, 0, random);
+            }
         }
+        perimeterFence(level, pose, 5, palette, random, 7);
+        paths(level, pose, palette, random);
         level.setBlock(pose.at(-3, 3), FantasyEarth.AETHER_CRYSTAL_CLUSTER.get().defaultBlockState(), UPDATE_FLAGS);
         stock(level, pose.at(-4, 1), random,
                 new ItemStack(FantasyEarth.ARCANE_DUST.get(), 6 + random.nextInt(6)),
@@ -414,6 +439,76 @@ public final class MagicSettlementFeature extends Feature<NoneFeatureConfigurati
             level.setBlock(pose.at(x, z), Blocks.AMETHYST_BLOCK.defaultBlockState(), UPDATE_FLAGS);
             if (random.nextInt(3) == 0) {
                 level.setBlock(pose.at(x, z).above(), Blocks.AMETHYST_CLUSTER.defaultBlockState(), UPDATE_FLAGS);
+            }
+        }
+    }
+
+    private static void paths(WorldGenLevel level, Pose pose, Palette palette, RandomSource random) {
+        BlockState path = random.nextBoolean()
+                ? Blocks.GRAVEL.defaultBlockState()
+                : Blocks.COARSE_DIRT.defaultBlockState();
+        for (int index = -3; index <= 3; index++) {
+            level.setBlock(pose.at(index, -4), path, UPDATE_FLAGS);
+            level.setBlock(pose.at(0, index), path, UPDATE_FLAGS);
+        }
+        for (int index = 0; index < 3; index++) {
+            level.setBlock(pose.at(-4 - index, -4), path, UPDATE_FLAGS);
+            level.setBlock(pose.at(4 + index, 4), path, UPDATE_FLAGS);
+        }
+    }
+
+    private static void perimeterFence(WorldGenLevel level, Pose pose, int radius, Palette palette,
+                                       RandomSource random, int opening) {
+        BlockState post = palette.post();
+        for (int index = -radius; index <= radius; index++) {
+            if (Math.abs(index) >= opening) {
+                continue;
+            }
+            if (random.nextInt(3) == 0) {
+                continue;
+            }
+            level.setBlock(pose.at(index, -radius), post, UPDATE_FLAGS);
+            level.setBlock(pose.at(index, radius), post, UPDATE_FLAGS);
+            level.setBlock(pose.at(-radius, index), post, UPDATE_FLAGS);
+            level.setBlock(pose.at(radius, index), post, UPDATE_FLAGS);
+        }
+    }
+
+    private static void ruin(WorldGenLevel level, Pose pose, Palette palette, RandomSource random, int radius) {
+        level.setBlock(pose.at(0, 0), Blocks.COBWEB.defaultBlockState(), UPDATE_FLAGS);
+        for (int index = 0; index < radius * 3; index++) {
+            int dx = random.nextInt(radius * 2 + 1) - radius;
+            int dz = random.nextInt(radius * 2 + 1) - radius;
+            BlockState state = random.nextBoolean() ? palette.wall() : palette.floor();
+            int height = 1 + random.nextInt(2);
+            for (int y = 0; y < height; y++) {
+                level.setBlock(pose.at(dx, dz).above(y), state, UPDATE_FLAGS);
+            }
+            if (random.nextInt(4) == 0) {
+                level.setBlock(pose.at(dx, dz).above(height), Blocks.COBWEB.defaultBlockState(), UPDATE_FLAGS);
+            }
+        }
+        for (int index = 0; index < 6; index++) {
+            int dx = random.nextInt(radius * 2 + 1) - radius;
+            int dz = random.nextInt(radius * 2 + 1) - radius;
+            if (random.nextBoolean()) {
+                level.setBlock(pose.at(dx, dz), Blocks.MOSS_BLOCK.defaultBlockState(), UPDATE_FLAGS);
+            }
+        }
+    }
+
+    private static void scatterGrowth(WorldGenLevel level, Pose pose, int radius, RandomSource random) {
+        Block[] plants = {Blocks.SHORT_GRASS, Blocks.FERN, Blocks.POPPY, Blocks.DANDELION, Blocks.AZURE_BLUET,
+                Blocks.OXEYE_DAISY, Blocks.CORNFLOWER};
+        for (int index = 0; index < radius * 4; index++) {
+            int dx = random.nextInt(radius * 4 + 1) - radius * 2;
+            int dz = random.nextInt(radius * 4 + 1) - radius * 2;
+            if (Math.abs(dx) <= radius && Math.abs(dz) <= radius) {
+                continue;
+            }
+            BlockPos pos = pose.at(dx, dz);
+            if (level.isEmptyBlock(pos) && level.getBlockState(pos.below()).isSolidRender()) {
+                level.setBlock(pos, plants[random.nextInt(plants.length)].defaultBlockState(), UPDATE_FLAGS);
             }
         }
     }

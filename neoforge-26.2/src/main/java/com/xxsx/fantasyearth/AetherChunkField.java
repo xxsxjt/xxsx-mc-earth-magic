@@ -63,7 +63,14 @@ public final class AetherChunkField extends SavedData {
         if (restoredMana <= 0.0D || !(level instanceof ServerLevel serverLevel)) {
             return;
         }
-        data(serverLevel).disturbAt(serverLevel, pos, restoredMana);
+        data(serverLevel).disturbAt(serverLevel, pos, Math.max(0.5D, restoredMana * 0.35D));
+    }
+
+    public static void disturbAeu(Level level, BlockPos pos, double aeu) {
+        if (aeu <= 0.0D || !(level instanceof ServerLevel serverLevel)) {
+            return;
+        }
+        data(serverLevel).disturbAt(serverLevel, pos, Math.max(0.5D, AetherLedger.disturbanceForAeu(aeu)));
     }
 
     public static Component gradeName(int value) {
@@ -90,12 +97,11 @@ public final class AetherChunkField extends SavedData {
         return buildReading(level, pos, sources, disturbance);
     }
 
-    private void disturbAt(ServerLevel level, BlockPos pos, double restoredMana) {
+    private void disturbAt(ServerLevel level, BlockPos pos, double addedDisturbance) {
         String key = chunkKey(level, pos);
         long now = level.getGameTime();
         double current = currentDisturbance(key, now);
-        double added = Math.max(0.5D, restoredMana * 0.35D);
-        double updated = clamp(current + added, 0.0D, MAX_DISTURBANCE);
+        double updated = clamp(current + addedDisturbance, 0.0D, MAX_DISTURBANCE);
         disturbedChunks.put(key, new DisturbanceState(updated, now));
         setDirty();
     }

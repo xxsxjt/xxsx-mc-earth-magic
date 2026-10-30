@@ -243,5 +243,6 @@
   "message.fantasy_earth.familiar.mode.follow": "Follow",
   "message.fantasy_earth.familiar.mode.guard": "Guard",
   "message.fantasy_earth.familiar.mode.anchor": "Anchor",
-  "message.fantasy_earth.settlement.anchor": "This is the arcane anchor for %s. Residents initialize after the chunk is safely loaded."
+  "message.fantasy_earth.settlement.anchor": "This is the arcane anchor for %s. Residents initialize after the chunk is safely loaded.",
+  "message.fantasy_earth.skill.field_low": "The local aether field is too thin for this spell: %s. Cast where the field is denser or let it recover."
 }

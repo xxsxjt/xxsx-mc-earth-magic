@@ -61,7 +61,7 @@ public final class ArcaneSettlerModel extends EntityModel<ArcaneSettlerRenderSta
                         .texOffs(32, 0).addBox(-4.5F, -8.5F, -4.5F, 9.0F, 3.0F, 9.0F,
                                 new CubeDeformation(0.06F)), PartPose.ZERO);
         PartDefinition hat = head.addOrReplaceChild("witch_hat", CubeListBuilder.create()
-                        .texOffs(70, 0).addBox(-5.0F, -1.0F, -5.0F, 10.0F, 2.0F, 10.0F),
+                        .texOffs(70, 0).addBox(-6.0F, -1.0F, -6.0F, 12.0F, 2.0F, 12.0F),
                 PartPose.offset(0.0F, -8.5F, 0.0F));
         hat.addOrReplaceChild("crown", CubeListBuilder.create()
                         .texOffs(70, 14).addBox(-3.0F, -7.0F, -3.0F, 6.0F, 7.0F, 6.0F,
@@ -81,7 +81,7 @@ public final class ArcaneSettlerModel extends EntityModel<ArcaneSettlerRenderSta
                         .texOffs(26, 20).addBox(-4.5F, -0.5F, -2.5F, 9.0F, 13.0F, 5.0F,
                                 new CubeDeformation(0.04F)), PartPose.ZERO);
         body.addOrReplaceChild("coat_skirt", CubeListBuilder.create()
-                        .texOffs(56, 20).addBox(-5.0F, 0.0F, -3.0F, 10.0F, 8.0F, 6.0F,
+                        .texOffs(56, 20).addBox(-5.5F, 0.0F, -3.5F, 11.0F, 9.0F, 7.0F,
                                 new CubeDeformation(0.03F)), PartPose.offset(0.0F, 10.0F, 0.0F));
 
         PartDefinition rightArm = root.addOrReplaceChild("right_arm", CubeListBuilder.create()

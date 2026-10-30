@@ -5,6 +5,8 @@ import com.xxsx.fantasyearth.client.model.ArcaneSettlerModel;
 import com.xxsx.fantasyearth.entity.ArcaneSettlerEntity;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.client.renderer.entity.MobRenderer;
+import net.minecraft.client.renderer.rendertype.RenderTypes;
+import net.minecraft.client.renderer.entity.layers.LivingEntityEmissiveLayer;
 import net.minecraft.resources.Identifier;
 
 public final class ArcaneSettlerRenderer extends MobRenderer<ArcaneSettlerEntity,
@@ -17,6 +19,10 @@ public final class ArcaneSettlerRenderer extends MobRenderer<ArcaneSettlerEntity
 
     public ArcaneSettlerRenderer(EntityRendererProvider.Context context) {
         super(context, new ArcaneSettlerModel(context.bakeLayer(ArcaneSettlerModel.LAYER_LOCATION)), 0.48F);
+        this.addLayer(new LivingEntityEmissiveLayer<>(this,
+                state -> TEXTURES[Math.max(0, Math.min(TEXTURES.length - 1, state.role))],
+                (state, age) -> 0.03F + (state.trading ? 0.05F : 0.0F),
+                this.getModel(), RenderTypes::entityTranslucentEmissive, false));
     }
 
     @Override

@@ -27,11 +27,20 @@ public final class SpellExecutor {
         if (remaining > 0L) {
             return Plan.reject("cooldown", "skill is cooling down for " + ((remaining + 19L) / 20L) + "s");
         }
+        double aeuCost = graph.energyCostAeu();
+        if (aeuCost > 0.0D) {
+            AetherChunkField.Reading reading = AetherChunkField.read(level, player.blockPosition());
+            double available = AetherLedger.availableAeu(reading.value(), reading.disturbance());
+            if (available + 0.0001D < aeuCost) {
+                return Plan.reject("field_low",
+                        "local aether field holds " + Math.round(available) + " AEU, " + Math.round(aeuCost) + " needed");
+            }
+        }
         double manaCost = graph.manaCost();
         if (!ArcanaPower.canSpendMana(player, manaCost)) {
             return Plan.reject("mana_low", "at least " + ArcanaPower.format(manaCost) + " mana is required");
         }
-        return Plan.ok(graph, graph.energyCostAeu(), manaCost);
+        return Plan.ok(graph, aeuCost, manaCost);
     }
 
     public record Plan(boolean accepted, SpellGraph graph, double aeuCost, double manaCost,

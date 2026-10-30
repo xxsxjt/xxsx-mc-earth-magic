@@ -1,12 +1,11 @@
 {
   "id": "fantasy_earth:arcane_ward",
-  "sources": ["player_mana"],
+  "sources": ["player_mana", "local_aether"],
   "nodes": [
     { "kind": "arcane_focus", "input": "energy" },
     { "kind": "ward_shaper", "input": "energy" },
     { "kind": "self_target", "input": "control" },
-    { "kind": "ward_effect", "input": "target", "cost_mana": 12 },
+    { "kind": "ward_effect", "input": "target", "cost_aeu": 60, "cost_mana": 12 },
     { "kind": "aether_disturbance_sink", "input": "target" }
   ]
 }
-

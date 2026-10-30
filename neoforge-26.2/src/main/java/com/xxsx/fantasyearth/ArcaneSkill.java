@@ -22,6 +22,7 @@ public final class ArcaneSkill {
                 case "requires_research" -> "message.fantasy_earth.skill.requires_research";
                 case "cooldown" -> "message.fantasy_earth.skill.cooldown";
                 case "mana_low" -> "message.fantasy_earth.skill.no_mana";
+                case "field_low" -> "message.fantasy_earth.skill.field_low";
                 default -> "message.fantasy_earth.skill.graph_invalid";
             };
             long remaining = ArcanaPower.getSkillCooldownTicks(player, level);
@@ -31,6 +32,9 @@ public final class ArcaneSkill {
             } else if ("mana_low".equals(plan.errorCode())) {
                 player.sendSystemMessage(Component.translatable(key, ArcanaPower.format(plan.manaCost()))
                         .withStyle(ChatFormatting.RED));
+            } else if ("field_low".equals(plan.errorCode())) {
+                player.sendSystemMessage(Component.translatable(key, plan.message())
+                        .withStyle(ChatFormatting.AQUA));
             } else {
                 player.sendSystemMessage(Component.translatable(key, plan.message())
                         .withStyle(ChatFormatting.RED));
@@ -67,6 +71,9 @@ public final class ArcaneSkill {
             }
         }
 
+        if (plan.aeuCost() > 0.0D) {
+            AetherChunkField.disturbAeu(level, player.blockPosition(), plan.aeuCost());
+        }
         player.swing(InteractionHand.MAIN_HAND, true);
         ArcanaPower.startSkillCooldown(player, level);
         ArcaneNetwork.broadcastVisual(player, ArcaneVisualAction.forFocus(focus));

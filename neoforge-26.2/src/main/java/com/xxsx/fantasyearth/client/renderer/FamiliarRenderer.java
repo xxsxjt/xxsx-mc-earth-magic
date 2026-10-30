@@ -7,6 +7,9 @@ import net.minecraft.client.model.geom.ModelLayerLocation;
 import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.client.renderer.entity.MobRenderer;
+import net.minecraft.client.renderer.entity.layers.LivingEntityEmissiveLayer;
+import net.minecraft.client.renderer.rendertype.RenderTypes;
+import net.minecraft.util.Mth;
 import net.minecraft.resources.Identifier;
 
 import java.util.function.Function;
@@ -22,6 +25,10 @@ public final class FamiliarRenderer<T extends ContractableFamiliarEntity,
         super(context, modelFactory.apply(context.bakeLayer(layer)), shadowRadius);
         this.texture = texture;
         this.scale = scale;
+        this.addLayer(new LivingEntityEmissiveLayer<>(this, state -> texture,
+                (state, age) -> 0.05F + state.stability * 0.10F + (state.aggressive ? 0.06F : 0.0F)
+                        + Mth.sin(age * 0.12F) * 0.02F,
+                this.getModel(), RenderTypes::entityTranslucentEmissive, false));
     }
 
     @Override

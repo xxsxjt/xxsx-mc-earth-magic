@@ -91,6 +91,9 @@ public final class ArcanaBalanceRegression {
         require(AetherLedger.report(100.0D, 45.0D).extractableField() > 0.0D,
                 "dense field must still provide flux after disturbance");
         require(AetherLedger.report(0.0D, 45.0D).isDepleted(), "empty field must report depletion");
+        close(1000.0D, AetherLedger.availableAeu(100.0D, 0.0D));
+        close(775.0D, AetherLedger.availableAeu(100.0D, 45.0D));
+        close(4.2D, AetherLedger.disturbanceForAeu(60.0D));
     }
 
     private static void verifySpellGraphs() {
@@ -99,8 +102,9 @@ public final class ArcanaBalanceRegression {
         SpellGraph.Validation validation = ward.validate();
         require(validation.valid(), "arcane ward graph invalid: " + validation.errorCode() + " " + validation.message());
         close(12.0D, ward.manaCost());
-        close(0.0D, ward.energyCostAeu());
+        close(60.0D, ward.energyCostAeu());
         require(ward.requires(SpellSource.PLAYER_MANA), "ward graph lost its player mana source");
+        require(ward.requires(SpellSource.LOCAL_AETHER), "ward graph lost its local aether source");
         require(!ward.requires(SpellSource.AETHER_CRYSTAL),
                 "the ward graph must not declare a crystal it does not consume");
         for (SpellGraph graph : SpellCatalog.graphs().values()) {
@@ -127,6 +131,16 @@ public final class ArcanaBalanceRegression {
                         new SpellGraph.SpellNodeInstance(SpellNode.WARD_EFFECT, "target", 0.0D, 0.0D),
                         new SpellGraph.SpellNodeInstance(SpellNode.AETHER_DISTURBANCE_SINK, "target", 0.0D, 0.0D)));
         require("free_spell".equals(free.validate().errorCode()), "zero-cost magic graph was accepted");
+        SpellGraph unbounded = new SpellGraph("fantasy_earth:unbounded", java.util.List.of(
+                SpellSource.PLAYER_MANA),
+                java.util.List.of(
+                        new SpellGraph.SpellNodeInstance(SpellNode.ARCANE_FOCUS, "energy", 0.0D, 0.0D),
+                        new SpellGraph.SpellNodeInstance(SpellNode.WARD_SHAPER, "energy", 0.0D, 0.0D),
+                        new SpellGraph.SpellNodeInstance(SpellNode.SELF_TARGET, "control", 0.0D, 0.0D),
+                        new SpellGraph.SpellNodeInstance(SpellNode.WARD_EFFECT, "target", 25.0D, 10.0D),
+                        new SpellGraph.SpellNodeInstance(SpellNode.AETHER_DISTURBANCE_SINK, "target", 0.0D, 0.0D)));
+        require("missing_aether_source".equals(unbounded.validate().errorCode()),
+                "AEU cost without an aether source was accepted");
     }
 
     private static void close(double expected, double actual) {

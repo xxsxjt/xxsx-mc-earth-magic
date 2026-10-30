@@ -76,6 +76,9 @@ public record SpellGraph(String id, List<SpellSource> sources, List<SpellNodeIns
         if (energyCostAeu() + manaCost() <= 0.0D) {
             return Validation.invalid("free_spell", "graph must demand AEU or MP");
         }
+        if (energyCostAeu() > 0.0D && !requires(SpellSource.LOCAL_AETHER) && !requires(SpellSource.AETHER_CRYSTAL)) {
+            return Validation.invalid("missing_aether_source", "graph spends AEU without an aether source");
+        }
         return Validation.VALID;
     }
 

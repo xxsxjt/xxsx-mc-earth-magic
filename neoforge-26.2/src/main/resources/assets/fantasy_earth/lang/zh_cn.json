@@ -243,5 +243,6 @@
   "message.fantasy_earth.familiar.mode.follow": "跟随",
   "message.fantasy_earth.familiar.mode.guard": "守护",
   "message.fantasy_earth.familiar.mode.anchor": "锚定",
-  "message.fantasy_earth.settlement.anchor": "此处为 %s 的奥术锚点；居民会在区块安全加载后初始化。"
+  "message.fantasy_earth.settlement.anchor": "此处为 %s 的奥术锚点；居民会在区块安全加载后初始化。",
+  "message.fantasy_earth.skill.field_low": "本地以太场不足以支撑这次施法：%s。请到以太更浓的地方施法，或等待场恢复。"
 }
