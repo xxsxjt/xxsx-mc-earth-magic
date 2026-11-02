@@ -21,6 +21,7 @@ public final class ArcaneSettlerModel extends EntityModel<ArcaneSettlerRenderSta
 
     private final ModelPart head;
     private final ModelPart witchHat;
+    private final ModelPart witchHatTip;
     private final ModelPart goblinEars;
     private final ModelPart lens;
     private final ModelPart body;
@@ -37,6 +38,7 @@ public final class ArcaneSettlerModel extends EntityModel<ArcaneSettlerRenderSta
         super(root, RenderTypes::entityCutout);
         this.head = root.getChild("head");
         this.witchHat = this.head.getChild("witch_hat");
+        this.witchHatTip = this.witchHat.getChild("crown").getChild("tip");
         this.goblinEars = this.head.getChild("goblin_ears");
         this.lens = this.head.getChild("lens");
         this.body = root.getChild("body");
@@ -63,12 +65,15 @@ public final class ArcaneSettlerModel extends EntityModel<ArcaneSettlerRenderSta
         PartDefinition hat = head.addOrReplaceChild("witch_hat", CubeListBuilder.create()
                         .texOffs(70, 0).addBox(-6.0F, -1.0F, -6.0F, 12.0F, 2.0F, 12.0F),
                 PartPose.offset(0.0F, -8.5F, 0.0F));
-        hat.addOrReplaceChild("crown", CubeListBuilder.create()
-                        .texOffs(70, 14).addBox(-3.0F, -7.0F, -3.0F, 6.0F, 7.0F, 6.0F,
+        PartDefinition crown = hat.addOrReplaceChild("crown", CubeListBuilder.create()
+                        .texOffs(70, 14).addBox(-3.0F, -6.0F, -3.0F, 6.0F, 6.0F, 6.0F,
                                 new CubeDeformation(0.08F)), PartPose.ZERO);
+        crown.addOrReplaceChild("tip", CubeListBuilder.create()
+                        .texOffs(70, 14).addBox(-1.6F, -4.5F, -1.6F, 3.2F, 4.5F, 3.2F),
+                PartPose.offsetAndRotation(0.0F, -5.6F, 0.0F, -0.26F, 0.0F, 0.14F));
         head.addOrReplaceChild("goblin_ears", CubeListBuilder.create()
-                        .texOffs(104, 0).addBox(-7.0F, -5.0F, -0.5F, 3.0F, 3.0F, 1.0F)
-                        .texOffs(112, 0).addBox(4.0F, -5.0F, -0.5F, 3.0F, 3.0F, 1.0F),
+                        .texOffs(104, 0).addBox(-7.4F, -5.2F, -0.5F, 3.4F, 3.2F, 1.0F)
+                        .texOffs(112, 0).addBox(4.0F, -5.2F, -0.5F, 3.4F, 3.2F, 1.0F),
                 PartPose.ZERO);
         head.addOrReplaceChild("lens", CubeListBuilder.create().texOffs(104, 8)
                         .addBox(-1.5F, -1.5F, -0.6F, 3.0F, 3.0F, 1.0F),
@@ -79,7 +84,9 @@ public final class ArcaneSettlerModel extends EntityModel<ArcaneSettlerRenderSta
                 PartPose.ZERO);
         body.addOrReplaceChild("coat", CubeListBuilder.create()
                         .texOffs(26, 20).addBox(-4.5F, -0.5F, -2.5F, 9.0F, 13.0F, 5.0F,
-                                new CubeDeformation(0.04F)), PartPose.ZERO);
+                                new CubeDeformation(0.04F))
+                        .texOffs(26, 20).addBox(-4.8F, 7.6F, -2.8F, 9.6F, 2.2F, 5.6F,
+                                new CubeDeformation(0.06F)), PartPose.ZERO);
         body.addOrReplaceChild("coat_skirt", CubeListBuilder.create()
                         .texOffs(56, 20).addBox(-5.5F, 0.0F, -3.5F, 11.0F, 9.0F, 7.0F,
                                 new CubeDeformation(0.03F)), PartPose.offset(0.0F, 10.0F, 0.0F));
@@ -114,7 +121,8 @@ public final class ArcaneSettlerModel extends EntityModel<ArcaneSettlerRenderSta
                         .texOffs(0, 80).addBox(-4.5F, 0.0F, 0.0F, 9.0F, 12.0F, 4.0F),
                 PartPose.offset(0.0F, 2.0F, 2.0F));
         witchPack.addOrReplaceChild("herb_bottle", CubeListBuilder.create()
-                        .texOffs(28, 80).addBox(-1.5F, -2.0F, -1.5F, 3.0F, 5.0F, 3.0F),
+                        .texOffs(28, 80).addBox(-1.5F, -2.0F, -1.5F, 3.0F, 5.0F, 3.0F)
+                        .texOffs(28, 80).addBox(-8.5F, -1.0F, -1.5F, 2.4F, 4.2F, 2.4F),
                 PartPose.offset(5.0F, 7.0F, 2.5F));
 
         PartDefinition goblinPack = root.addOrReplaceChild("goblin_pack", CubeListBuilder.create()
@@ -128,7 +136,8 @@ public final class ArcaneSettlerModel extends EntityModel<ArcaneSettlerRenderSta
                         .texOffs(0, 102).addBox(-4.5F, 0.0F, 0.0F, 9.0F, 13.0F, 4.0F),
                 PartPose.offset(0.0F, 2.0F, 2.0F));
         researcherPack.addOrReplaceChild("scroll_tube", CubeListBuilder.create()
-                        .texOffs(28, 102).addBox(-1.5F, -7.0F, -1.5F, 3.0F, 14.0F, 3.0F),
+                        .texOffs(28, 102).addBox(-1.5F, -7.0F, -1.5F, 3.0F, 14.0F, 3.0F)
+                        .texOffs(28, 102).addBox(-8.5F, -4.0F, -1.5F, 2.6F, 10.0F, 2.6F),
                 PartPose.offset(4.5F, 6.0F, 2.5F));
 
         return LayerDefinition.create(mesh, 128, 128);
@@ -188,6 +197,8 @@ public final class ArcaneSettlerModel extends EntityModel<ArcaneSettlerRenderSta
         this.lens.yScale = this.lens.xScale;
         this.lens.zScale = this.lens.xScale;
         this.witchHat.zRot = CreatureMotion.wave(age, 0.04F, 0.2F) * 0.025F * idle;
+        this.witchHatTip.zRot = 0.14F + CreatureMotion.wave(age, 0.075F, 0.8F) * 0.08F;
+        this.witchHatTip.xRot = -0.26F + CreatureMotion.wave(age, 0.06F, 1.4F) * 0.06F;
     }
 
     private void applyRoleIdle(ArcaneSettlerRenderState state, float age, float idle) {

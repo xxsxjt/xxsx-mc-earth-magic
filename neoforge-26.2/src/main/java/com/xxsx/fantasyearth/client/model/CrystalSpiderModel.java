@@ -19,6 +19,8 @@ public final class CrystalSpiderModel extends EntityModel<CrystalSpiderRenderSta
     public static final ModelLayerLocation LAYER_LOCATION = new ModelLayerLocation(
             FantasyEarth.id("crystal_armored_spider"), "main");
     private final ModelPart head;
+    private final ModelPart leftFang;
+    private final ModelPart rightFang;
     private final ModelPart abdomen;
     private final ModelPart crystals;
     private final ModelPart[] legs = new ModelPart[8];
@@ -27,6 +29,8 @@ public final class CrystalSpiderModel extends EntityModel<CrystalSpiderRenderSta
     public CrystalSpiderModel(ModelPart root) {
         super(root, RenderTypes::entityCutout);
         head = root.getChild("head");
+        leftFang = head.getChild("left_fang");
+        rightFang = head.getChild("right_fang");
         abdomen = root.getChild("abdomen");
         crystals = abdomen.getChild("crystals");
         for (int i = 0; i < legs.length; i++) {
@@ -38,25 +42,37 @@ public final class CrystalSpiderModel extends EntityModel<CrystalSpiderRenderSta
     public static LayerDefinition createBodyLayer() {
         MeshDefinition mesh = new MeshDefinition();
         PartDefinition root = mesh.getRoot();
-        root.addOrReplaceChild("head", CubeListBuilder.create()
+        PartDefinition head = root.addOrReplaceChild("head", CubeListBuilder.create()
                         .texOffs(0, 0).addBox(-4.0F, -3.0F, -5.0F, 8.0F, 6.0F, 6.0F)
                         .texOffs(28, 0).addBox(-3.0F, -1.0F, -7.0F, 6.0F, 3.0F, 3.0F),
                 PartPose.offset(0.0F, 16.0F, -4.0F));
+        head.addOrReplaceChild("left_fang", CubeListBuilder.create()
+                        .texOffs(28, 0).addBox(-0.6F, -0.5F, -2.5F, 1.4F, 2.2F, 2.6F),
+                PartPose.offsetAndRotation(1.6F, 1.0F, -6.2F, 0.16F, -0.18F, 0.0F));
+        head.addOrReplaceChild("right_fang", CubeListBuilder.create()
+                        .texOffs(28, 0).addBox(-0.8F, -0.5F, -2.5F, 1.4F, 2.2F, 2.6F),
+                PartPose.offsetAndRotation(-1.6F, 1.0F, -6.2F, 0.16F, 0.18F, 0.0F));
         PartDefinition abdomen = root.addOrReplaceChild("abdomen", CubeListBuilder.create()
-                        .texOffs(0, 16).addBox(-6.5F, -4.5F, -4.0F, 13.0F, 9.0F, 12.0F)
-                        .texOffs(48, 16).addBox(-6.5F, -4.5F, -3.5F, 13.0F, 5.0F, 10.0F, new CubeDeformation(0.22F)),
+                        .texOffs(0, 16).addBox(-6.0F, -4.2F, -4.0F, 12.0F, 8.4F, 12.0F)
+                        .texOffs(48, 16).addBox(-6.2F, -4.5F, -3.5F, 12.4F, 5.0F, 10.0F, new CubeDeformation(0.22F)),
                 PartPose.offset(0.0F, 15.0F, 2.0F));
         PartDefinition crystals = abdomen.addOrReplaceChild("crystals", CubeListBuilder.create(),
                 PartPose.offset(0.0F, -3.0F, 1.0F));
         crystals.addOrReplaceChild("main", CubeListBuilder.create()
-                        .texOffs(0, 40).addBox(-1.5F, -7.0F, -1.5F, 3.0F, 7.0F, 3.0F),
-                PartPose.offsetAndRotation(0.0F, 0.0F, 0.0F, -0.10F, 0.0F, 0.06F));
+                        .texOffs(0, 40).addBox(-1.5F, -7.5F, -1.5F, 3.0F, 7.5F, 3.0F),
+                PartPose.offsetAndRotation(0.0F, 0.0F, 0.0F, -0.12F, 0.0F, 0.06F));
         crystals.addOrReplaceChild("left", CubeListBuilder.create()
+                        .texOffs(14, 40).addBox(-1.0F, -5.5F, -1.0F, 2.0F, 5.5F, 2.0F),
+                PartPose.offsetAndRotation(-3.0F, 0.4F, 1.2F, -0.15F, 0.0F, -0.44F));
+        crystals.addOrReplaceChild("right", CubeListBuilder.create()
                         .texOffs(14, 40).addBox(-1.0F, -5.0F, -1.0F, 2.0F, 5.0F, 2.0F),
-                PartPose.offsetAndRotation(-3.0F, 0.4F, 1.2F, -0.15F, 0.0F, -0.42F));
+                PartPose.offsetAndRotation(3.0F, 0.4F, -0.8F, -0.10F, 0.0F, 0.42F));
         crystals.addOrReplaceChild("rear", CubeListBuilder.create()
-                        .texOffs(26, 40).addBox(-1.0F, -4.0F, -1.0F, 2.0F, 4.0F, 2.0F),
-                PartPose.offsetAndRotation(3.1F, 0.7F, 2.6F, 0.20F, 0.0F, 0.38F));
+                        .texOffs(26, 40).addBox(-1.0F, -4.5F, -1.0F, 2.0F, 4.5F, 2.0F),
+                PartPose.offsetAndRotation(2.2F, 0.7F, 3.0F, 0.24F, 0.0F, 0.34F));
+        crystals.addOrReplaceChild("crown_shard", CubeListBuilder.create()
+                        .texOffs(26, 40).addBox(-0.8F, -4.2F, -0.8F, 1.6F, 4.2F, 1.6F),
+                PartPose.offsetAndRotation(-1.8F, 0.6F, -2.2F, -0.26F, 0.0F, -0.28F));
         for (int i = 0; i < 8; i++) {
             boolean left = i >= 4;
             int row = i % 4;
@@ -67,10 +83,14 @@ public final class CrystalSpiderModel extends EntityModel<CrystalSpiderRenderSta
                     CubeListBuilder.create().texOffs(row * 20, 52)
                             .addBox(left ? 0.0F : -7.0F, -1.0F, -1.0F, 7.0F, 2.0F, 2.0F),
                     PartPose.offsetAndRotation(left ? 4.0F : -4.0F, 17.0F, z, 0.0F, yaw, roll));
-            leg.addOrReplaceChild("lower", CubeListBuilder.create().texOffs(row * 20, 60)
-                            .addBox(left ? 0.0F : -8.0F, -1.0F, -1.0F, 8.0F, 2.0F, 2.0F),
+            PartDefinition lower = leg.addOrReplaceChild("lower", CubeListBuilder.create().texOffs(row * 20, 60)
+                            .addBox(left ? 0.0F : -8.0F, -0.9F, -0.9F, 8.0F, 1.8F, 1.8F),
                     PartPose.offsetAndRotation(left ? 6.7F : -6.7F, 0.0F, 0.0F,
                             0.0F, 0.0F, left ? 0.52F : -0.52F));
+            lower.addOrReplaceChild("claw", CubeListBuilder.create().texOffs(row * 20, 60)
+                            .addBox(left ? 0.0F : -2.2F, -0.6F, -0.6F, 2.2F, 1.2F, 1.2F),
+                    PartPose.offsetAndRotation(left ? 7.6F : -7.6F, 0.0F, 0.0F,
+                            0.0F, 0.0F, left ? 0.28F : -0.28F));
         }
         return LayerDefinition.create(mesh, 96, 80);
     }
@@ -91,6 +111,9 @@ public final class CrystalSpiderModel extends EntityModel<CrystalSpiderRenderSta
         head.xRot = CreatureMotion.clampLook(state.xRot * Mth.DEG_TO_RAD * 0.45F, 0.35F)
                 + breathe * 0.02F - wind * 0.12F;
         head.zRot = CreatureMotion.wave(age, 0.05F, 0.9F) * 0.02F;
+        float fangSwing = CreatureMotion.wave(age, 0.14F, 0.0F) * 0.08F + alert * 0.14F + strike * 0.44F;
+        leftFang.yRot = -0.18F + fangSwing;
+        rightFang.yRot = 0.18F - fangSwing;
 
         for (int i = 0; i < legs.length; i++) {
             boolean left = i >= 4;

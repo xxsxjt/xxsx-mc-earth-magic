@@ -20,6 +20,7 @@ public final class RunicWatcherModel extends EntityModel<RunicWatcherRenderState
             FantasyEarth.id("runic_watcher"), "main");
 
     private final ModelPart head;
+    private final ModelPart halo;
     private final ModelPart lens;
     private final ModelPart torso;
     private final ModelPart chestRune;
@@ -33,6 +34,7 @@ public final class RunicWatcherModel extends EntityModel<RunicWatcherRenderState
     public RunicWatcherModel(ModelPart root) {
         super(root, RenderTypes::entityTranslucent);
         this.head = root.getChild("head");
+        this.halo = this.head.getChild("halo");
         this.lens = this.head.getChild("lens");
         this.torso = root.getChild("torso");
         this.chestRune = this.torso.getChild("chest_rune");
@@ -51,41 +53,70 @@ public final class RunicWatcherModel extends EntityModel<RunicWatcherRenderState
 
         PartDefinition head = root.addOrReplaceChild("head",
                 CubeListBuilder.create()
-                        .texOffs(0, 0).addBox(-4.5F, -8.0F, -4.5F, 9.0F, 8.0F, 9.0F)
-                        .texOffs(32, 0).addBox(-4.5F, -8.0F, -4.5F, 9.0F, 8.0F, 9.0F, rim),
+                        .texOffs(0, 0).addBox(-4.2F, -8.0F, -4.2F, 8.4F, 8.0F, 8.4F)
+                        .texOffs(32, 0).addBox(-4.2F, -8.0F, -4.2F, 8.4F, 8.0F, 8.4F, rim),
                 PartPose.offset(0.0F, 5.0F, 0.0F));
+        head.addOrReplaceChild("halo",
+                CubeListBuilder.create().texOffs(32, 16)
+                        .addBox(-5.2F, -0.8F, -5.2F, 10.4F, 1.6F, 10.4F, new CubeDeformation(-0.15F)),
+                PartPose.offset(0.0F, -9.2F, 0.0F));
         head.addOrReplaceChild("lens",
                 CubeListBuilder.create().texOffs(0, 52).addBox(-2.0F, -2.0F, -0.8F, 4.0F, 4.0F, 1.0F),
                 PartPose.offset(0.0F, -3.8F, -4.0F));
 
         PartDefinition torso = root.addOrReplaceChild("torso",
                 CubeListBuilder.create()
-                        .texOffs(0, 16).addBox(-5.5F, 0.0F, -3.0F, 11.0F, 12.0F, 6.0F)
+                        .texOffs(0, 16).addBox(-5.5F, 0.0F, -3.0F, 11.0F, 8.0F, 6.0F)
+                        .texOffs(0, 16).addBox(-4.2F, 7.6F, -2.5F, 8.4F, 4.4F, 5.0F)
                         .texOffs(32, 16).addBox(-5.0F, 1.0F, -3.5F, 10.0F, 4.0F, 1.0F, rim),
                 PartPose.offset(0.0F, 5.0F, 0.0F));
         torso.addOrReplaceChild("chest_rune",
                 CubeListBuilder.create().texOffs(0, 52).addBox(-2.0F, -2.0F, -0.6F, 4.0F, 4.0F, 1.0F),
                 PartPose.offset(0.0F, 6.0F, -3.1F));
 
-        root.addOrReplaceChild("right_arm",
-                CubeListBuilder.create().texOffs(0, 34).addBox(-4.0F, -2.0F, -2.5F, 5.0F, 13.0F, 5.0F),
+        PartDefinition rightArm = root.addOrReplaceChild("right_arm",
+                CubeListBuilder.create()
+                        .texOffs(0, 34).addBox(-3.8F, -2.0F, -2.3F, 4.6F, 12.5F, 4.6F)
+                        .texOffs(32, 0).addBox(-4.3F, -2.6F, -2.8F, 5.4F, 4.2F, 5.6F, new CubeDeformation(0.10F)),
                 PartPose.offset(-6.0F, 7.0F, 0.0F));
-        root.addOrReplaceChild("left_arm",
-                CubeListBuilder.create().texOffs(20, 34).addBox(-1.0F, -2.0F, -2.5F, 5.0F, 13.0F, 5.0F),
+        rightArm.addOrReplaceChild("right_gauntlet",
+                CubeListBuilder.create().texOffs(0, 34)
+                        .addBox(-4.2F, 6.2F, -2.6F, 5.2F, 5.0F, 5.2F, new CubeDeformation(0.08F)),
+                PartPose.ZERO);
+
+        PartDefinition leftArm = root.addOrReplaceChild("left_arm",
+                CubeListBuilder.create()
+                        .texOffs(20, 34).addBox(-0.8F, -2.0F, -2.3F, 4.6F, 12.5F, 4.6F)
+                        .texOffs(32, 0).addBox(-1.1F, -2.6F, -2.8F, 5.4F, 4.2F, 5.6F, new CubeDeformation(0.10F)),
                 PartPose.offset(6.0F, 7.0F, 0.0F));
+        leftArm.addOrReplaceChild("left_gauntlet",
+                CubeListBuilder.create().texOffs(20, 34)
+                        .addBox(-1.0F, 6.2F, -2.6F, 5.2F, 5.0F, 5.2F, new CubeDeformation(0.08F)),
+                PartPose.ZERO);
+
         root.addOrReplaceChild("right_leg",
-                CubeListBuilder.create().texOffs(40, 34).addBox(-2.5F, 0.0F, -2.5F, 5.0F, 9.0F, 5.0F),
+                CubeListBuilder.create()
+                        .texOffs(40, 34).addBox(-2.4F, 0.0F, -2.4F, 4.8F, 9.0F, 4.8F)
+                        .texOffs(40, 34).addBox(-2.7F, 5.0F, -2.7F, 5.4F, 4.0F, 5.4F, new CubeDeformation(0.08F)),
                 PartPose.offset(-2.7F, 15.0F, 0.0F));
         root.addOrReplaceChild("left_leg",
-                CubeListBuilder.create().texOffs(40, 48).addBox(-2.5F, 0.0F, -2.5F, 5.0F, 9.0F, 5.0F),
+                CubeListBuilder.create()
+                        .texOffs(40, 48).addBox(-2.4F, 0.0F, -2.4F, 4.8F, 9.0F, 4.8F)
+                        .texOffs(40, 48).addBox(-2.7F, 5.0F, -2.7F, 5.4F, 4.0F, 5.4F, new CubeDeformation(0.08F)),
                 PartPose.offset(2.7F, 15.0F, 0.0F));
 
-        root.addOrReplaceChild("right_pylon",
-                CubeListBuilder.create().texOffs(10, 54).addBox(-1.0F, -6.0F, -1.0F, 2.0F, 8.0F, 2.0F),
-                PartPose.offsetAndRotation(-4.2F, 6.5F, 3.4F, -0.18F, 0.0F, -0.28F));
-        root.addOrReplaceChild("left_pylon",
-                CubeListBuilder.create().texOffs(18, 54).addBox(-1.0F, -6.0F, -1.0F, 2.0F, 8.0F, 2.0F),
-                PartPose.offsetAndRotation(4.2F, 6.5F, 3.4F, -0.18F, 0.0F, 0.28F));
+        PartDefinition rightPylon = root.addOrReplaceChild("right_pylon",
+                CubeListBuilder.create().texOffs(10, 54).addBox(-1.0F, -6.5F, -1.0F, 2.0F, 8.5F, 2.0F),
+                PartPose.offsetAndRotation(-4.4F, 6.2F, 3.5F, -0.18F, 0.0F, -0.28F));
+        rightPylon.addOrReplaceChild("tip",
+                CubeListBuilder.create().texOffs(0, 52).addBox(-1.2F, -8.5F, -1.2F, 2.4F, 2.0F, 2.4F),
+                PartPose.ZERO);
+        PartDefinition leftPylon = root.addOrReplaceChild("left_pylon",
+                CubeListBuilder.create().texOffs(18, 54).addBox(-1.0F, -6.5F, -1.0F, 2.0F, 8.5F, 2.0F),
+                PartPose.offsetAndRotation(4.4F, 6.2F, 3.5F, -0.18F, 0.0F, 0.28F));
+        leftPylon.addOrReplaceChild("tip",
+                CubeListBuilder.create().texOffs(0, 52).addBox(-1.2F, -8.5F, -1.2F, 2.4F, 2.0F, 2.4F),
+                PartPose.ZERO);
 
         return LayerDefinition.create(mesh, 64, 64);
     }
@@ -136,6 +167,9 @@ public final class RunicWatcherModel extends EntityModel<RunicWatcherRenderState
         this.lens.xScale = pulse;
         this.lens.yScale = pulse;
         this.lens.zScale = pulse;
+        this.halo.yRot = age * 0.06F;
+        this.halo.xRot = CreatureMotion.wave(age, 0.05F, 0.7F) * 0.14F;
+        this.halo.zRot = CreatureMotion.wave(age, 0.04F, 1.8F) * 0.14F;
         this.chestRune.xScale = 1.0F + CreatureMotion.breathe(age, 0.16F) * 0.10F;
         this.chestRune.yScale = this.chestRune.xScale;
         this.chestRune.zScale = this.chestRune.xScale;

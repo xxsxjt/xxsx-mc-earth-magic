@@ -18,10 +18,13 @@ import net.minecraft.util.Mth;
 public final class ManaWispModel extends EntityModel<FamiliarRenderState> {
     public static final ModelLayerLocation LAYER_LOCATION = new ModelLayerLocation(FantasyEarth.id("mana_wisp"), "main");
     private final ModelPart core;
+    private final ModelPart crown;
     private final ModelPart ring;
+    private final ModelPart innerRing;
     private final ModelPart leftFin;
     private final ModelPart rightFin;
     private final ModelPart flame;
+    private final ModelPart flameTip;
     private final ModelPart moteA;
     private final ModelPart moteB;
     private final ModelPart moteC;
@@ -29,10 +32,13 @@ public final class ManaWispModel extends EntityModel<FamiliarRenderState> {
     public ManaWispModel(ModelPart root) {
         super(root, RenderTypes::entityTranslucent);
         core = root.getChild("core");
+        crown = core.getChild("crown");
         ring = root.getChild("ring");
+        innerRing = root.getChild("inner_ring");
         leftFin = root.getChild("left_fin");
         rightFin = root.getChild("right_fin");
         flame = root.getChild("flame");
+        flameTip = flame.getChild("flame_tip");
         moteA = root.getChild("mote_a");
         moteB = root.getChild("mote_b");
         moteC = root.getChild("mote_c");
@@ -41,22 +47,31 @@ public final class ManaWispModel extends EntityModel<FamiliarRenderState> {
     public static LayerDefinition createBodyLayer() {
         MeshDefinition mesh = new MeshDefinition();
         PartDefinition root = mesh.getRoot();
-        root.addOrReplaceChild("core", CubeListBuilder.create()
-                        .texOffs(0, 0).addBox(-3.5F, -3.5F, -3.5F, 7.0F, 7.0F, 7.0F)
-                        .texOffs(24, 0).addBox(-4.0F, -4.0F, -4.0F, 8.0F, 8.0F, 8.0F, new CubeDeformation(0.14F)),
+        PartDefinition core = root.addOrReplaceChild("core", CubeListBuilder.create()
+                        .texOffs(0, 0).addBox(-3.0F, -3.0F, -3.0F, 6.0F, 6.0F, 6.0F)
+                        .texOffs(24, 0).addBox(-3.8F, -3.8F, -3.8F, 7.6F, 7.6F, 7.6F, new CubeDeformation(0.14F)),
                 PartPose.offset(0.0F, 13.0F, 0.0F));
+        core.addOrReplaceChild("crown", CubeListBuilder.create()
+                        .texOffs(0, 0).addBox(-1.4F, -3.2F, -1.4F, 2.8F, 3.2F, 2.8F),
+                PartPose.offset(0.0F, -3.6F, 0.0F));
         root.addOrReplaceChild("ring", CubeListBuilder.create()
                         .texOffs(0, 16).addBox(-6.0F, -1.0F, -6.0F, 12.0F, 2.0F, 12.0F, new CubeDeformation(-0.15F)),
-                PartPose.offset(0.0F, 16.0F, 0.0F));
+                PartPose.offset(0.0F, 15.6F, 0.0F));
+        root.addOrReplaceChild("inner_ring", CubeListBuilder.create()
+                        .texOffs(0, 16).addBox(-4.6F, -0.8F, -4.6F, 9.2F, 1.6F, 9.2F, new CubeDeformation(-0.18F)),
+                PartPose.offsetAndRotation(0.0F, 13.0F, 0.0F, 0.42F, 0.0F, -0.35F));
         root.addOrReplaceChild("left_fin", CubeListBuilder.create().texOffs(0, 30)
-                        .addBox(0.0F, -4.0F, -1.0F, 7.0F, 8.0F, 1.0F),
-                PartPose.offsetAndRotation(2.5F, 13.0F, 0.0F, 0.0F, 0.22F, -0.16F));
+                        .addBox(0.0F, -4.2F, -1.0F, 7.5F, 8.5F, 1.0F),
+                PartPose.offsetAndRotation(2.6F, 12.8F, 0.0F, 0.0F, 0.24F, -0.18F));
         root.addOrReplaceChild("right_fin", CubeListBuilder.create().texOffs(16, 30)
-                        .addBox(-7.0F, -4.0F, -1.0F, 7.0F, 8.0F, 1.0F),
-                PartPose.offsetAndRotation(-2.5F, 13.0F, 0.0F, 0.0F, -0.22F, 0.16F));
-        root.addOrReplaceChild("flame", CubeListBuilder.create().texOffs(34, 30)
-                        .addBox(-2.0F, 0.0F, -2.0F, 4.0F, 8.0F, 4.0F),
+                        .addBox(-7.5F, -4.2F, -1.0F, 7.5F, 8.5F, 1.0F),
+                PartPose.offsetAndRotation(-2.6F, 12.8F, 0.0F, 0.0F, -0.24F, 0.18F));
+        PartDefinition flame = root.addOrReplaceChild("flame", CubeListBuilder.create().texOffs(34, 30)
+                        .addBox(-2.0F, 0.0F, -2.0F, 4.0F, 6.0F, 4.0F),
                 PartPose.offset(0.0F, 16.0F, 0.0F));
+        flame.addOrReplaceChild("flame_tip", CubeListBuilder.create().texOffs(34, 30)
+                        .addBox(-1.2F, 0.0F, -1.2F, 2.4F, 4.2F, 2.4F),
+                PartPose.offset(0.0F, 5.4F, 0.0F));
         for (int i = 0; i < 3; i++) {
             PartDefinition mote = root.addOrReplaceChild("mote_" + (char) ('a' + i),
                     CubeListBuilder.create().texOffs(0, 0)
@@ -78,12 +93,18 @@ public final class ManaWispModel extends EntityModel<FamiliarRenderState> {
 
         core.y = 13.0F + breathe * 0.8F + CreatureMotion.breathe(age, 0.31F) * 0.18F;
         core.yRot = age * 0.06F;
-        ring.y = 16.0F + breathe * 0.5F;
+        crown.yRot = -age * 0.11F;
+        crown.yScale = 1.0F + CreatureMotion.breathe(age, 0.28F) * 0.12F;
+        ring.y = 15.6F + breathe * 0.5F;
         ring.yRot = age * 0.045F;
         ring.xRot = CreatureMotion.wave(age, 0.07F, 0.4F) * 0.32F;
         ring.zRot = CreatureMotion.wave(age, 0.05F, 1.7F) * 0.32F;
+        innerRing.y = 13.0F + breathe * 0.65F;
+        innerRing.yRot = -age * 0.065F;
+        innerRing.xRot = 0.42F + CreatureMotion.wave(age, 0.09F, 1.1F) * 0.28F;
+        innerRing.zRot = -0.35F + CreatureMotion.wave(age, 0.08F, 2.3F) * 0.28F;
 
-        leftFin.zRot = -0.16F - CreatureMotion.wave(age, 0.18F, 0.0F) * 0.24F;
+        leftFin.zRot = -0.18F - CreatureMotion.wave(age, 0.18F, 0.0F) * 0.24F;
         rightFin.zRot = -leftFin.zRot;
         leftFin.xRot = -0.08F - CreatureMotion.breathe(age, 0.24F) * 0.14F;
         rightFin.xRot = leftFin.xRot;
@@ -92,6 +113,8 @@ public final class ManaWispModel extends EntityModel<FamiliarRenderState> {
         flame.xScale = 1.0F - CreatureMotion.wave(age, 0.20F, 0.9F) * 0.05F;
         flame.zScale = flame.xScale;
         flame.yRot = age * 0.09F;
+        flameTip.xRot = CreatureMotion.wave(age, 0.23F, 0.6F) * 0.16F;
+        flameTip.zRot = CreatureMotion.wave(age, 0.19F, 1.9F) * 0.16F;
 
         float pulse = 1.0F + CreatureMotion.breathe(age, 0.24F) * 0.06F;
         core.xScale = pulse;
@@ -110,6 +133,7 @@ public final class ManaWispModel extends EntityModel<FamiliarRenderState> {
         if (state.sitting) {
             core.y += 1.4F;
             ring.y += 1.4F;
+            innerRing.y += 1.4F;
             leftFin.zRot = -0.08F;
             rightFin.zRot = 0.08F;
         }

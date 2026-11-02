@@ -18,6 +18,7 @@ import net.minecraft.util.Mth;
 public final class AetherFoxModel extends EntityModel<FamiliarRenderState> {
     public static final ModelLayerLocation LAYER_LOCATION = new ModelLayerLocation(FantasyEarth.id("aether_fox"), "main");
     private final ModelPart head;
+    private final ModelPart jaw;
     private final ModelPart leftEarFin;
     private final ModelPart rightEarFin;
     private final ModelPart body;
@@ -26,10 +27,13 @@ public final class AetherFoxModel extends EntityModel<FamiliarRenderState> {
     private final ModelPart rightTail;
     private final ModelPart leftTailMid;
     private final ModelPart rightTailMid;
+    private final ModelPart leftTailTip;
+    private final ModelPart rightTailTip;
 
     public AetherFoxModel(ModelPart root) {
         super(root, RenderTypes::entityCutout);
         head = root.getChild("head");
+        jaw = head.getChild("jaw");
         leftEarFin = head.getChild("left_ear_fin");
         rightEarFin = head.getChild("right_ear_fin");
         body = root.getChild("body");
@@ -39,55 +43,64 @@ public final class AetherFoxModel extends EntityModel<FamiliarRenderState> {
         rightTail = root.getChild("right_tail");
         leftTailMid = leftTail.getChild("mid");
         rightTailMid = rightTail.getChild("mid");
+        leftTailTip = leftTailMid.getChild("tip");
+        rightTailTip = rightTailMid.getChild("tip");
     }
 
     public static LayerDefinition createBodyLayer() {
         MeshDefinition mesh = new MeshDefinition();
         PartDefinition root = mesh.getRoot();
         root.addOrReplaceChild("body", CubeListBuilder.create()
-                        .texOffs(0, 24).addBox(-4.0F, -4.0F, -6.0F, 8.0F, 8.0F, 12.0F)
-                        .texOffs(42, 25).addBox(-3.6F, -4.7F, -5.0F, 7.2F, 1.2F, 10.0F, new CubeDeformation(0.08F)),
+                        .texOffs(0, 24).addBox(-3.5F, -3.5F, -6.0F, 7.0F, 7.0F, 12.0F)
+                        .texOffs(42, 25).addBox(-3.3F, -4.4F, -5.0F, 6.6F, 1.3F, 10.0F, new CubeDeformation(0.08F))
+                        .texOffs(42, 25).addBox(-3.2F, -2.5F, -6.4F, 6.4F, 4.5F, 3.0F, new CubeDeformation(0.10F)),
                 PartPose.offset(0.0F, 15.0F, 0.0F));
         PartDefinition head = root.addOrReplaceChild("head", CubeListBuilder.create()
-                        .texOffs(0, 0).addBox(-4.0F, -4.0F, -5.0F, 8.0F, 7.0F, 7.0F)
-                        .texOffs(30, 0).addBox(-2.0F, -0.5F, -8.0F, 4.0F, 3.0F, 4.0F),
+                        .texOffs(0, 0).addBox(-3.5F, -3.8F, -5.0F, 7.0F, 6.5F, 7.0F)
+                        .texOffs(30, 0).addBox(-1.8F, -0.4F, -8.5F, 3.6F, 2.6F, 4.5F),
                 PartPose.offset(0.0F, 12.0F, -6.0F));
+        head.addOrReplaceChild("jaw", CubeListBuilder.create().texOffs(30, 0)
+                        .addBox(-1.5F, 0.0F, 0.0F, 3.0F, 1.2F, 4.0F),
+                PartPose.offset(0.0F, 1.2F, -8.2F));
         head.addOrReplaceChild("left_ear_fin", CubeListBuilder.create().texOffs(48, 0)
-                        .addBox(0.0F, -7.0F, -1.0F, 5.0F, 7.0F, 1.0F),
-                PartPose.offsetAndRotation(1.0F, -3.0F, -1.0F, 0.0F, -0.18F, -0.15F));
+                        .addBox(0.0F, -7.5F, -1.0F, 5.0F, 7.5F, 1.0F),
+                PartPose.offsetAndRotation(1.0F, -3.0F, -1.0F, 0.0F, -0.22F, -0.18F));
         head.addOrReplaceChild("right_ear_fin", CubeListBuilder.create().texOffs(60, 0)
-                        .addBox(-5.0F, -7.0F, -1.0F, 5.0F, 7.0F, 1.0F),
-                PartPose.offsetAndRotation(-1.0F, -3.0F, -1.0F, 0.0F, 0.18F, 0.15F));
-        leg(root, "front_right_leg", 0, 48, -2.5F, -4.0F);
-        leg(root, "front_left_leg", 12, 48, 2.5F, -4.0F);
-        leg(root, "back_right_leg", 24, 48, -2.5F, 4.0F);
-        leg(root, "back_left_leg", 36, 48, 2.5F, 4.0F);
+                        .addBox(-5.0F, -7.5F, -1.0F, 5.0F, 7.5F, 1.0F),
+                PartPose.offsetAndRotation(-1.0F, -3.0F, -1.0F, 0.0F, 0.22F, 0.18F));
+        leg(root, "front_right_leg", 0, 48, 48, 48, -2.3F, -4.2F);
+        leg(root, "front_left_leg", 12, 48, 62, 48, 2.3F, -4.2F);
+        leg(root, "back_right_leg", 24, 48, 76, 48, -2.3F, 4.2F);
+        leg(root, "back_left_leg", 36, 48, 90, 48, 2.3F, 4.2F);
         PartDefinition leftTail = root.addOrReplaceChild("left_tail", CubeListBuilder.create().texOffs(0, 64)
                         .addBox(-2.0F, -2.0F, 0.0F, 4.0F, 4.0F, 7.0F),
-                PartPose.offsetAndRotation(2.0F, 14.0F, 5.0F, 0.35F, 0.22F, 0.0F));
+                PartPose.offsetAndRotation(1.8F, 14.0F, 5.2F, 0.35F, 0.24F, 0.0F));
         PartDefinition leftTailMid = leftTail.addOrReplaceChild("mid", CubeListBuilder.create().texOffs(48, 64)
-                        .addBox(-2.5F, -2.5F, 0.0F, 5.0F, 5.0F, 7.0F),
-                PartPose.offsetAndRotation(0.0F, 0.0F, 6.3F, 0.12F, 0.12F, 0.0F));
+                        .addBox(-2.4F, -2.4F, 0.0F, 4.8F, 4.8F, 7.0F),
+                PartPose.offsetAndRotation(0.0F, 0.0F, 6.2F, 0.14F, 0.14F, 0.0F));
         leftTailMid.addOrReplaceChild("tip", CubeListBuilder.create().texOffs(0, 84)
-                        .addBox(-3.0F, -3.0F, 0.0F, 6.0F, 6.0F, 7.0F),
-                PartPose.offsetAndRotation(0.0F, 0.0F, 6.3F, 0.10F, 0.10F, 0.0F));
+                        .addBox(-2.8F, -2.8F, 0.0F, 5.6F, 5.6F, 7.0F),
+                PartPose.offsetAndRotation(0.0F, 0.0F, 6.2F, 0.12F, 0.12F, 0.0F));
 
         PartDefinition rightTail = root.addOrReplaceChild("right_tail", CubeListBuilder.create().texOffs(24, 64)
                         .addBox(-2.0F, -2.0F, 0.0F, 4.0F, 4.0F, 7.0F),
-                PartPose.offsetAndRotation(-2.0F, 14.0F, 5.0F, 0.35F, -0.22F, 0.0F));
+                PartPose.offsetAndRotation(-1.8F, 14.0F, 5.2F, 0.35F, -0.24F, 0.0F));
         PartDefinition rightTailMid = rightTail.addOrReplaceChild("mid", CubeListBuilder.create().texOffs(74, 64)
-                        .addBox(-2.5F, -2.5F, 0.0F, 5.0F, 5.0F, 7.0F),
-                PartPose.offsetAndRotation(0.0F, 0.0F, 6.3F, 0.12F, -0.12F, 0.0F));
+                        .addBox(-2.4F, -2.4F, 0.0F, 4.8F, 4.8F, 7.0F),
+                PartPose.offsetAndRotation(0.0F, 0.0F, 6.2F, 0.14F, -0.14F, 0.0F));
         rightTailMid.addOrReplaceChild("tip", CubeListBuilder.create().texOffs(26, 84)
-                        .addBox(-3.0F, -3.0F, 0.0F, 6.0F, 6.0F, 7.0F),
-                PartPose.offsetAndRotation(0.0F, 0.0F, 6.3F, 0.10F, -0.10F, 0.0F));
+                        .addBox(-2.8F, -2.8F, 0.0F, 5.6F, 5.6F, 7.0F),
+                PartPose.offsetAndRotation(0.0F, 0.0F, 6.2F, 0.12F, -0.12F, 0.0F));
         return LayerDefinition.create(mesh, 128, 128);
     }
 
-    private static void leg(PartDefinition root, String name, int u, int v, float x, float z) {
-        root.addOrReplaceChild(name, CubeListBuilder.create().texOffs(u, v)
-                        .addBox(-1.5F, 0.0F, -1.5F, 3.0F, 6.0F, 3.0F),
-                PartPose.offset(x, 18.0F, z));
+    private static void leg(PartDefinition root, String name, int u, int v, int pawU, int pawV, float x, float z) {
+        PartDefinition leg = root.addOrReplaceChild(name, CubeListBuilder.create().texOffs(u, v)
+                        .addBox(-1.1F, 0.0F, -1.1F, 2.2F, 6.2F, 2.2F),
+                PartPose.offset(x, 17.5F, z));
+        leg.addOrReplaceChild("paw", CubeListBuilder.create().texOffs(pawU, pawV)
+                        .addBox(-1.4F, -0.3F, -2.0F, 2.8F, 1.5F, 3.0F),
+                PartPose.offset(0.0F, 5.5F, -0.2F));
     }
 
     @Override    public void setupAnim(FamiliarRenderState state) {
@@ -104,6 +117,7 @@ public final class AetherFoxModel extends EntityModel<FamiliarRenderState> {
         head.yRot = CreatureMotion.clampLook(state.yRot * Mth.DEG_TO_RAD, 0.85F);
         head.xRot = CreatureMotion.clampLook(state.xRot * Mth.DEG_TO_RAD, 0.5F) + breathe * 0.02F - wind * 0.12F;
         head.zRot = CreatureMotion.wave(age, 0.045F, 0.0F) * 0.03F + alert * 0.04F;
+        jaw.xRot = 0.05F + alert * 0.08F + CreatureMotion.wave(age, 0.09F, 0.9F) * 0.025F + strike * 0.36F;
 
         float earFlickLeft = CreatureMotion.twitch(age, 0.13F, 1.7F, 0.20F);
         float earFlickRight = CreatureMotion.twitch(age, 0.10F, 4.3F, 0.20F);
@@ -136,8 +150,12 @@ public final class AetherFoxModel extends EntityModel<FamiliarRenderState> {
         rightTailMid.yRot = -0.12F - tailWave * 0.55F;
         leftTail.xRot = 0.35F + breathe * 0.03F - alert * 0.10F + wind * 0.22F;
         rightTail.xRot = leftTail.xRot;
-        leftTailMid.xRot = 0.12F + CreatureMotion.wave(age, 0.14F, 0.9F) * 0.05F;
+        leftTailMid.xRot = 0.14F + CreatureMotion.wave(age, 0.14F, 0.9F) * 0.05F;
         rightTailMid.xRot = leftTailMid.xRot;
+        leftTailTip.yRot = 0.12F + tailWave * 0.72F;
+        rightTailTip.yRot = -0.12F - tailWave * 0.72F;
+        leftTailTip.xRot = 0.12F + CreatureMotion.wave(age, 0.17F, 1.8F) * 0.07F;
+        rightTailTip.xRot = leftTailTip.xRot;
 
         head.xRot -= strike * 0.45F;
         legs[0].xRot -= strike * 0.34F;
