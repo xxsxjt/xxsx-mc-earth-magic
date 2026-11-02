@@ -33,7 +33,7 @@ public final class RuneWolfModel extends EntityModel<FamiliarRenderState> {
         super(root, RenderTypes::entityCutout);
         this.head = root.getChild("head");
         this.body = root.getChild("body");
-        this.armor = root.getChild("armor");
+        this.armor = this.body.getChild("armor");
         this.lens = this.head.getChild("lens");
         this.leftEar = this.head.getChild("left_ear");
         this.rightEar = this.head.getChild("right_ear");
