@@ -25,6 +25,8 @@ public final class ArcaneSettlerModel extends EntityModel<ArcaneSettlerRenderSta
     private final ModelPart goblinEars;
     private final ModelPart lens;
     private final ModelPart body;
+    private final ModelPart grimoire;
+    private final ModelPart waistVial;
     private final ModelPart rightArm;
     private final ModelPart leftArm;
     private final ModelPart rightLeg;
@@ -42,6 +44,8 @@ public final class ArcaneSettlerModel extends EntityModel<ArcaneSettlerRenderSta
         this.goblinEars = this.head.getChild("goblin_ears");
         this.lens = this.head.getChild("lens");
         this.body = root.getChild("body");
+        this.grimoire = this.body.getChild("grimoire");
+        this.waistVial = this.body.getChild("waist_vial");
         this.rightArm = root.getChild("right_arm");
         this.leftArm = root.getChild("left_arm");
         this.rightLeg = root.getChild("right_leg");
@@ -55,96 +59,117 @@ public final class ArcaneSettlerModel extends EntityModel<ArcaneSettlerRenderSta
     public static LayerDefinition createBodyLayer() {
         MeshDefinition mesh = new MeshDefinition();
         PartDefinition root = mesh.getRoot();
-
-        PartDefinition head = root.addOrReplaceChild("head", CubeListBuilder.create()
+        PartDefinition p_head_1 = root.addOrReplaceChild("head", CubeListBuilder.create()
                         .texOffs(0, 0).addBox(-4.0F, -8.0F, -4.0F, 8.0F, 8.0F, 8.0F),
                 PartPose.ZERO);
-        head.addOrReplaceChild("hair_cap", CubeListBuilder.create()
-                        .texOffs(32, 0).addBox(-4.5F, -8.5F, -4.5F, 9.0F, 3.0F, 9.0F,
-                                new CubeDeformation(0.06F)), PartPose.ZERO);
-        PartDefinition hat = head.addOrReplaceChild("witch_hat", CubeListBuilder.create()
-                        .texOffs(70, 0).addBox(-6.0F, -1.0F, -6.0F, 12.0F, 2.0F, 12.0F),
-                PartPose.offset(0.0F, -8.5F, 0.0F));
-        PartDefinition crown = hat.addOrReplaceChild("crown", CubeListBuilder.create()
-                        .texOffs(70, 14).addBox(-3.0F, -6.0F, -3.0F, 6.0F, 6.0F, 6.0F,
-                                new CubeDeformation(0.08F)), PartPose.ZERO);
-        crown.addOrReplaceChild("tip", CubeListBuilder.create()
-                        .texOffs(70, 14).addBox(-1.6F, -4.5F, -1.6F, 3.2F, 4.5F, 3.2F),
-                PartPose.offsetAndRotation(0.0F, -5.6F, 0.0F, -0.26F, 0.0F, 0.14F));
-        head.addOrReplaceChild("goblin_ears", CubeListBuilder.create()
-                        .texOffs(104, 0).addBox(-7.4F, -5.2F, -0.5F, 3.4F, 3.2F, 1.0F)
-                        .texOffs(112, 0).addBox(4.0F, -5.2F, -0.5F, 3.4F, 3.2F, 1.0F),
+        p_head_1.addOrReplaceChild("hair_cap", CubeListBuilder.create()
+                        .texOffs(33, 0).addBox(-4.5F, -8.5F, -4.5F, 9.0F, 3.0F, 9.0F, new CubeDeformation(0.05F))
+                        .texOffs(70, 0).addBox(-4.0F, -6.0F, 3.2F, 8.0F, 7.0F, 2.0F),
                 PartPose.ZERO);
-        head.addOrReplaceChild("lens", CubeListBuilder.create().texOffs(104, 8)
-                        .addBox(-1.5F, -1.5F, -0.6F, 3.0F, 3.0F, 1.0F),
-                PartPose.offset(2.0F, -4.0F, -4.0F));
-
-        PartDefinition body = root.addOrReplaceChild("body", CubeListBuilder.create()
-                        .texOffs(0, 20).addBox(-4.0F, 0.0F, -2.0F, 8.0F, 12.0F, 4.0F),
+        PartDefinition p_witch_hat_3 = p_head_1.addOrReplaceChild("witch_hat", CubeListBuilder.create()
+                        .texOffs(0, 17).addBox(-6.0F, -1.0F, -6.0F, 12.0F, 1.0F, 12.0F)
+                        .texOffs(49, 17).addBox(-4.5F, -2.0F, -4.5F, 9.0F, 1.0F, 9.0F, new CubeDeformation(0.05F)),
+                PartPose.offsetAndRotation(0.0F, -8.0F, 0.0F, -0.08F, 0.0F, 0.04F));
+        PartDefinition p_crown_4 = p_witch_hat_3.addOrReplaceChild("crown", CubeListBuilder.create()
+                        .texOffs(86, 17).addBox(-3.5F, -4.0F, -3.5F, 7.0F, 4.0F, 7.0F),
+                PartPose.offsetAndRotation(0.0F, -2.0F, 0.0F, -0.18F, 0.0F, 0.08F));
+        p_crown_4.addOrReplaceChild("tip", CubeListBuilder.create()
+                        .texOffs(0, 31).addBox(-2.0F, -4.0F, -2.0F, 4.0F, 4.0F, 4.0F)
+                        .texOffs(17, 31).addBox(-0.5F, -5.0F, -1.5F, 1.0F, 2.0F, 1.0F),
+                PartPose.offsetAndRotation(0.0F, -3.8F, 0.0F, -0.38F, 0.0F, 0.22F));
+        PartDefinition p_goblin_ears_6 = p_head_1.addOrReplaceChild("goblin_ears", CubeListBuilder.create(),
+                PartPose.offset(0.0F, -4.5F, -0.5F));
+        p_goblin_ears_6.addOrReplaceChild("ear_l", CubeListBuilder.create()
+                        .texOffs(22, 31).addBox(0.0F, -1.5F, -0.5F, 4.0F, 2.0F, 1.0F),
+                PartPose.offsetAndRotation(4.0F, 0.0F, 0.0F, 0.0F, -0.22F, -0.28F));
+        p_goblin_ears_6.addOrReplaceChild("ear_r", CubeListBuilder.create()
+                        .texOffs(33, 31).addBox(-4.0F, -1.5F, -0.5F, 4.0F, 2.0F, 1.0F),
+                PartPose.offsetAndRotation(-4.0F, 0.0F, 0.0F, 0.0F, 0.22F, 0.28F));
+        p_head_1.addOrReplaceChild("lens", CubeListBuilder.create()
+                        .texOffs(44, 31).addBox(-1.5F, -1.5F, -0.5F, 3.0F, 3.0F, 1.0F),
+                PartPose.offsetAndRotation(2.2F, -4.2F, -4.2F, 0.0F, -0.08F, 0.0F));
+        PartDefinition p_body_10 = root.addOrReplaceChild("body", CubeListBuilder.create()
+                        .texOffs(53, 31).addBox(-4.0F, 0.0F, -2.0F, 8.0F, 12.0F, 4.0F),
                 PartPose.ZERO);
-        body.addOrReplaceChild("coat", CubeListBuilder.create()
-                        .texOffs(26, 20).addBox(-4.5F, -0.5F, -2.5F, 9.0F, 13.0F, 5.0F,
-                                new CubeDeformation(0.04F))
-                        .texOffs(26, 20).addBox(-4.8F, 7.6F, -2.8F, 9.6F, 2.2F, 5.6F,
-                                new CubeDeformation(0.06F)), PartPose.ZERO);
-        body.addOrReplaceChild("coat_skirt", CubeListBuilder.create()
-                        .texOffs(56, 20).addBox(-5.5F, 0.0F, -3.5F, 11.0F, 9.0F, 7.0F,
-                                new CubeDeformation(0.03F)), PartPose.offset(0.0F, 10.0F, 0.0F));
-
-        PartDefinition rightArm = root.addOrReplaceChild("right_arm", CubeListBuilder.create()
-                        .texOffs(0, 42).addBox(-3.0F, -2.0F, -2.0F, 4.0F, 12.0F, 4.0F),
-                PartPose.offset(-5.0F, 2.0F, 0.0F));
-        rightArm.addOrReplaceChild("right_sleeve", CubeListBuilder.create()
-                        .texOffs(32, 42).addBox(-3.5F, -2.5F, -2.5F, 5.0F, 9.0F, 5.0F,
-                                new CubeDeformation(0.03F)), PartPose.ZERO);
-        PartDefinition leftArm = root.addOrReplaceChild("left_arm", CubeListBuilder.create()
-                        .texOffs(16, 42).addBox(-1.0F, -2.0F, -2.0F, 4.0F, 12.0F, 4.0F),
-                PartPose.offset(5.0F, 2.0F, 0.0F));
-        leftArm.addOrReplaceChild("left_sleeve", CubeListBuilder.create()
-                        .texOffs(52, 42).addBox(-1.5F, -2.5F, -2.5F, 5.0F, 9.0F, 5.0F,
-                                new CubeDeformation(0.03F)), PartPose.ZERO);
-
-        PartDefinition rightLeg = root.addOrReplaceChild("right_leg", CubeListBuilder.create()
-                        .texOffs(0, 60).addBox(-2.0F, 0.0F, -2.0F, 4.0F, 12.0F, 4.0F),
-                PartPose.offset(-1.9F, 12.0F, 0.0F));
-        rightLeg.addOrReplaceChild("right_boot", CubeListBuilder.create()
-                        .texOffs(32, 60).addBox(-2.5F, -1.0F, -2.8F, 5.0F, 5.0F, 5.0F),
-                PartPose.offset(0.0F, 8.0F, 0.0F));
-        PartDefinition leftLeg = root.addOrReplaceChild("left_leg", CubeListBuilder.create()
-                        .texOffs(16, 60).addBox(-2.0F, 0.0F, -2.0F, 4.0F, 12.0F, 4.0F),
-                PartPose.offset(1.9F, 12.0F, 0.0F));
-        leftLeg.addOrReplaceChild("left_boot", CubeListBuilder.create()
-                        .texOffs(52, 60).addBox(-2.5F, -1.0F, -2.8F, 5.0F, 5.0F, 5.0F),
-                PartPose.offset(0.0F, 8.0F, 0.0F));
-
-        PartDefinition witchPack = root.addOrReplaceChild("witch_pack", CubeListBuilder.create()
-                        .texOffs(0, 80).addBox(-4.5F, 0.0F, 0.0F, 9.0F, 12.0F, 4.0F),
-                PartPose.offset(0.0F, 2.0F, 2.0F));
-        witchPack.addOrReplaceChild("herb_bottle", CubeListBuilder.create()
-                        .texOffs(28, 80).addBox(-1.5F, -2.0F, -1.5F, 3.0F, 5.0F, 3.0F)
-                        .texOffs(28, 80).addBox(-8.5F, -1.0F, -1.5F, 2.4F, 4.2F, 2.4F),
-                PartPose.offset(5.0F, 7.0F, 2.5F));
-
-        PartDefinition goblinPack = root.addOrReplaceChild("goblin_pack", CubeListBuilder.create()
-                        .texOffs(42, 80).addBox(-5.0F, 0.0F, 0.0F, 10.0F, 11.0F, 5.0F),
-                PartPose.offset(0.0F, 3.0F, 2.0F));
-        goblinPack.addOrReplaceChild("tool_roll", CubeListBuilder.create()
-                        .texOffs(74, 80).addBox(-4.0F, -2.0F, -2.0F, 8.0F, 4.0F, 4.0F),
-                PartPose.offset(0.0F, 1.0F, 2.5F));
-
-        PartDefinition researcherPack = root.addOrReplaceChild("researcher_pack", CubeListBuilder.create()
-                        .texOffs(0, 102).addBox(-4.5F, 0.0F, 0.0F, 9.0F, 13.0F, 4.0F),
-                PartPose.offset(0.0F, 2.0F, 2.0F));
-        researcherPack.addOrReplaceChild("scroll_tube", CubeListBuilder.create()
-                        .texOffs(28, 102).addBox(-1.5F, -7.0F, -1.5F, 3.0F, 14.0F, 3.0F)
-                        .texOffs(28, 102).addBox(-8.5F, -4.0F, -1.5F, 2.6F, 10.0F, 2.6F),
-                PartPose.offset(4.5F, 6.0F, 2.5F));
-
+        p_body_10.addOrReplaceChild("coat", CubeListBuilder.create()
+                        .texOffs(78, 31).addBox(-4.5F, -0.2F, -2.5F, 9.0F, 12.0F, 5.0F, new CubeDeformation(0.04F)),
+                PartPose.ZERO);
+        p_body_10.addOrReplaceChild("mantle_left", CubeListBuilder.create()
+                        .texOffs(0, 49).addBox(-0.5F, -1.0F, -3.0F, 5.0F, 3.0F, 6.0F, new CubeDeformation(0.08F)),
+                PartPose.offsetAndRotation(3.8F, 0.5F, 0.0F, 0.06F, 0.0F, 0.26F));
+        p_body_10.addOrReplaceChild("mantle_right", CubeListBuilder.create()
+                        .texOffs(23, 49).addBox(-4.5F, -1.0F, -3.0F, 5.0F, 3.0F, 6.0F, new CubeDeformation(0.08F)),
+                PartPose.offsetAndRotation(-3.8F, 0.5F, 0.0F, 0.06F, 0.0F, -0.26F));
+        p_body_10.addOrReplaceChild("grimoire", CubeListBuilder.create()
+                        .texOffs(46, 49).addBox(-1.0F, 0.0F, -2.0F, 2.0F, 5.0F, 4.0F)
+                        .texOffs(59, 49).addBox(-1.2F, 1.5F, -0.5F, 1.0F, 2.0F, 1.0F),
+                PartPose.offsetAndRotation(-4.6F, 9.2F, -0.5F, 0.14F, 0.12F, 0.24F));
+        p_body_10.addOrReplaceChild("waist_vial", CubeListBuilder.create()
+                        .texOffs(64, 49).addBox(-1.0F, 0.0F, -1.0F, 2.0F, 4.0F, 2.0F),
+                PartPose.offsetAndRotation(4.5F, 9.2F, -1.2F, -0.16F, -0.14F, -0.22F));
+        PartDefinition p_coat_skirt_16 = p_body_10.addOrReplaceChild("coat_skirt", CubeListBuilder.create()
+                        .texOffs(73, 49).addBox(-3.5F, 0.0F, -2.6F, 7.0F, 8.0F, 1.0F)
+                        .texOffs(90, 49).addBox(-4.5F, 0.0F, 1.6F, 9.0F, 9.0F, 1.0F),
+                PartPose.offsetAndRotation(0.0F, 10.5F, 0.0F, 0.04F, 0.0F, 0.0F));
+        p_coat_skirt_16.addOrReplaceChild("skirt_left", CubeListBuilder.create()
+                        .texOffs(111, 49).addBox(-1.0F, 0.0F, -2.5F, 2.0F, 9.0F, 5.0F),
+                PartPose.offsetAndRotation(4.2F, 0.0F, 0.0F, 0.0F, 0.0F, -0.18F));
+        p_coat_skirt_16.addOrReplaceChild("skirt_right", CubeListBuilder.create()
+                        .texOffs(0, 64).addBox(-1.0F, 0.0F, -2.5F, 2.0F, 9.0F, 5.0F),
+                PartPose.offsetAndRotation(-4.2F, 0.0F, 0.0F, 0.0F, 0.0F, 0.18F));
+        PartDefinition p_right_arm_19 = root.addOrReplaceChild("right_arm", CubeListBuilder.create()
+                        .texOffs(15, 64).addBox(-3.0F, -2.0F, -2.0F, 4.0F, 12.0F, 4.0F),
+                PartPose.offsetAndRotation(-5.0F, 2.0F, 0.0F, -0.06F, 0.0F, 0.08F));
+        p_right_arm_19.addOrReplaceChild("right_sleeve", CubeListBuilder.create()
+                        .texOffs(32, 64).addBox(-3.5F, -2.0F, -2.5F, 5.0F, 7.0F, 5.0F, new CubeDeformation(0.04F)),
+                PartPose.ZERO);
+        p_right_arm_19.addOrReplaceChild("right_cuff", CubeListBuilder.create()
+                        .texOffs(53, 64).addBox(-2.5F, 0.0F, -3.0F, 5.0F, 5.0F, 6.0F),
+                PartPose.offsetAndRotation(-1.5F, 4.8F, 0.2F, 0.14F, 0.0F, 0.12F));
+        PartDefinition p_left_arm_22 = root.addOrReplaceChild("left_arm", CubeListBuilder.create()
+                        .texOffs(76, 64).addBox(-1.0F, -2.0F, -2.0F, 4.0F, 12.0F, 4.0F),
+                PartPose.offsetAndRotation(5.0F, 2.0F, 0.0F, -0.06F, 0.0F, -0.08F));
+        p_left_arm_22.addOrReplaceChild("left_sleeve", CubeListBuilder.create()
+                        .texOffs(93, 64).addBox(-1.5F, -2.0F, -2.5F, 5.0F, 7.0F, 5.0F, new CubeDeformation(0.04F)),
+                PartPose.ZERO);
+        p_left_arm_22.addOrReplaceChild("left_cuff", CubeListBuilder.create()
+                        .texOffs(0, 81).addBox(-2.5F, 0.0F, -3.0F, 5.0F, 5.0F, 6.0F),
+                PartPose.offsetAndRotation(1.5F, 4.8F, 0.2F, 0.14F, 0.0F, -0.12F));
+        PartDefinition p_right_leg_25 = root.addOrReplaceChild("right_leg", CubeListBuilder.create()
+                        .texOffs(23, 81).addBox(-2.0F, 0.0F, -2.0F, 4.0F, 12.0F, 4.0F),
+                PartPose.offset(-2.0F, 12.0F, 0.0F));
+        p_right_leg_25.addOrReplaceChild("right_boot", CubeListBuilder.create()
+                        .texOffs(40, 81).addBox(-2.5F, 0.0F, -2.8F, 5.0F, 5.0F, 5.0F),
+                PartPose.offset(0.0F, 7.0F, 0.0F));
+        PartDefinition p_left_leg_27 = root.addOrReplaceChild("left_leg", CubeListBuilder.create()
+                        .texOffs(61, 81).addBox(-2.0F, 0.0F, -2.0F, 4.0F, 12.0F, 4.0F),
+                PartPose.offset(2.0F, 12.0F, 0.0F));
+        p_left_leg_27.addOrReplaceChild("left_boot", CubeListBuilder.create()
+                        .texOffs(78, 81).addBox(-2.5F, 0.0F, -2.8F, 5.0F, 5.0F, 5.0F),
+                PartPose.offset(0.0F, 7.0F, 0.0F));
+        PartDefinition p_witch_pack_29 = root.addOrReplaceChild("witch_pack", CubeListBuilder.create()
+                        .texOffs(99, 81).addBox(-4.0F, 0.0F, 0.0F, 8.0F, 10.0F, 4.0F),
+                PartPose.offsetAndRotation(0.0F, 2.0F, 2.5F, 0.06F, 0.0F, 0.0F));
+        p_witch_pack_29.addOrReplaceChild("herb_bottle", CubeListBuilder.create()
+                        .texOffs(0, 98).addBox(-1.5F, -2.0F, -1.5F, 3.0F, 5.0F, 3.0F),
+                PartPose.offsetAndRotation(4.2F, 4.5F, 2.0F, 0.0F, 0.0F, -0.22F));
+        PartDefinition p_goblin_pack_31 = root.addOrReplaceChild("goblin_pack", CubeListBuilder.create()
+                        .texOffs(13, 98).addBox(-4.5F, 0.0F, 0.0F, 9.0F, 10.0F, 5.0F),
+                PartPose.offsetAndRotation(0.0F, 2.5F, 2.5F, 0.08F, 0.0F, 0.0F));
+        p_goblin_pack_31.addOrReplaceChild("tool_roll", CubeListBuilder.create()
+                        .texOffs(42, 98).addBox(-5.0F, -1.5F, -1.5F, 10.0F, 3.0F, 3.0F),
+                PartPose.offsetAndRotation(0.0F, -1.5F, 2.5F, 0.0F, 0.0F, 0.06F));
+        PartDefinition p_researcher_pack_33 = root.addOrReplaceChild("researcher_pack", CubeListBuilder.create()
+                        .texOffs(69, 98).addBox(-4.0F, 0.0F, 0.0F, 8.0F, 11.0F, 4.0F),
+                PartPose.offsetAndRotation(0.0F, 2.0F, 2.5F, 0.05F, 0.0F, 0.0F));
+        p_researcher_pack_33.addOrReplaceChild("scroll_tube", CubeListBuilder.create()
+                        .texOffs(94, 98).addBox(-1.5F, -6.0F, -1.5F, 3.0F, 12.0F, 3.0F),
+                PartPose.offsetAndRotation(4.0F, 4.0F, 2.0F, 0.0F, 0.0F, -0.26F));
         return LayerDefinition.create(mesh, 128, 128);
     }
 
     @Override
-        public void setupAnim(ArcaneSettlerRenderState state) {
+    public void setupAnim(ArcaneSettlerRenderState state) {
         super.setupAnim(state);
         float age = state.ageInTicks;
         float walk = state.walkAnimationPos;
@@ -152,38 +177,35 @@ public final class ArcaneSettlerModel extends EntityModel<ArcaneSettlerRenderSta
         float idle = CreatureMotion.idleBlend(speed);
         float breathe = CreatureMotion.breathe(age, 0.08F);
 
-        this.head.yRot = CreatureMotion.clampLook(state.yRot * Mth.DEG_TO_RAD, 0.9F);
-        this.head.xRot = CreatureMotion.clampLook(state.xRot * Mth.DEG_TO_RAD, 0.6F) + breathe * 0.015F;
-        this.head.zRot = CreatureMotion.wave(age, 0.035F, 0.8F) * 0.02F;
+        this.head.yRot += CreatureMotion.clampLook(state.yRot * Mth.DEG_TO_RAD, 0.9F);
+        this.head.xRot += CreatureMotion.clampLook(state.xRot * Mth.DEG_TO_RAD, 0.6F) + breathe * 0.015F;
+        this.head.zRot += CreatureMotion.wave(age, 0.035F, 0.8F) * 0.02F;
 
-        this.rightLeg.xRot = CreatureMotion.gait(walk, 0.0F, 1.0F, speed);
-        this.leftLeg.xRot = CreatureMotion.gait(walk, Mth.PI, 1.0F, speed);
-        this.rightLeg.zRot = -0.02F - Math.max(0.0F, this.rightLeg.xRot) * 0.03F;
-        this.leftLeg.zRot = 0.02F + Math.max(0.0F, this.leftLeg.xRot) * 0.03F;
+        this.rightLeg.xRot += CreatureMotion.gait(walk, 0.0F, 1.0F, speed);
+        this.leftLeg.xRot += CreatureMotion.gait(walk, Mth.PI, 1.0F, speed);
+        this.rightLeg.zRot += -0.02F - Math.max(0.0F, this.rightLeg.xRot) * 0.03F;
+        this.leftLeg.zRot += 0.02F + Math.max(0.0F, this.leftLeg.xRot) * 0.03F;
 
-        this.body.y = breathe * 0.04F;
-        this.body.zRot = CreatureMotion.wave(age, 0.03F, 1.3F) * 0.012F * idle;
+        this.body.y += breathe * 0.04F;
+        this.body.zRot += CreatureMotion.wave(age, 0.03F, 1.3F) * 0.012F * idle;
         this.body.yScale = 1.0F + breathe * 0.008F;
-        this.body.xRot = Mth.sin(walk * 0.67F) * 0.01F * speed;
+        this.body.xRot += Mth.sin(walk * 0.67F) * 0.01F * speed;
 
-        this.coatSkirt.xRot = Mth.sin(walk * 0.67F) * 0.05F * speed
+        this.coatSkirt.xRot += Mth.sin(walk * 0.67F) * 0.05F * speed
                 + CreatureMotion.wave(age, 0.05F, 2.0F) * 0.012F * idle;
-        this.coatSkirt.zRot = CreatureMotion.wave(age, 0.04F, 0.5F) * 0.014F * idle;
+        this.coatSkirt.zRot += CreatureMotion.wave(age, 0.04F, 0.5F) * 0.014F * idle;
+
+        this.grimoire.zRot += CreatureMotion.wave(age, 0.06F, 0.3F) * 0.04F;
+        this.waistVial.zRot -= CreatureMotion.wave(age, 0.07F, 1.4F) * 0.05F;
 
         if (state.trading) {
-            this.rightArm.xRot = -0.72F;
-            this.leftArm.xRot = -0.72F;
-            this.rightArm.yRot = -0.28F;
-            this.leftArm.yRot = 0.28F;
-            this.rightArm.zRot = -0.06F;
-            this.leftArm.zRot = 0.06F;
+            this.rightArm.xRot += -0.66F;
+            this.leftArm.xRot += -0.66F;
+            this.rightArm.yRot += -0.28F;
+            this.leftArm.yRot += 0.28F;
         } else {
-            this.rightArm.xRot = this.leftLeg.xRot * 0.65F;
-            this.leftArm.xRot = this.rightLeg.xRot * 0.65F;
-            this.rightArm.yRot = 0.0F;
-            this.leftArm.yRot = 0.0F;
-            this.rightArm.zRot = -0.02F;
-            this.leftArm.zRot = 0.02F;
+            this.rightArm.xRot += this.leftLeg.xRot * 0.65F;
+            this.leftArm.xRot += this.rightLeg.xRot * 0.65F;
             applyRoleIdle(state, age, idle);
         }
 
@@ -193,12 +215,13 @@ public final class ArcaneSettlerModel extends EntityModel<ArcaneSettlerRenderSta
         this.goblinPack.visible = state.role == 1;
         this.lens.visible = state.role == 2;
         this.researcherPack.visible = state.role == 2;
-        this.lens.xScale = 1.0F + CreatureMotion.breathe(age, 0.18F) * 0.08F;
-        this.lens.yScale = this.lens.xScale;
-        this.lens.zScale = this.lens.xScale;
-        this.witchHat.zRot = CreatureMotion.wave(age, 0.04F, 0.2F) * 0.025F * idle;
-        this.witchHatTip.zRot = 0.14F + CreatureMotion.wave(age, 0.075F, 0.8F) * 0.08F;
-        this.witchHatTip.xRot = -0.26F + CreatureMotion.wave(age, 0.06F, 1.4F) * 0.06F;
+        float lensScale = 1.0F + CreatureMotion.breathe(age, 0.18F) * 0.08F;
+        this.lens.xScale = lensScale;
+        this.lens.yScale = lensScale;
+        this.lens.zScale = lensScale;
+        this.witchHat.zRot += CreatureMotion.wave(age, 0.04F, 0.2F) * 0.025F * idle;
+        this.witchHatTip.zRot += CreatureMotion.wave(age, 0.075F, 0.8F) * 0.06F;
+        this.witchHatTip.xRot += CreatureMotion.wave(age, 0.06F, 1.4F) * 0.05F;
     }
 
     private void applyRoleIdle(ArcaneSettlerRenderState state, float age, float idle) {
@@ -209,22 +232,20 @@ public final class ArcaneSettlerModel extends EntityModel<ArcaneSettlerRenderSta
             case 0 -> {
                 float stir = CreatureMotion.wave(age, 0.075F, 0.0F);
                 float circle = CreatureMotion.wave(age, 0.075F, Mth.HALF_PI);
-                this.leftArm.xRot += (-0.78F + stir * 0.10F) * idle;
+                this.leftArm.xRot += (-0.72F + stir * 0.10F) * idle;
                 this.leftArm.zRot += (0.18F + circle * 0.10F) * idle;
-                this.rightArm.xRot += -0.28F * idle;
+                this.rightArm.xRot += -0.24F * idle;
                 this.head.xRot += 0.10F * idle;
             }
             case 1 -> {
                 float rub = CreatureMotion.wave(age, 0.32F, 0.0F);
-                this.rightArm.xRot += (-0.68F + rub * 0.05F) * idle;
-                this.leftArm.xRot += (-0.68F - rub * 0.05F) * idle;
+                this.rightArm.xRot += (-0.64F + rub * 0.05F) * idle;
+                this.leftArm.xRot += (-0.64F - rub * 0.05F) * idle;
                 this.rightArm.yRot += -0.24F * idle;
                 this.leftArm.yRot += 0.24F * idle;
-                this.rightArm.zRot += 0.12F * idle;
-                this.leftArm.zRot += -0.12F * idle;
             }
             case 2 -> {
-                this.rightArm.xRot += -1.12F * idle;
+                this.rightArm.xRot += -1.05F * idle;
                 this.rightArm.yRot += CreatureMotion.wave(age, 0.045F, 0.0F) * 0.34F * idle;
                 this.rightArm.zRot += -0.18F * idle;
                 this.head.yRot += CreatureMotion.wave(age, 0.045F, 0.6F) * 0.22F * idle;

@@ -17,6 +17,8 @@ run/
 
 # Local generated assets and temporary experiments
 tmp/
+art/
+*.bbmodel
 *.bak
 *.zip
 *.jar

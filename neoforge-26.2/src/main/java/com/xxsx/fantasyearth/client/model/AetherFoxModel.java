@@ -17,93 +17,171 @@ import net.minecraft.util.Mth;
 
 public final class AetherFoxModel extends EntityModel<FamiliarRenderState> {
     public static final ModelLayerLocation LAYER_LOCATION = new ModelLayerLocation(FantasyEarth.id("aether_fox"), "main");
+
     private final ModelPart head;
     private final ModelPart jaw;
     private final ModelPart leftEarFin;
     private final ModelPart rightEarFin;
     private final ModelPart body;
+    private final ModelPart leftWingFin;
+    private final ModelPart rightWingFin;
     private final ModelPart[] legs;
+    private final ModelPart centerTail;
+    private final ModelPart centerTailMid;
+    private final ModelPart centerTailTip;
     private final ModelPart leftTail;
     private final ModelPart rightTail;
     private final ModelPart leftTailMid;
     private final ModelPart rightTailMid;
     private final ModelPart leftTailTip;
     private final ModelPart rightTailTip;
+    private final ModelPart outerLeftTail;
+    private final ModelPart outerRightTail;
 
     public AetherFoxModel(ModelPart root) {
         super(root, RenderTypes::entityCutout);
-        head = root.getChild("head");
-        jaw = head.getChild("jaw");
-        leftEarFin = head.getChild("left_ear_fin");
-        rightEarFin = head.getChild("right_ear_fin");
-        body = root.getChild("body");
-        legs = new ModelPart[]{root.getChild("front_right_leg"), root.getChild("front_left_leg"),
-                root.getChild("back_right_leg"), root.getChild("back_left_leg")};
-        leftTail = root.getChild("left_tail");
-        rightTail = root.getChild("right_tail");
-        leftTailMid = leftTail.getChild("mid");
-        rightTailMid = rightTail.getChild("mid");
-        leftTailTip = leftTailMid.getChild("tip");
-        rightTailTip = rightTailMid.getChild("tip");
+        this.head = root.getChild("head");
+        this.jaw = this.head.getChild("jaw");
+        this.leftEarFin = this.head.getChild("left_ear_fin");
+        this.rightEarFin = this.head.getChild("right_ear_fin");
+        this.body = root.getChild("body");
+        this.leftWingFin = this.body.getChild("left_wing_fin");
+        this.rightWingFin = this.body.getChild("right_wing_fin");
+        this.legs = new ModelPart[]{
+                root.getChild("front_right_leg"),
+                root.getChild("front_left_leg"),
+                root.getChild("back_right_leg"),
+                root.getChild("back_left_leg")
+        };
+        this.centerTail = root.getChild("center_tail");
+        this.centerTailMid = this.centerTail.getChild("mid");
+        this.centerTailTip = this.centerTailMid.getChild("tip");
+        this.leftTail = root.getChild("left_tail");
+        this.rightTail = root.getChild("right_tail");
+        this.leftTailMid = this.leftTail.getChild("mid");
+        this.rightTailMid = this.rightTail.getChild("mid");
+        this.leftTailTip = this.leftTailMid.getChild("tip");
+        this.rightTailTip = this.rightTailMid.getChild("tip");
+        this.outerLeftTail = root.getChild("outer_left_tail");
+        this.outerRightTail = root.getChild("outer_right_tail");
     }
 
     public static LayerDefinition createBodyLayer() {
         MeshDefinition mesh = new MeshDefinition();
         PartDefinition root = mesh.getRoot();
-        root.addOrReplaceChild("body", CubeListBuilder.create()
-                        .texOffs(0, 24).addBox(-3.5F, -3.5F, -6.0F, 7.0F, 7.0F, 12.0F)
-                        .texOffs(42, 25).addBox(-3.3F, -4.4F, -5.0F, 6.6F, 1.3F, 10.0F, new CubeDeformation(0.08F))
-                        .texOffs(42, 25).addBox(-3.2F, -2.5F, -6.4F, 6.4F, 4.5F, 3.0F, new CubeDeformation(0.10F)),
-                PartPose.offset(0.0F, 15.0F, 0.0F));
-        PartDefinition head = root.addOrReplaceChild("head", CubeListBuilder.create()
-                        .texOffs(0, 0).addBox(-3.5F, -3.8F, -5.0F, 7.0F, 6.5F, 7.0F)
-                        .texOffs(30, 0).addBox(-1.8F, -0.4F, -8.5F, 3.6F, 2.6F, 4.5F),
-                PartPose.offset(0.0F, 12.0F, -6.0F));
-        head.addOrReplaceChild("jaw", CubeListBuilder.create().texOffs(30, 0)
-                        .addBox(-1.5F, 0.0F, 0.0F, 3.0F, 1.2F, 4.0F),
-                PartPose.offset(0.0F, 1.2F, -8.2F));
-        head.addOrReplaceChild("left_ear_fin", CubeListBuilder.create().texOffs(48, 0)
-                        .addBox(0.0F, -7.5F, -1.0F, 5.0F, 7.5F, 1.0F),
-                PartPose.offsetAndRotation(1.0F, -3.0F, -1.0F, 0.0F, -0.22F, -0.18F));
-        head.addOrReplaceChild("right_ear_fin", CubeListBuilder.create().texOffs(60, 0)
-                        .addBox(-5.0F, -7.5F, -1.0F, 5.0F, 7.5F, 1.0F),
-                PartPose.offsetAndRotation(-1.0F, -3.0F, -1.0F, 0.0F, 0.22F, 0.18F));
-        leg(root, "front_right_leg", 0, 48, 48, 48, -2.3F, -4.2F);
-        leg(root, "front_left_leg", 12, 48, 62, 48, 2.3F, -4.2F);
-        leg(root, "back_right_leg", 24, 48, 76, 48, -2.3F, 4.2F);
-        leg(root, "back_left_leg", 36, 48, 90, 48, 2.3F, 4.2F);
-        PartDefinition leftTail = root.addOrReplaceChild("left_tail", CubeListBuilder.create().texOffs(0, 64)
-                        .addBox(-2.0F, -2.0F, 0.0F, 4.0F, 4.0F, 7.0F),
-                PartPose.offsetAndRotation(1.8F, 14.0F, 5.2F, 0.35F, 0.24F, 0.0F));
-        PartDefinition leftTailMid = leftTail.addOrReplaceChild("mid", CubeListBuilder.create().texOffs(48, 64)
-                        .addBox(-2.4F, -2.4F, 0.0F, 4.8F, 4.8F, 7.0F),
-                PartPose.offsetAndRotation(0.0F, 0.0F, 6.2F, 0.14F, 0.14F, 0.0F));
-        leftTailMid.addOrReplaceChild("tip", CubeListBuilder.create().texOffs(0, 84)
-                        .addBox(-2.8F, -2.8F, 0.0F, 5.6F, 5.6F, 7.0F),
-                PartPose.offsetAndRotation(0.0F, 0.0F, 6.2F, 0.12F, 0.12F, 0.0F));
-
-        PartDefinition rightTail = root.addOrReplaceChild("right_tail", CubeListBuilder.create().texOffs(24, 64)
-                        .addBox(-2.0F, -2.0F, 0.0F, 4.0F, 4.0F, 7.0F),
-                PartPose.offsetAndRotation(-1.8F, 14.0F, 5.2F, 0.35F, -0.24F, 0.0F));
-        PartDefinition rightTailMid = rightTail.addOrReplaceChild("mid", CubeListBuilder.create().texOffs(74, 64)
-                        .addBox(-2.4F, -2.4F, 0.0F, 4.8F, 4.8F, 7.0F),
-                PartPose.offsetAndRotation(0.0F, 0.0F, 6.2F, 0.14F, -0.14F, 0.0F));
-        rightTailMid.addOrReplaceChild("tip", CubeListBuilder.create().texOffs(26, 84)
-                        .addBox(-2.8F, -2.8F, 0.0F, 5.6F, 5.6F, 7.0F),
-                PartPose.offsetAndRotation(0.0F, 0.0F, 6.2F, 0.12F, -0.12F, 0.0F));
+        PartDefinition p_body_1 = root.addOrReplaceChild("body", CubeListBuilder.create()
+                        .texOffs(0, 0).addBox(-3.5F, -3.5F, -5.5F, 7.0F, 7.0F, 6.0F)
+                        .texOffs(27, 0).addBox(-3.0F, -3.0F, 0.5F, 6.0F, 6.0F, 6.0F)
+                        .texOffs(52, 0).addBox(-4.0F, -2.5F, -6.0F, 8.0F, 5.0F, 3.0F, new CubeDeformation(0.06F)),
+                PartPose.offsetAndRotation(0.0F, 14.5F, 0.0F, -0.05F, 0.0F, 0.0F));
+        p_body_1.addOrReplaceChild("neck", CubeListBuilder.create()
+                        .texOffs(75, 0).addBox(-2.5F, -2.5F, -2.0F, 5.0F, 5.0F, 4.0F),
+                PartPose.offsetAndRotation(0.0F, -1.5F, -5.0F, 0.38F, 0.0F, 0.0F));
+        p_body_1.addOrReplaceChild("left_wing_fin", CubeListBuilder.create()
+                        .texOffs(94, 0).addBox(0.0F, -4.0F, -0.5F, 1.0F, 4.0F, 5.0F)
+                        .texOffs(107, 0).addBox(0.0F, -6.5F, 1.5F, 1.0F, 3.0F, 4.0F),
+                PartPose.offsetAndRotation(3.0F, -2.5F, -2.0F, -0.42F, 0.32F, 0.38F));
+        p_body_1.addOrReplaceChild("right_wing_fin", CubeListBuilder.create()
+                        .texOffs(0, 14).addBox(-1.0F, -4.0F, -0.5F, 1.0F, 4.0F, 5.0F)
+                        .texOffs(13, 14).addBox(-1.0F, -6.5F, 1.5F, 1.0F, 3.0F, 4.0F),
+                PartPose.offsetAndRotation(-3.0F, -2.5F, -2.0F, -0.42F, -0.32F, -0.38F));
+        PartDefinition p_head_5 = root.addOrReplaceChild("head", CubeListBuilder.create()
+                        .texOffs(24, 14).addBox(-3.5F, -3.0F, -3.5F, 7.0F, 6.0F, 5.0F)
+                        .texOffs(49, 14).addBox(2.5F, -0.5F, -2.5F, 2.0F, 3.0F, 3.0F)
+                        .texOffs(60, 14).addBox(-4.5F, -0.5F, -2.5F, 2.0F, 3.0F, 3.0F),
+                PartPose.offsetAndRotation(0.0F, 11.5F, -6.0F, 0.06F, 0.0F, 0.0F));
+        p_head_5.addOrReplaceChild("muzzle", CubeListBuilder.create()
+                        .texOffs(71, 14).addBox(-2.0F, -1.0F, -2.0F, 4.0F, 2.0F, 2.0F)
+                        .texOffs(84, 14).addBox(-1.0F, -0.5F, -4.0F, 2.0F, 2.0F, 2.0F),
+                PartPose.offsetAndRotation(0.0F, 0.5F, -3.5F, 0.08F, 0.0F, 0.0F));
+        p_head_5.addOrReplaceChild("jaw", CubeListBuilder.create()
+                        .texOffs(93, 14).addBox(-1.5F, 0.0F, -3.0F, 3.0F, 1.0F, 3.0F),
+                PartPose.offsetAndRotation(0.0F, 2.0F, -3.0F, 0.06F, 0.0F, 0.0F));
+        p_head_5.addOrReplaceChild("left_ear_fin", CubeListBuilder.create()
+                        .texOffs(106, 14).addBox(-1.0F, -5.0F, -0.5F, 3.0F, 5.0F, 1.0F)
+                        .texOffs(115, 14).addBox(-0.5F, -7.0F, -0.5F, 2.0F, 2.0F, 1.0F),
+                PartPose.offsetAndRotation(2.0F, -2.5F, -1.0F, -0.2F, -0.22F, 0.44F));
+        p_head_5.addOrReplaceChild("right_ear_fin", CubeListBuilder.create()
+                        .texOffs(0, 26).addBox(-2.0F, -5.0F, -0.5F, 3.0F, 5.0F, 1.0F)
+                        .texOffs(9, 26).addBox(-1.5F, -7.0F, -0.5F, 2.0F, 2.0F, 1.0F),
+                PartPose.offsetAndRotation(-2.0F, -2.5F, -1.0F, -0.2F, 0.22F, -0.44F));
+        p_head_5.addOrReplaceChild("forehead_gem", CubeListBuilder.create()
+                        .texOffs(16, 26).addBox(-0.5F, -2.0F, -0.5F, 1.0F, 2.0F, 1.0F),
+                PartPose.offsetAndRotation(0.0F, -2.5F, -3.5F, -0.3F, 0.0F, 0.0F));
+        PartDefinition p_front_right_leg_11 = root.addOrReplaceChild("front_right_leg", CubeListBuilder.create()
+                        .texOffs(21, 26).addBox(-1.0F, -0.5F, -1.5F, 2.0F, 5.0F, 3.0F),
+                PartPose.offsetAndRotation(-2.2F, 15.5F, -3.8F, -0.14F, 0.0F, 0.0F));
+        PartDefinition p_shin_12 = p_front_right_leg_11.addOrReplaceChild("shin", CubeListBuilder.create()
+                        .texOffs(32, 26).addBox(-1.0F, 0.0F, -1.0F, 2.0F, 4.0F, 2.0F),
+                PartPose.offsetAndRotation(0.0F, 4.0F, 0.0F, 0.26F, 0.0F, 0.0F));
+        p_shin_12.addOrReplaceChild("paw", CubeListBuilder.create()
+                        .texOffs(41, 26).addBox(-1.0F, 0.0F, -2.0F, 2.0F, 1.0F, 3.0F),
+                PartPose.offsetAndRotation(0.0F, 3.5F, 0.0F, -0.12F, 0.0F, 0.0F));
+        PartDefinition p_front_left_leg_14 = root.addOrReplaceChild("front_left_leg", CubeListBuilder.create()
+                        .texOffs(52, 26).addBox(-1.0F, -0.5F, -1.5F, 2.0F, 5.0F, 3.0F),
+                PartPose.offsetAndRotation(2.2F, 15.5F, -3.8F, -0.14F, 0.0F, 0.0F));
+        PartDefinition p_shin_15 = p_front_left_leg_14.addOrReplaceChild("shin", CubeListBuilder.create()
+                        .texOffs(63, 26).addBox(-1.0F, 0.0F, -1.0F, 2.0F, 4.0F, 2.0F),
+                PartPose.offsetAndRotation(0.0F, 4.0F, 0.0F, 0.26F, 0.0F, 0.0F));
+        p_shin_15.addOrReplaceChild("paw", CubeListBuilder.create()
+                        .texOffs(72, 26).addBox(-1.0F, 0.0F, -2.0F, 2.0F, 1.0F, 3.0F),
+                PartPose.offsetAndRotation(0.0F, 3.5F, 0.0F, -0.12F, 0.0F, 0.0F));
+        PartDefinition p_back_right_leg_17 = root.addOrReplaceChild("back_right_leg", CubeListBuilder.create()
+                        .texOffs(83, 26).addBox(-1.0F, -0.5F, -1.5F, 2.0F, 5.0F, 3.0F),
+                PartPose.offsetAndRotation(-2.2F, 15.5F, 4.2F, 0.22F, 0.0F, 0.0F));
+        PartDefinition p_shin_18 = p_back_right_leg_17.addOrReplaceChild("shin", CubeListBuilder.create()
+                        .texOffs(94, 26).addBox(-1.0F, 0.0F, -1.0F, 2.0F, 4.0F, 2.0F),
+                PartPose.offsetAndRotation(0.0F, 4.0F, 0.0F, -0.42F, 0.0F, 0.0F));
+        p_shin_18.addOrReplaceChild("paw", CubeListBuilder.create()
+                        .texOffs(103, 26).addBox(-1.0F, 0.0F, -2.0F, 2.0F, 1.0F, 3.0F),
+                PartPose.offsetAndRotation(0.0F, 3.5F, 0.0F, 0.2F, 0.0F, 0.0F));
+        PartDefinition p_back_left_leg_20 = root.addOrReplaceChild("back_left_leg", CubeListBuilder.create()
+                        .texOffs(114, 26).addBox(-1.0F, -0.5F, -1.5F, 2.0F, 5.0F, 3.0F),
+                PartPose.offsetAndRotation(2.2F, 15.5F, 4.2F, 0.22F, 0.0F, 0.0F));
+        PartDefinition p_shin_21 = p_back_left_leg_20.addOrReplaceChild("shin", CubeListBuilder.create()
+                        .texOffs(0, 35).addBox(-1.0F, 0.0F, -1.0F, 2.0F, 4.0F, 2.0F),
+                PartPose.offsetAndRotation(0.0F, 4.0F, 0.0F, -0.42F, 0.0F, 0.0F));
+        p_shin_21.addOrReplaceChild("paw", CubeListBuilder.create()
+                        .texOffs(9, 35).addBox(-1.0F, 0.0F, -2.0F, 2.0F, 1.0F, 3.0F),
+                PartPose.offsetAndRotation(0.0F, 3.5F, 0.0F, 0.2F, 0.0F, 0.0F));
+        PartDefinition p_center_tail_23 = root.addOrReplaceChild("center_tail", CubeListBuilder.create()
+                        .texOffs(20, 35).addBox(-1.5F, -1.5F, 0.0F, 3.0F, 3.0F, 6.0F),
+                PartPose.offsetAndRotation(0.0F, 13.5F, 6.0F, 0.42F, 0.0F, 0.0F));
+        PartDefinition p_mid_24 = p_center_tail_23.addOrReplaceChild("mid", CubeListBuilder.create()
+                        .texOffs(39, 35).addBox(-2.0F, -2.0F, 0.0F, 4.0F, 4.0F, 6.0F),
+                PartPose.offsetAndRotation(0.0F, 0.0F, 5.5F, 0.24F, 0.0F, 0.0F));
+        p_mid_24.addOrReplaceChild("tip", CubeListBuilder.create()
+                        .texOffs(60, 35).addBox(-1.5F, -1.5F, 0.0F, 3.0F, 3.0F, 5.0F),
+                PartPose.offsetAndRotation(0.0F, 0.0F, 5.5F, 0.18F, 0.0F, 0.0F));
+        PartDefinition p_left_tail_26 = root.addOrReplaceChild("left_tail", CubeListBuilder.create()
+                        .texOffs(77, 35).addBox(-1.5F, -1.5F, 0.0F, 3.0F, 3.0F, 6.0F),
+                PartPose.offsetAndRotation(1.5F, 13.5F, 6.0F, 0.28F, 0.42F, 0.14F));
+        PartDefinition p_mid_27 = p_left_tail_26.addOrReplaceChild("mid", CubeListBuilder.create()
+                        .texOffs(96, 35).addBox(-2.0F, -2.0F, 0.0F, 4.0F, 4.0F, 6.0F),
+                PartPose.offsetAndRotation(0.0F, 0.0F, 5.5F, 0.2F, 0.18F, 0.0F));
+        p_mid_27.addOrReplaceChild("tip", CubeListBuilder.create()
+                        .texOffs(0, 46).addBox(-1.5F, -1.5F, 0.0F, 3.0F, 3.0F, 5.0F),
+                PartPose.offsetAndRotation(0.0F, 0.0F, 5.5F, 0.18F, 0.108F, 0.0F));
+        PartDefinition p_right_tail_29 = root.addOrReplaceChild("right_tail", CubeListBuilder.create()
+                        .texOffs(17, 46).addBox(-1.5F, -1.5F, 0.0F, 3.0F, 3.0F, 6.0F),
+                PartPose.offsetAndRotation(-1.5F, 13.5F, 6.0F, 0.28F, -0.42F, -0.14F));
+        PartDefinition p_mid_30 = p_right_tail_29.addOrReplaceChild("mid", CubeListBuilder.create()
+                        .texOffs(36, 46).addBox(-2.0F, -2.0F, 0.0F, 4.0F, 4.0F, 6.0F),
+                PartPose.offsetAndRotation(0.0F, 0.0F, 5.5F, 0.2F, -0.18F, 0.0F));
+        p_mid_30.addOrReplaceChild("tip", CubeListBuilder.create()
+                        .texOffs(57, 46).addBox(-1.5F, -1.5F, 0.0F, 3.0F, 3.0F, 5.0F),
+                PartPose.offsetAndRotation(0.0F, 0.0F, 5.5F, 0.18F, -0.108F, 0.0F));
+        root.addOrReplaceChild("outer_left_tail", CubeListBuilder.create()
+                        .texOffs(74, 46).addBox(-1.0F, -1.5F, 0.0F, 2.0F, 3.0F, 7.0F),
+                PartPose.offsetAndRotation(2.0F, 14.0F, 5.5F, 0.14F, 0.78F, 0.26F));
+        root.addOrReplaceChild("outer_right_tail", CubeListBuilder.create()
+                        .texOffs(93, 46).addBox(-1.0F, -1.5F, 0.0F, 2.0F, 3.0F, 7.0F),
+                PartPose.offsetAndRotation(-2.0F, 14.0F, 5.5F, 0.14F, -0.78F, -0.26F));
         return LayerDefinition.create(mesh, 128, 128);
     }
 
-    private static void leg(PartDefinition root, String name, int u, int v, int pawU, int pawV, float x, float z) {
-        PartDefinition leg = root.addOrReplaceChild(name, CubeListBuilder.create().texOffs(u, v)
-                        .addBox(-1.1F, 0.0F, -1.1F, 2.2F, 6.2F, 2.2F),
-                PartPose.offset(x, 17.5F, z));
-        leg.addOrReplaceChild("paw", CubeListBuilder.create().texOffs(pawU, pawV)
-                        .addBox(-1.4F, -0.3F, -2.0F, 2.8F, 1.5F, 3.0F),
-                PartPose.offset(0.0F, 5.5F, -0.2F));
-    }
-
-    @Override    public void setupAnim(FamiliarRenderState state) {
+    @Override
+    public void setupAnim(FamiliarRenderState state) {
         super.setupAnim(state);
         float age = state.ageInTicks;
         float walk = state.walkAnimationPos;
@@ -114,67 +192,61 @@ public final class AetherFoxModel extends EntityModel<FamiliarRenderState> {
         float wind = CreatureMotion.windUp(state.attackProgress);
         float strike = CreatureMotion.strike(state.attackProgress);
 
-        head.yRot = CreatureMotion.clampLook(state.yRot * Mth.DEG_TO_RAD, 0.85F);
-        head.xRot = CreatureMotion.clampLook(state.xRot * Mth.DEG_TO_RAD, 0.5F) + breathe * 0.02F - wind * 0.12F;
-        head.zRot = CreatureMotion.wave(age, 0.045F, 0.0F) * 0.03F + alert * 0.04F;
-        jaw.xRot = 0.05F + alert * 0.08F + CreatureMotion.wave(age, 0.09F, 0.9F) * 0.025F + strike * 0.36F;
+        this.head.yRot += CreatureMotion.clampLook(state.yRot * Mth.DEG_TO_RAD, 0.85F);
+        this.head.xRot += CreatureMotion.clampLook(state.xRot * Mth.DEG_TO_RAD, 0.5F)
+                + breathe * 0.02F - wind * 0.12F - strike * 0.42F;
+        this.head.zRot += CreatureMotion.wave(age, 0.045F, 0.0F) * 0.03F + alert * 0.04F;
+        this.jaw.xRot += alert * 0.08F + CreatureMotion.wave(age, 0.09F, 0.9F) * 0.025F + strike * 0.36F;
 
-        float earFlickLeft = CreatureMotion.twitch(age, 0.13F, 1.7F, 0.20F);
-        float earFlickRight = CreatureMotion.twitch(age, 0.10F, 4.3F, 0.20F);
-        leftEarFin.zRot = -0.15F - earFlickLeft - alert * 0.05F;
-        rightEarFin.zRot = 0.15F + earFlickRight + alert * 0.05F;
-        leftEarFin.xRot = -0.10F * alert - CreatureMotion.twitch(age, 0.07F, 0.6F, 0.12F);
-        rightEarFin.xRot = -0.10F * alert - CreatureMotion.twitch(age, 0.08F, 2.2F, 0.12F);
-        leftEarFin.zScale = 1.0F + breathe * 0.05F;
-        rightEarFin.zScale = leftEarFin.zScale;
+        float earFlickLeft = CreatureMotion.twitch(age, 0.13F, 1.7F, 0.18F);
+        float earFlickRight = CreatureMotion.twitch(age, 0.10F, 4.3F, 0.18F);
+        this.leftEarFin.zRot += earFlickLeft + alert * 0.06F;
+        this.rightEarFin.zRot -= earFlickRight + alert * 0.06F;
+        this.leftEarFin.xRot += -0.10F * alert - CreatureMotion.twitch(age, 0.07F, 0.6F, 0.10F);
+        this.rightEarFin.xRot += -0.10F * alert - CreatureMotion.twitch(age, 0.08F, 2.2F, 0.10F);
 
-        legs[0].xRot = CreatureMotion.gait(walk, 0.0F, 1.05F, speed);
-        legs[1].xRot = CreatureMotion.gait(walk, Mth.PI, 1.05F, speed);
-        legs[2].xRot = legs[1].xRot;
-        legs[3].xRot = legs[0].xRot;
-        legs[0].zRot = -0.03F - Math.max(0.0F, legs[0].xRot) * 0.05F;
-        legs[1].zRot = 0.03F + Math.max(0.0F, legs[1].xRot) * 0.05F;
-        legs[2].zRot = -legs[1].zRot;
-        legs[3].zRot = -legs[0].zRot;
+        float wingFlutter = CreatureMotion.wave(age, 0.12F, 0.5F) * 0.12F + alert * 0.14F;
+        this.leftWingFin.zRot -= wingFlutter;
+        this.rightWingFin.zRot += wingFlutter;
 
-        body.y = 15.0F + breathe * 0.06F + Mth.cos(walk * 1.33F) * 0.05F * speed;
-        body.xRot = -alert * 0.02F + Mth.sin(walk * 0.67F) * 0.015F * speed - strike * 0.10F;
-        body.zRot = CreatureMotion.wave(age, 0.05F, 1.1F) * 0.012F * idle;
-        body.yScale = 1.0F + breathe * 0.015F;
-        body.xScale = 1.0F - breathe * 0.008F;
+        float gait0 = CreatureMotion.gait(walk, 0.0F, 0.95F, speed);
+        float gait1 = CreatureMotion.gait(walk, Mth.PI, 0.95F, speed);
+        this.legs[0].xRot += gait0 - strike * 0.34F;
+        this.legs[1].xRot += gait1 - strike * 0.34F;
+        this.legs[2].xRot += gait1;
+        this.legs[3].xRot += gait0;
 
-        float tailWave = CreatureMotion.wave(age, 0.10F, 0.0F) * (0.22F + state.stability * 0.18F);
-        leftTail.yRot = 0.22F + tailWave;
-        rightTail.yRot = -0.22F - tailWave;
-        leftTailMid.yRot = 0.12F + tailWave * 0.55F;
-        rightTailMid.yRot = -0.12F - tailWave * 0.55F;
-        leftTail.xRot = 0.35F + breathe * 0.03F - alert * 0.10F + wind * 0.22F;
-        rightTail.xRot = leftTail.xRot;
-        leftTailMid.xRot = 0.14F + CreatureMotion.wave(age, 0.14F, 0.9F) * 0.05F;
-        rightTailMid.xRot = leftTailMid.xRot;
-        leftTailTip.yRot = 0.12F + tailWave * 0.72F;
-        rightTailTip.yRot = -0.12F - tailWave * 0.72F;
-        leftTailTip.xRot = 0.12F + CreatureMotion.wave(age, 0.17F, 1.8F) * 0.07F;
-        rightTailTip.xRot = leftTailTip.xRot;
+        this.body.y += breathe * 0.06F + Mth.cos(walk * 1.33F) * 0.05F * speed;
+        this.body.xRot += -alert * 0.02F + Mth.sin(walk * 0.67F) * 0.015F * speed - strike * 0.10F;
+        this.body.zRot += CreatureMotion.wave(age, 0.05F, 1.1F) * 0.012F * idle;
+        this.body.z -= strike * 0.55F;
 
-        head.xRot -= strike * 0.45F;
-        legs[0].xRot -= strike * 0.34F;
-        legs[1].xRot -= strike * 0.34F;
-        body.z -= strike * 0.55F;
+        float tailWave = CreatureMotion.wave(age, 0.10F, 0.0F) * (0.18F + state.stability * 0.14F);
+        this.centerTail.yRot += tailWave;
+        this.centerTailMid.yRot += tailWave * 0.65F;
+        this.centerTailTip.yRot += tailWave * 0.85F;
+        this.centerTail.xRot += breathe * 0.03F + wind * 0.18F;
+
+        this.leftTail.yRot += tailWave * 0.9F;
+        this.rightTail.yRot += tailWave * 0.9F;
+        this.leftTailMid.yRot += tailWave * 0.6F;
+        this.rightTailMid.yRot += tailWave * 0.6F;
+        this.leftTailTip.yRot += tailWave * 0.75F;
+        this.rightTailTip.yRot += tailWave * 0.75F;
+
+        this.outerLeftTail.yRot += tailWave * 0.7F;
+        this.outerRightTail.yRot += tailWave * 0.7F;
 
         if (state.sitting) {
-            body.xRot = 0.18F;
-            body.y = 15.0F;
-            legs[0].xRot = -0.10F;
-            legs[1].xRot = -0.10F;
-            legs[2].xRot = -1.08F;
-            legs[3].xRot = -1.08F;
-            legs[0].zRot = -0.10F;
-            legs[1].zRot = 0.10F;
-            leftTail.xRot = 0.92F;
-            rightTail.xRot = 0.92F;
-            leftTail.yRot = 0.34F + tailWave * 0.5F;
-            rightTail.yRot = -0.34F - tailWave * 0.5F;
+            this.body.xRot += 0.24F;
+            this.body.y += 1.2F;
+            this.legs[0].xRot += -0.08F;
+            this.legs[1].xRot += -0.08F;
+            this.legs[2].xRot += -1.15F;
+            this.legs[3].xRot += -1.15F;
+            this.centerTail.xRot += 0.36F;
+            this.leftTail.xRot += 0.34F;
+            this.rightTail.xRot += 0.34F;
         }
     }
 }
