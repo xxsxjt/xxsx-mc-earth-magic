@@ -5,4 +5,5 @@
 - Keep the mod independently runnable. Integrate `earth_on_minecraft`, `earth_human`, and `xuanhuan_earth` only through optional compatibility layers.
 - Preserve the technical mod id `fantasy_earth` unless a deliberate save-breaking migration is requested.
 - Target line is `NeoForge 26.1.2.124 / MC 26.1.2 / JDK 25`, aligned with Earth on Minecraft 0.1.16.
+- **NEVER launch the game client (`gradlew runClient`, launcher, or client smoke scripts) without explicit permission from the user in the current turn.** Verify client code via static checks, bytecode inspection, or headless unit tests; leave in-game client verification to the user.
 - This mod recreates broadly recognized fantasy systems and content, not real survival difficulty.

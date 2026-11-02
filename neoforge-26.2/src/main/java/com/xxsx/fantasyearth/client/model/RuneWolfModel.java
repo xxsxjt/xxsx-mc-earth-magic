@@ -20,6 +20,7 @@ public final class RuneWolfModel extends EntityModel<FamiliarRenderState> {
             FantasyEarth.id("rune_wolf"), "main");
 
     private final ModelPart head;
+    private final ModelPart jaw;
     private final ModelPart body;
     private final ModelPart armor;
     private final ModelPart lens;
@@ -27,11 +28,13 @@ public final class RuneWolfModel extends EntityModel<FamiliarRenderState> {
     private final ModelPart rightEar;
     private final ModelPart[] legs;
     private final ModelPart tail;
+    private final ModelPart tailMid;
     private final ModelPart tailTip;
 
     public RuneWolfModel(ModelPart root) {
         super(root, RenderTypes::entityCutout);
         this.head = root.getChild("head");
+        this.jaw = this.head.getChild("jaw");
         this.body = root.getChild("body");
         this.armor = this.body.getChild("armor");
         this.lens = this.head.getChild("lens");
@@ -40,7 +43,8 @@ public final class RuneWolfModel extends EntityModel<FamiliarRenderState> {
         this.legs = new ModelPart[]{root.getChild("front_right_leg"), root.getChild("front_left_leg"),
                 root.getChild("back_right_leg"), root.getChild("back_left_leg")};
         this.tail = root.getChild("tail");
-        this.tailTip = this.tail.getChild("tail_tip");
+        this.tailMid = this.tail.getChild("tail_mid");
+        this.tailTip = this.tailMid.getChild("tail_tip");
     }
 
     public static LayerDefinition createBodyLayer() {
@@ -48,7 +52,11 @@ public final class RuneWolfModel extends EntityModel<FamiliarRenderState> {
         PartDefinition root = mesh.getRoot();
 
         PartDefinition body = root.addOrReplaceChild("body", CubeListBuilder.create().texOffs(0, 24)
-                        .addBox(-4.0F, -4.0F, -7.0F, 8.0F, 8.0F, 14.0F),
+                        .addBox(-3.5F, -4.0F, -7.0F, 7.0F, 7.0F, 14.0F)
+                        .texOffs(48, 20).addBox(-3.0F, -3.0F, -6.5F, 2.0F, 5.0F, 4.0F,
+                                new CubeDeformation(0.10F))
+                        .texOffs(48, 20).addBox(1.0F, -3.0F, -6.5F, 2.0F, 5.0F, 4.0F,
+                                new CubeDeformation(0.10F)),
                 PartPose.offset(0.0F, 15.0F, 0.0F));
 
         PartDefinition armor = body.addOrReplaceChild("armor", CubeListBuilder.create()
@@ -65,6 +73,9 @@ public final class RuneWolfModel extends EntityModel<FamiliarRenderState> {
                         .texOffs(0, 0).addBox(-3.5F, -3.5F, -4.5F, 7.0F, 7.0F, 7.0F)
                         .texOffs(30, 0).addBox(-2.0F, -0.4F, -9.0F, 4.0F, 3.0F, 6.0F),
                 PartPose.offset(0.0F, 11.5F, -7.0F));
+        head.addOrReplaceChild("jaw", CubeListBuilder.create().texOffs(30, 0)
+                        .addBox(-1.8F, 0.0F, 0.0F, 3.6F, 1.5F, 5.4F),
+                PartPose.offset(0.0F, 1.0F, -8.6F));
         head.addOrReplaceChild("left_ear", CubeListBuilder.create().texOffs(48, 0)
                         .addBox(-1.0F, -2.5F, -1.0F, 2.0F, 6.0F, 2.0F),
                 PartPose.offsetAndRotation(-2.1F, -5.3F, -0.8F, 0.0F, 0.0F, -0.06F));
@@ -83,9 +94,12 @@ public final class RuneWolfModel extends EntityModel<FamiliarRenderState> {
         PartDefinition tail = root.addOrReplaceChild("tail", CubeListBuilder.create().texOffs(0, 84)
                         .addBox(-2.0F, -2.0F, 0.0F, 4.0F, 4.0F, 7.0F),
                 PartPose.offsetAndRotation(0.0F, 14.0F, 6.0F, 0.34F, 0.0F, 0.0F));
-        tail.addOrReplaceChild("tail_tip", CubeListBuilder.create().texOffs(28, 84)
-                        .addBox(-2.0F, -2.0F, 0.0F, 4.0F, 4.0F, 7.0F),
-                PartPose.offsetAndRotation(0.0F, 0.0F, 6.4F, 0.06F, 0.0F, 0.0F));
+        PartDefinition tailMid = tail.addOrReplaceChild("tail_mid", CubeListBuilder.create().texOffs(28, 84)
+                        .addBox(-2.0F, -1.9F, 0.0F, 4.0F, 4.0F, 4.0F),
+                PartPose.offsetAndRotation(0.0F, 0.0F, 3.6F, 0.10F, 0.0F, 0.0F));
+        tailMid.addOrReplaceChild("tail_tip", CubeListBuilder.create().texOffs(28, 84)
+                        .addBox(-1.8F, -1.8F, 0.0F, 3.6F, 3.6F, 5.0F),
+                PartPose.offsetAndRotation(0.0F, 0.0F, 3.6F, 0.06F, 0.0F, 0.0F));
 
         return LayerDefinition.create(mesh, 128, 128);
     }
@@ -94,15 +108,15 @@ public final class RuneWolfModel extends EntityModel<FamiliarRenderState> {
         int legU = index * 12;
         int pawU = index * 16;
         PartDefinition leg = root.addOrReplaceChild(name, CubeListBuilder.create().texOffs(legU, 52)
-                        .addBox(-1.0F, 0.0F, -1.0F, 2.0F, 6.0F, 2.0F),
-                PartPose.offset(x, 16.5F, z));
+                        .addBox(-1.0F, 0.0F, -1.0F, 2.0F, 7.0F, 2.0F),
+                PartPose.offset(x, 16.0F, z));
         leg.addOrReplaceChild("paw", CubeListBuilder.create().texOffs(pawU, 68)
                         .addBox(-1.6F, -0.5F, -2.7F, 3.2F, 2.2F, 4.4F),
-                PartPose.offset(0.0F, 5.5F, -0.2F));
+                PartPose.offset(0.0F, 6.5F, -0.2F));
     }
 
     @Override
-        public void setupAnim(FamiliarRenderState state) {
+    public void setupAnim(FamiliarRenderState state) {
         super.setupAnim(state);
         float age = state.ageInTicks;
         float walk = state.walkAnimationPos;
@@ -117,6 +131,9 @@ public final class RuneWolfModel extends EntityModel<FamiliarRenderState> {
         this.head.xRot = CreatureMotion.clampLook(state.xRot * Mth.DEG_TO_RAD, 0.55F)
                 - alert * 0.10F + breathe * 0.02F - wind * 0.18F;
         this.head.zRot = CreatureMotion.wave(age, 0.035F, 0.4F) * 0.025F;
+
+        this.jaw.xRot = 0.06F + alert * 0.10F + CreatureMotion.wave(age, 0.08F, 1.1F) * 0.03F
+                + strike * 0.42F;
 
         this.leftEar.xRot = -0.05F + CreatureMotion.twitch(age, 0.09F, 0.8F, 0.18F) - alert * 0.12F;
         this.rightEar.xRot = -0.05F + CreatureMotion.twitch(age, 0.11F, 3.4F, 0.18F) - alert * 0.12F;
@@ -143,10 +160,12 @@ public final class RuneWolfModel extends EntityModel<FamiliarRenderState> {
         this.lens.yScale = pulse;
         this.lens.zScale = pulse;
 
-        this.tail.yRot = CreatureMotion.wave(age, 0.10F, 0.0F) * 0.22F;
-        this.tailTip.yRot = CreatureMotion.wave(age, 0.13F, 0.7F) * 0.26F;
+        this.tail.yRot = CreatureMotion.wave(age, 0.10F, 0.0F) * 0.20F;
         this.tail.xRot = 0.34F + breathe * 0.02F - alert * 0.10F + wind * 0.18F;
-        this.tailTip.xRot = 0.06F + CreatureMotion.wave(age, 0.16F, 1.4F) * 0.05F;
+        this.tailMid.yRot = CreatureMotion.wave(age, 0.12F, 0.7F) * 0.24F;
+        this.tailMid.xRot = 0.10F + CreatureMotion.wave(age, 0.14F, 1.2F) * 0.07F;
+        this.tailTip.yRot = CreatureMotion.wave(age, 0.15F, 1.5F) * 0.28F;
+        this.tailTip.xRot = 0.06F + CreatureMotion.wave(age, 0.17F, 2.1F) * 0.08F;
 
         this.head.xRot -= strike * 0.62F;
         this.legs[0].xRot -= strike * 0.42F;
@@ -163,6 +182,7 @@ public final class RuneWolfModel extends EntityModel<FamiliarRenderState> {
             this.legs[0].zRot = -0.08F;
             this.legs[1].zRot = 0.08F;
             this.tail.xRot = 0.96F;
+            this.tailMid.xRot = 0.22F;
             this.tailTip.xRot = 0.30F;
         }
     }
