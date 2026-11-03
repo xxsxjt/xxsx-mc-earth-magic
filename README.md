@@ -67,7 +67,11 @@ academy outposts or witch hamlets loading together from producing a synchronous 
 `0.7.0-alpha.10` unifies the public brand, workspace, GitHub repository, Java package,
 resource namespace, mod id and jar under `Fantasy Earth / 魔幻地球` and `fantasy_earth`.
 NeoForge registry aliases migrate old content ids, while shared player data moves to
-`earth_arcana.*` on first access.
+`earth_arcana.*` on first access. Subsequent `26.1.2` iterations (`6af7583`–`f62237a`) add:
+
+- **Creature motion & settlement variety (`6af7583`)**: adds four Fantasy Earth particle types (`aether_mote`, `crystal_shard`, `rune_spark`, `ward_rune`) wired across spells, stations, seats, anchors and creatures; gives every creature model custom idle, gait and attack beats; expands generated settlements (~1 per 500–900 chunks) with dwarven delvings and elven groves, randomized layouts/palettes/rotations, and a reusable catalyst ritual core.
+- **Local aether-field spell charging (`101e362`)**: spell graphs declare `local_aether` with real AEU costs, reject casts when the chunk field is too thin and disturb the chunk on cast; adds emissive aura layers to all custom creatures and expands settlements with paths, fences, scattered growth and a ruined variant.
+- **6-entity skeletal & shaded texture overhaul (`84ac93e`–`f62237a`)**: fixes rune wolf body-attached armor, exports Blockbench 5.0 `.bbmodel` sources under `art/blockbench/entities/`, and rebuilds all 6 entity models (`AetherFoxModel`, `ManaWispModel`, `RuneWolfModel`, `CrystalSpiderModel`, `RunicWatcherModel`, `ArcaneSettlerModel`) with angled sub-bones and directional shaded textures plus updated spawn egg icons.
 
 Design documents:
 
@@ -109,7 +113,9 @@ Texture note: facilities use per-face exterior textures, distinct active states 
 
 Mana note: this mod shares the versioned `earth_arcana.*` player-data contract with `xuanhuan_earth`. Magic-route and qi-route bonuses add together when both mods are present, but each mod writes only its own contribution and remains fully playable alone. Aether-field recovery is intentionally separate from xuanhuan qi: magic reads crystal, ritual, rune and alchemy structures, while xuanhuan reads veins, springs, spirit soil and arrays.
 
-Build artifact: `fantasy-earth-neoforge-26.1.2-0.7.0-alpha.10.jar`.
+Build artifact: `neoforge-26.2/build/libs/fantasy-earth-neoforge-26.1.2-0.7.0-alpha.10.jar`
+- Size: `976,641 B`
+- SHA-256: `7514BB46C26162CE13EAC4B9ABC1BC2F848034209E16C2B4485DCFF6C2D163E6`
 
 Build:
 
