@@ -97,7 +97,7 @@ public final class ArcanaBalanceRegression {
     }
 
     private static void verifySpellGraphs() {
-        require(SpellCatalog.graphs().size() == 3, "magic graph catalog changed without a test update");
+        require(SpellCatalog.graphs().size() == 6, "magic graph catalog changed without a test update");
         SpellGraph ward = SpellCatalog.ward();
         SpellGraph.Validation validation = ward.validate();
         require(validation.valid(), "arcane ward graph invalid: " + validation.errorCode() + " " + validation.message());

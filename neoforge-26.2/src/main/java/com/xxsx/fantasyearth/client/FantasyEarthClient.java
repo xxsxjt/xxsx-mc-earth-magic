@@ -7,6 +7,7 @@ import com.xxsx.fantasyearth.client.model.ManaWispModel;
 import com.xxsx.fantasyearth.client.model.RuneWolfModel;
 import com.xxsx.fantasyearth.client.model.RunicWatcherModel;
 import com.xxsx.fantasyearth.client.renderer.ArcaneSettlerRenderer;
+import com.xxsx.fantasyearth.client.renderer.ContractGolemRenderer;
 import com.xxsx.fantasyearth.client.renderer.CrystalSpiderRenderer;
 import com.xxsx.fantasyearth.client.renderer.FamiliarRenderer;
 import com.xxsx.fantasyearth.client.renderer.RunicWatcherRenderer;
@@ -83,6 +84,7 @@ public final class FantasyEarthClient {
                         FantasyEarth.id("textures/entity/mana_wisp.png"), 0.18F, 0.82F));
         event.registerEntityRenderer(FantasyEarth.CRYSTAL_ARMORED_SPIDER.get(), CrystalSpiderRenderer::new);
         event.registerEntityRenderer(FantasyEarth.ARCANE_SETTLER.get(), ArcaneSettlerRenderer::new);
+        event.registerEntityRenderer(FantasyEarth.CONTRACT_GOLEM.get(), ContractGolemRenderer::new);
     }
 
     private static void registerLayerDefinitions(EntityRenderersEvent.RegisterLayerDefinitions event) {

@@ -1,0 +1,16 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "pattern": [
+    "S S",
+    " R "
+  ],
+  "key": {
+    "S": "minecraft:stone_bricks",
+    "R": "fantasy_earth:rune_ink"
+  },
+  "result": {
+    "id": "fantasy_earth:offering_bowl",
+    "count": 1
+  }
+}

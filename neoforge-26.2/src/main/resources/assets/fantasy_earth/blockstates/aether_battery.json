@@ -1,0 +1,25 @@
+{
+  "variants": {
+    "charge_step=0": {
+      "model": "fantasy_earth:block/aether_battery"
+    },
+    "charge_step=1": {
+      "model": "fantasy_earth:block/aether_battery"
+    },
+    "charge_step=2": {
+      "model": "fantasy_earth:block/aether_battery"
+    },
+    "charge_step=3": {
+      "model": "fantasy_earth:block/aether_battery"
+    },
+    "charge_step=4": {
+      "model": "fantasy_earth:block/aether_battery"
+    },
+    "charge_step=5": {
+      "model": "fantasy_earth:block/aether_battery"
+    },
+    "charge_step=6": {
+      "model": "fantasy_earth:block/aether_battery"
+    }
+  }
+}

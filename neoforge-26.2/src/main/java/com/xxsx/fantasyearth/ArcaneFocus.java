@@ -1,11 +1,15 @@
 package com.xxsx.fantasyearth;
 
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
 
 public enum ArcaneFocus {
     ATTUNEMENT(0, "attunement"),
     BODY_WARD(1, "body_ward"),
-    BREATH_WARD(2, "breath_ward");
+    BREATH_WARD(2, "breath_ward"),
+    EVOCATION(3, "evocation"),
+    ILLUSION(4, "illusion"),
+    TRANSLOCATION(5, "translocation");
 
     private final int id;
     private final String path;
@@ -32,10 +36,20 @@ public enum ArcaneFocus {
     }
 
     public boolean isUnlocked(Player player) {
+        if (player instanceof ServerPlayer serverPlayer) {
+            return FantasyLoreIntegration.knowsFocus(serverPlayer, this);
+        }
+        return isUnlockedByLegacyTag(player);
+    }
+
+    public boolean isUnlockedByLegacyTag(Player player) {
         return switch (this) {
             case ATTUNEMENT -> ArcanaPower.getMagicResearchLevel(player) > 0;
             case BODY_WARD -> ArcanaPower.getArcaneBodyWardLevel(player) > 0;
             case BREATH_WARD -> ArcanaPower.getArcaneBreathWardLevel(player) > 0;
+            case EVOCATION -> ArcanaPower.getEvocationLevel(player) > 0;
+            case ILLUSION -> ArcanaPower.getIllusionLevel(player) > 0;
+            case TRANSLOCATION -> ArcanaPower.getTranslocationLevel(player) > 0;
         };
     }
 

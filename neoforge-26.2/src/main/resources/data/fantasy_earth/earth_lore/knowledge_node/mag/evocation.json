@@ -1,0 +1,40 @@
+{
+  "discipline": "earth_lore:mag",
+  "tier": 4,
+  "gate": "hard",
+  "requires": [
+    {
+      "all": "fantasy_earth:mag/arcane_research_3"
+    },
+    {
+      "all": "fantasy_earth:mag/rune_combination"
+    }
+  ],
+  "item_requires": [],
+  "unlocks": [
+    {
+      "ability": "fantasy_earth:spell_evocation"
+    }
+  ],
+  "literature": [
+    "notes",
+    "arcane_notes"
+  ],
+  "teachers": [],
+  "research": {
+    "items": [
+      {
+        "ingredient": "fantasy_earth:rune_power",
+        "count": 2
+      },
+      {
+        "ingredient": "minecraft:blaze_powder",
+        "count": 2
+      }
+    ],
+    "ticks": 4800
+  },
+  "fail_codes": [],
+  "name_key": "lore.fantasy_earth.mag.evocation",
+  "desc_key": "lore.fantasy_earth.mag.evocation.desc"
+}

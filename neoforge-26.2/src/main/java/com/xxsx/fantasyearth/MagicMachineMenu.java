@@ -169,6 +169,10 @@ public class MagicMachineMenu extends AbstractContainerMenu {
         return MagicMachineBlockEntity.ProcessState.byId(data.get(7));
     }
 
+    public int temperature() {
+        return data.getCount() > 8 ? data.get(8) : 300;
+    }
+
     public static MachineLayout layoutFor(MagicMachineBlock.Kind kind) {
         return switch (kind) {
             case ALCHEMY_TABLE -> new MachineLayout(34, 36, 58, 36, 118, 25, 140, 25, 129, 47);

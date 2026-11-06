@@ -1,0 +1,36 @@
+{
+  "discipline": "earth_lore:mag",
+  "tier": 2,
+  "gate": "soft",
+  "requires": [
+    {
+      "all": "fantasy_earth:mag/aether_crystals"
+    }
+  ],
+  "item_requires": [],
+  "unlocks": [
+    {
+      "item": "fantasy_earth:familiar_contract"
+    }
+  ],
+  "literature": [
+    "notes"
+  ],
+  "teachers": [],
+  "research": {
+    "items": [
+      {
+        "ingredient": "fantasy_earth:aether_shard",
+        "count": 4
+      },
+      {
+        "ingredient": "minecraft:bone",
+        "count": 4
+      }
+    ],
+    "ticks": 1200
+  },
+  "fail_codes": [],
+  "name_key": "lore.fantasy_earth.mag.familiars",
+  "desc_key": "lore.fantasy_earth.mag.familiars.desc"
+}

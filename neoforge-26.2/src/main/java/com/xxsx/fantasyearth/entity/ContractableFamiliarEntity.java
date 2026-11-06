@@ -42,6 +42,7 @@ import net.minecraft.world.entity.ai.goal.target.OwnerHurtTargetGoal;
 import net.minecraft.world.entity.animal.Animal;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.storage.ValueInput;
@@ -50,6 +51,8 @@ import org.jspecify.annotations.Nullable;
 
 public abstract class ContractableFamiliarEntity extends TamableAnimal {
     public static final int MAX_STABILITY = 3;
+    public static final int REQUIRED_AFFINITY = 30;
+    public static final int AFFINITY_PER_FEED = 10;
     private static final EntityDataAccessor<Integer> DATA_STABILITY = SynchedEntityData.defineId(
             ContractableFamiliarEntity.class, EntityDataSerializers.INT);
     private static final EntityDataAccessor<Byte> DATA_MODE = SynchedEntityData.defineId(
@@ -123,7 +126,7 @@ public abstract class ContractableFamiliarEntity extends TamableAnimal {
     public InteractionResult mobInteract(Player player, InteractionHand hand) {
         ItemStack stack = player.getItemInHand(hand);
         if (!isTame()) {
-            if (stack.is(FantasyEarth.ARCANE_DUST.get())) {
+            if (isAffinityFood(stack)) {
                 if (!level().isClientSide()) {
                     stack.consume(1, player);
                     setStability(getStability() + 1);
@@ -132,16 +135,16 @@ public abstract class ContractableFamiliarEntity extends TamableAnimal {
                                 getX(), getY() + getBbHeight() * 0.7D, getZ(), 8, 0.32D);
                     }
                     player.sendSystemMessage(Component.translatable(
-                            "message.fantasy_earth.familiar.stability", getStability(), MAX_STABILITY));
+                            "message.fantasy_earth.familiar.stability", getAffinity(), REQUIRED_AFFINITY));
                 }
                 return level().isClientSide() ? InteractionResult.SUCCESS : InteractionResult.SUCCESS_SERVER;
             }
             if (stack.is(FantasyEarth.FAMILIAR_CONTRACT.get())) {
                 if (!level().isClientSide()) {
-                    if (getStability() < MAX_STABILITY) {
+                    if (!canContractWithAffinity(getAffinity())) {
                         player.sendSystemMessage(Component.translatable(
                                 "message.fantasy_earth.familiar.stability_required",
-                                getStability(), MAX_STABILITY));
+                                getAffinity(), REQUIRED_AFFINITY));
                     } else if (!net.neoforged.neoforge.event.EventHooks.onAnimalTame(this, player)) {
                         stack.consume(1, player);
                         tame(player);
@@ -182,7 +185,29 @@ public abstract class ContractableFamiliarEntity extends TamableAnimal {
 
     @Override
     public boolean isFood(ItemStack stack) {
-        return stack.is(FantasyEarth.ARCANE_DUST.get());
+        return isAffinityFood(stack);
+    }
+
+    public boolean isAffinityFood(ItemStack stack) {
+        if (stack.is(FantasyEarth.ARCANE_DUST.get())) {
+            return true;
+        }
+        if (kind == Kind.AETHER_FOX && stack.is(FantasyEarth.AETHER_SHARD.get())) {
+            return true;
+        }
+        return kind == Kind.RUNE_WOLF && stack.is(Items.BONE);
+    }
+
+    public int getAffinity() {
+        return Math.min(REQUIRED_AFFINITY, getStability() * AFFINITY_PER_FEED);
+    }
+
+    public void setAffinity(int affinity) {
+        setStability(Math.max(0, Math.min(MAX_STABILITY, affinity / AFFINITY_PER_FEED)));
+    }
+
+    public static boolean canContractWithAffinity(int affinity) {
+        return com.xxsx.fantasyearth.ArcanaBalance.canContractWithAffinity(affinity);
     }
 
     @Override

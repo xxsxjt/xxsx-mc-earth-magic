@@ -1,0 +1,37 @@
+{
+  "discipline": "earth_lore:mag",
+  "tier": 2,
+  "gate": "hard",
+  "requires": [
+    {
+      "all": "fantasy_earth:mag/arcane_initiation"
+    }
+  ],
+  "item_requires": [],
+  "unlocks": [
+    {
+      "ability": "fantasy_earth:spell_ward"
+    }
+  ],
+  "literature": [
+    "notes",
+    "arcane_notes"
+  ],
+  "teachers": [],
+  "research": {
+    "items": [
+      {
+        "ingredient": "fantasy_earth:aether_shard",
+        "count": 2
+      },
+      {
+        "ingredient": "minecraft:iron_ingot",
+        "count": 4
+      }
+    ],
+    "ticks": 1200
+  },
+  "fail_codes": [],
+  "name_key": "lore.fantasy_earth.mag.body_ward",
+  "desc_key": "lore.fantasy_earth.mag.body_ward.desc"
+}

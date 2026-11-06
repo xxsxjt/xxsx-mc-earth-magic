@@ -1,6 +1,6 @@
 package com.xxsx.fantasyearth;
 
-final class ArcanaBalance {
+public final class ArcanaBalance {
     private ArcanaBalance() {
     }
 
@@ -25,6 +25,15 @@ final class ArcanaBalance {
             return 0;
         }
         return 60 + level * 35 + level * level * 8;
+    }
+
+    public static int computeAlchemyTemperature(int fieldVal) {
+        int clamped = Math.max(0, Math.min(100, fieldVal));
+        return Math.max(300, Math.min(1300, 300 + 10 * clamped));
+    }
+
+    public static boolean canContractWithAffinity(int affinity) {
+        return affinity >= 30;
     }
 
     static double clamp(double value, double min, double max) {

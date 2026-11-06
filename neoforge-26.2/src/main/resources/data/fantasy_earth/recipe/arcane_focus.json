@@ -1,0 +1,18 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "pattern": [
+    "  L",
+    " P ",
+    "C P"
+  ],
+  "key": {
+    "L": "fantasy_earth:aether_lens",
+    "P": "fantasy_earth:rune_copper_plate",
+    "C": "fantasy_earth:aether_crystal"
+  },
+  "result": {
+    "id": "fantasy_earth:arcane_focus",
+    "count": 1
+  }
+}

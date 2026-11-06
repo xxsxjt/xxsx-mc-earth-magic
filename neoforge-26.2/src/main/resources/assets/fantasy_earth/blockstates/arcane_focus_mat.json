@@ -1,8 +1,34 @@
 {
   "variants": {
-    "facing=north": { "model": "fantasy_earth:block/arcane_focus_mat" },
-    "facing=east": { "model": "fantasy_earth:block/arcane_focus_mat", "y": 90 },
-    "facing=south": { "model": "fantasy_earth:block/arcane_focus_mat", "y": 180 },
-    "facing=west": { "model": "fantasy_earth:block/arcane_focus_mat", "y": 270 }
+    "facing=north,occupied=false": {
+      "model": "fantasy_earth:block/arcane_focus_mat"
+    },
+    "facing=east,occupied=false": {
+      "model": "fantasy_earth:block/arcane_focus_mat",
+      "y": 90
+    },
+    "facing=south,occupied=false": {
+      "model": "fantasy_earth:block/arcane_focus_mat",
+      "y": 180
+    },
+    "facing=west,occupied=false": {
+      "model": "fantasy_earth:block/arcane_focus_mat",
+      "y": 270
+    },
+    "facing=north,occupied=true": {
+      "model": "fantasy_earth:block/arcane_focus_mat"
+    },
+    "facing=east,occupied=true": {
+      "model": "fantasy_earth:block/arcane_focus_mat",
+      "y": 90
+    },
+    "facing=south,occupied=true": {
+      "model": "fantasy_earth:block/arcane_focus_mat",
+      "y": 180
+    },
+    "facing=west,occupied=true": {
+      "model": "fantasy_earth:block/arcane_focus_mat",
+      "y": 270
+    }
   }
 }

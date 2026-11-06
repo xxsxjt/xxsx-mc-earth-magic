@@ -1,5 +1,6 @@
 package com.xxsx.fantasyearth.entity;
 
+import com.xxsx.earthlore.api.LoreApi;
 import com.xxsx.fantasyearth.FantasyEarth;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.syncher.EntityDataAccessor;
@@ -121,6 +122,7 @@ public final class ArcaneSettlerEntity extends AbstractVillager {
                 add(offers, Items.AMETHYST_SHARD, 8, new ItemStack(FantasyEarth.AETHER_CRYSTAL.get()), 6, 6);
             }
         }
+        offers.addAll(LoreApi.teachingOffers(level, getType()));
     }
 
     private static void add(MerchantOffers offers, net.minecraft.world.level.ItemLike cost, int count,

@@ -25,9 +25,9 @@ public enum ArcaneVisualAction {
 
     public static ArcaneVisualAction forFocus(ArcaneFocus focus) {
         return switch (focus) {
-            case ATTUNEMENT -> AETHER_PULSE;
-            case BODY_WARD -> BODY_WARD;
-            case BREATH_WARD -> BREATH_WARD;
+            case ATTUNEMENT, EVOCATION -> AETHER_PULSE;
+            case BODY_WARD, ILLUSION -> BODY_WARD;
+            case BREATH_WARD, TRANSLOCATION -> BREATH_WARD;
         };
     }
 

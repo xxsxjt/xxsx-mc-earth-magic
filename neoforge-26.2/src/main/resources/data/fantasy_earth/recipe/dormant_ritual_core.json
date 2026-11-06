@@ -1,0 +1,15 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    "fantasy_earth:rune_copper_plate",
+    "fantasy_earth:rune_copper_plate",
+    "fantasy_earth:aether_shard",
+    "fantasy_earth:arcane_dust",
+    "fantasy_earth:arcane_dust"
+  ],
+  "result": {
+    "id": "fantasy_earth:dormant_ritual_core",
+    "count": 1
+  }
+}

@@ -1,0 +1,67 @@
+{
+  "discipline": "earth_lore:mag",
+  "tier": 7,
+  "gate": "cap",
+  "requires": [
+    {
+      "all": "fantasy_earth:mag/body_ward"
+    },
+    {
+      "all": "fantasy_earth:mag/breath_ward"
+    },
+    {
+      "all": "fantasy_earth:mag/jade_runes"
+    },
+    {
+      "all": "fantasy_earth:mag/gem_socketing"
+    },
+    {
+      "all": "fantasy_earth:mag/foci_and_scrolls"
+    },
+    {
+      "all": "fantasy_earth:mag/familiars"
+    },
+    {
+      "all": "fantasy_earth:mag/evocation"
+    },
+    {
+      "all": "fantasy_earth:mag/illusion"
+    },
+    {
+      "all": "fantasy_earth:mag/translocation"
+    },
+    {
+      "all": "fantasy_earth:mag/constructs"
+    }
+  ],
+  "item_requires": [],
+  "unlocks": [
+    {
+      "capstone": "earth_lore:mag"
+    }
+  ],
+  "literature": [
+    "notes"
+  ],
+  "teachers": [],
+  "research": {
+    "items": [
+      {
+        "ingredient": "fantasy_earth:aether_battery",
+        "count": 1
+      },
+      {
+        "ingredient": "fantasy_earth:arcane_focus",
+        "count": 1
+      },
+      {
+        "ingredient": "fantasy_earth:spell_scroll",
+        "count": 4
+      }
+    ],
+    "ticks": 9600
+  },
+  "fail_codes": [],
+  "name_key": "lore.fantasy_earth.mag.magic_mastery",
+  "desc_key": "lore.fantasy_earth.mag.magic_mastery.desc"
+}

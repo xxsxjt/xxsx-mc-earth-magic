@@ -1,13 +1,19 @@
 package com.xxsx.fantasyearth;
 
+import com.xxsx.fantasyearth.entity.ContractGolemEntity;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.food.FoodData;
+import net.minecraft.world.level.entity.EntityTypeTest;
+import net.minecraft.world.phys.AABB;
 import net.neoforged.fml.ModList;
 import net.neoforged.neoforge.event.entity.living.LivingBreatheEvent;
 import net.neoforged.neoforge.event.entity.living.LivingFallEvent;
 import net.neoforged.neoforge.event.entity.living.LivingIncomingDamageEvent;
 import net.neoforged.neoforge.event.tick.PlayerTickEvent;
+
+import java.util.List;
 
 /** Applies progression benefits when the standalone magic module is active. */
 public final class ArcanaPassiveEffects {
@@ -36,8 +42,22 @@ public final class ArcanaPassiveEffects {
     }
 
     public static void onIncomingDamage(LivingIncomingDamageEvent event) {
-        if (!ownsSharedEffects() || !(event.getEntity() instanceof ServerPlayer player)
-                || (event.getSource().getEntity() == null && event.getSource().getDirectEntity() == null)) {
+        if (!(event.getEntity() instanceof ServerPlayer player) || event.getAmount() <= 0.0F) {
+            return;
+        }
+        if (player.level() instanceof ServerLevel serverLevel) {
+            AABB box = player.getBoundingBox().inflate(16.0D);
+            List<ContractGolemEntity> golems = serverLevel.getEntities(
+                    EntityTypeTest.forClass(ContractGolemEntity.class),
+                    box,
+                    g -> g.isAlive() && player.getUUID().equals(g.getOwnerUuid()));
+            if (!golems.isEmpty()) {
+                float redirected = event.getAmount() * 0.20F;
+                event.setAmount(event.getAmount() - redirected);
+                golems.getFirst().hurtServer(serverLevel, serverLevel.damageSources().magic(), redirected);
+            }
+        }
+        if (!ownsSharedEffects() || (event.getSource().getEntity() == null && event.getSource().getDirectEntity() == null)) {
             return;
         }
         double reduction = ArcanaPower.getCombatDamageReduction(player);

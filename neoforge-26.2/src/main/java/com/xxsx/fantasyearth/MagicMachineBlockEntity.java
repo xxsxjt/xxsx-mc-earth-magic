@@ -1,10 +1,15 @@
 package com.xxsx.fantasyearth;
 
+import com.xxsx.earthlore.api.GateResult;
+import com.xxsx.earthlore.api.Grade;
+import com.xxsx.earthlore.api.LoreApi;
+import com.xxsx.earthlore.api.LoreMachines;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.NonNullList;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.ContainerHelper;
@@ -19,8 +24,10 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.storage.ValueInput;
 import net.minecraft.world.level.storage.ValueOutput;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 public class MagicMachineBlockEntity extends BaseContainerBlockEntity {
     public static final int SLOT_PRIMARY = 0;
@@ -29,8 +36,10 @@ public class MagicMachineBlockEntity extends BaseContainerBlockEntity {
     public static final int SLOT_OUTPUT_START = 2;
     public static final int OUTPUT_SLOT_COUNT = 3;
     public static final int SLOT_COUNT = SLOT_OUTPUT_START + OUTPUT_SLOT_COUNT;
-    public static final int DATA_COUNT = 8;
+    public static final int DATA_COUNT = 9;
     private static final int INVENTORY_VERSION = 2;
+    public static final int ALCHEMY_HEAT_PER_FIELD = 10;
+    public static final double EOU_FALLBACK_AEU = 0.1D;
 
     private final ContainerData data = new ContainerData() {
         @Override
@@ -44,6 +53,7 @@ public class MagicMachineBlockEntity extends BaseContainerBlockEntity {
                 case 5 -> (int) Math.round(disturbance);
                 case 6 -> structureTier;
                 case 7 -> processState.id;
+                case 8 -> temperature;
                 default -> 0;
             };
         }
@@ -58,6 +68,7 @@ public class MagicMachineBlockEntity extends BaseContainerBlockEntity {
                 case 5 -> disturbance = Math.max(0, value);
                 case 6 -> structureTier = Math.max(0, value);
                 case 7 -> processState = ProcessState.byId(value);
+                case 8 -> temperature = Math.max(300, Math.min(1300, value));
                 default -> {
                 }
             }
@@ -78,9 +89,15 @@ public class MagicMachineBlockEntity extends BaseContainerBlockEntity {
     private int structureTier;
     private ProcessState processState = ProcessState.MISSING_INPUT;
     private String currentRecipeId = "";
+    private int temperature = 300;
+    private int energyStored = 0;
 
     public MagicMachineBlockEntity(BlockPos pos, BlockState state) {
         super(FantasyEarth.MAGIC_MACHINE_BLOCK_ENTITY.get(), pos, state);
+    }
+
+    public static int computeAlchemyTemperature(int fieldVal) {
+        return ArcanaBalance.computeAlchemyTemperature(fieldVal);
     }
 
     public static void serverTick(Level level, BlockPos pos, BlockState state, MagicMachineBlockEntity machine) {
@@ -90,6 +107,10 @@ public class MagicMachineBlockEntity extends BaseContainerBlockEntity {
         machine.fieldValue = reading.value();
         machine.disturbance = reading.disturbance();
         machine.structureTier = MagicStructures.tierFor(machine.kind(), level, pos);
+        if (machine.kind() == MagicMachineBlock.Kind.ALCHEMY_TABLE
+                && (machine.temperature == 300 || level.getGameTime() % 20L == 0L)) {
+            machine.temperature = computeAlchemyTemperature(machine.fieldValue);
+        }
 
         if (!machine.redstoneMode.allows(level.hasNeighborSignal(pos))) {
             machine.processState = ProcessState.REDSTONE_PAUSED;
@@ -120,14 +141,57 @@ public class MagicMachineBlockEntity extends BaseContainerBlockEntity {
             machine.currentRecipeId = recipe.id();
             changed = true;
         }
+        if (!recipe.outputs().isEmpty()) {
+            GateResult gate = FantasyLoreIntegration.checkMachineProduct(
+                    machine, recipe.outputs().getFirst().item().get().asItem());
+            if (gate.locked()) {
+                machine.processState = ProcessState.LORE_LOCKED;
+                LoreMachines.setFault(machine, "lore_locked", gate.missing());
+                machine.finishTick(level, pos, state, changed);
+                return;
+            }
+        }
+        if ("construct_awakening".equals(recipe.id()) && machine.structureTier <= 0) {
+            machine.processState = ProcessState.FIELD_LOW;
+            LoreMachines.setFault(machine, "ritual_not_formed", List.of());
+            machine.finishTick(level, pos, state, changed);
+            return;
+        }
+        if (machine.kind() == MagicMachineBlock.Kind.ALCHEMY_TABLE && recipe.requiredTempK() > 0) {
+            machine.temperature = computeAlchemyTemperature(machine.fieldValue);
+            if (machine.temperature < recipe.requiredTempK()) {
+                machine.processState = ProcessState.TOO_COLD;
+                LoreMachines.setFault(machine, "too_cold", List.of());
+                machine.finishTick(level, pos, state, changed);
+                return;
+            }
+        }
+        if (recipe.eouPerTick() > 0) {
+            if (machine.energyStored >= recipe.eouPerTick()) {
+                machine.energyStored -= recipe.eouPerTick();
+            } else {
+                double aeuNeeded = recipe.eouPerTick() * EOU_FALLBACK_AEU;
+                double extractable = AetherLedger.extractableField(reading.value(), reading.disturbance());
+                if (extractable + 0.0001D < aeuNeeded) {
+                    machine.processState = ProcessState.AETHER_LOW;
+                    LoreMachines.setFault(machine, "aether_low", List.of());
+                    machine.finishTick(level, pos, state, changed);
+                    return;
+                }
+                AetherChunkField.disturb(level, pos, aeuNeeded);
+            }
+        }
+        LoreMachines.clearFault(machine);
         int requiredField = machine.effectiveMinField(recipe);
         if (reading.value() < requiredField) {
             machine.processState = ProcessState.FIELD_LOW;
+            LoreMachines.setFault(machine, "aether_low", List.of());
             machine.finishTick(level, pos, state, changed);
             return;
         }
         if (!machine.canFitOutputs(recipe.outputStacks())) {
             machine.processState = ProcessState.OUTPUT_FULL;
+            LoreMachines.setFault(machine, "output_blocked", List.of());
             machine.finishTick(level, pos, state, changed);
             return;
         }
@@ -141,12 +205,53 @@ public class MagicMachineBlockEntity extends BaseContainerBlockEntity {
                 machine.consumeInput(SLOT_PRIMARY, recipe.primary().count());
             }
             machine.consumeInput(SLOT_REAGENT, recipe.reagent().count());
-            machine.insertOutputs(recipe.outputStacks());
+            List<ItemStack> stamped = machine.stampOutputs(level, pos, reading, recipe);
+            machine.insertOutputs(stamped);
+            ServerPlayer onlineOwner = machine.findOnlineOwner(level);
+            if (onlineOwner != null) {
+                for (ItemStack outStack : stamped) {
+                    LoreApi.recordMade(onlineOwner, outStack.getItem(), outStack.getCount());
+                }
+            }
             AetherChunkField.disturb(level, pos, Math.max(1.0D, requiredField / (machine.structureTier > 0 ? 10.0D : 8.0D)));
             machine.emitCompletionEffects(level, pos);
             machine.progress = 0;
         }
         machine.finishTick(level, pos, state, changed);
+    }
+
+    private List<ItemStack> stampOutputs(Level level, BlockPos pos, AetherChunkField.Reading reading,
+                                         MagicMachineBlock.Recipe recipe) {
+        List<ItemStack> stamped = new ArrayList<>();
+        for (ItemStack raw : recipe.outputStacks()) {
+            ItemStack copy = raw.copy();
+            if (copy.is(FantasyEarth.AETHER_CRYSTAL.get())) {
+                double charge = "aether_infusion".equals(recipe.id()) ? AetherCrystalComponent.CAPACITY_AEU : 0.0D;
+                String sig = AetherCrystalComponent.computeSignature(level, pos, reading.mainSourceKey());
+                copy.set(FantasyEarth.AETHER_CRYSTAL_COMPONENT.get(),
+                        new AetherCrystalComponent(charge, AetherCrystalComponent.CAPACITY_AEU, sig, AetherCrystalComponent.CURRENT_SCHEMA));
+            } else if (copy.is(FantasyEarth.CONSTRUCT_CORE.get())) {
+                copy.set(FantasyEarth.CONSTRUCT_CORE_COMPONENT.get(), ConstructCoreComponent.FULL);
+            } else if (copy.is(FantasyEarth.INSCRIBED_RITUAL_CORE.get())) {
+                copy.set(FantasyEarth.RITUAL_CORE_COMPONENT.get(), RitualCoreComponent.DEFAULT);
+            } else if (copy.getItem() instanceof RuneStoneItem runeItem) {
+                Grade capped = FantasyLoreIntegration.capMachineGrade(this, copy.getItem(), Grade.FINE);
+                copy.set(FantasyEarth.RUNE_ITEM_COMPONENT.get(), new RuneItemComponent(runeItem.runeKind(), 1, capped.id()));
+            }
+            stamped.add(copy);
+        }
+        return stamped;
+    }
+
+    private ServerPlayer findOnlineOwner(Level level) {
+        if (!(level instanceof ServerLevel serverLevel)) {
+            return null;
+        }
+        Optional<UUID> ownerId = LoreMachines.owner(this);
+        if (ownerId.isEmpty()) {
+            return null;
+        }
+        return serverLevel.getServer().getPlayerList().getPlayer(ownerId.get());
     }
 
     public MagicMachineBlock.Kind kind() {
@@ -214,6 +319,7 @@ public class MagicMachineBlockEntity extends BaseContainerBlockEntity {
         }
         this.progress = input.getIntOr("Progress", 0);
         this.redstoneMode = RedstoneMode.byId(input.getIntOr("RedstoneMode", 0));
+        this.energyStored = input.getIntOr("EnergyStored", 0);
     }
 
     @Override
@@ -222,6 +328,7 @@ public class MagicMachineBlockEntity extends BaseContainerBlockEntity {
         ContainerHelper.saveAllItems(output, this.items);
         output.putInt("Progress", progress);
         output.putInt("RedstoneMode", redstoneMode.id);
+        output.putInt("EnergyStored", energyStored);
         output.putInt("InventoryVersion", INVENTORY_VERSION);
     }
 
@@ -348,7 +455,10 @@ public class MagicMachineBlockEntity extends BaseContainerBlockEntity {
         FIELD_LOW(2),
         OUTPUT_FULL(3),
         REDSTONE_PAUSED(4),
-        RUNNING(5);
+        RUNNING(5),
+        TOO_COLD(6),
+        AETHER_LOW(7),
+        LORE_LOCKED(8);
 
         private final int id;
 

@@ -1,0 +1,36 @@
+{
+  "discipline": "earth_lore:mag",
+  "tier": 2,
+  "gate": "theory",
+  "requires": [
+    {
+      "all": "fantasy_earth:mag/aether_crystals"
+    }
+  ],
+  "item_requires": [],
+  "unlocks": [],
+  "literature": [
+    "notes"
+  ],
+  "teachers": [],
+  "research": {
+    "items": [
+      {
+        "ingredient": "fantasy_earth:aether_shard",
+        "count": 8
+      },
+      {
+        "ingredient": "minecraft:amethyst_shard",
+        "count": 8
+      },
+      {
+        "ingredient": "minecraft:paper",
+        "count": 8
+      }
+    ],
+    "ticks": 4800
+  },
+  "fail_codes": [],
+  "name_key": "lore.fantasy_earth.mag.aether_sensing",
+  "desc_key": "lore.fantasy_earth.mag.aether_sensing.desc"
+}

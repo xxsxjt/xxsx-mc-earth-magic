@@ -3,6 +3,8 @@
   "values": [
     "fantasy_earth:rune_carving_table",
     "fantasy_earth:ritual_pedestal",
-    "fantasy_earth:aether_crystal_cluster"
+    "fantasy_earth:aether_crystal_cluster",
+    "fantasy_earth:aether_battery",
+    "fantasy_earth:rune_stone"
   ]
 }

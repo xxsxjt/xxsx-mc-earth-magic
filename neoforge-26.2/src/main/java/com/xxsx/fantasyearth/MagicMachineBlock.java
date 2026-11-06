@@ -164,9 +164,18 @@ public class MagicMachineBlock extends Block implements EntityBlock {
         recipes.add(r("mana_salt_crystallization", Kind.ALCHEMY_TABLE,
                 item(FantasyEarth.ARCANE_DUST::get, 2), item(() -> Items.GLOWSTONE_DUST, 1),
                 25, 90, out(FantasyEarth.CRYSTALLIZED_MANA_SALT::get, 2)));
+        recipes.add(r("mana_salt_from_shard", Kind.ALCHEMY_TABLE,
+                item(FantasyEarth.ARCANE_DUST::get, 2), item(FantasyEarth.AETHER_SHARD::get, 1),
+                20, 90, 600, 0, out(FantasyEarth.CRYSTALLIZED_MANA_SALT::get, 1)));
         recipes.add(r("aether_glass_fusion", Kind.ALCHEMY_TABLE,
-                item(FantasyEarth.AETHER_CRYSTAL::get, 1), item(() -> Items.GLASS, 1),
-                42, 130, out(FantasyEarth.AETHER_GLASS::get, 2)));
+                item(() -> Items.GLASS, 2), item(FantasyEarth.ARCANE_DUST::get, 1),
+                30, 130, 700, 0, out(FantasyEarth.AETHER_GLASS::get, 2)));
+        recipes.add(r("aether_crystal_synthesis", Kind.ALCHEMY_TABLE,
+                item(FantasyEarth.AETHER_SHARD::get, 2), item(FantasyEarth.ARCANE_DUST::get, 1),
+                40, 200, 800, 0, out(FantasyEarth.AETHER_CRYSTAL::get, 1)));
+        recipes.add(r("aether_battery_synthesis", Kind.ALCHEMY_TABLE,
+                item(FantasyEarth.AETHER_CRYSTAL::get, 2), item(FantasyEarth.RUNE_COPPER_PLATE::get, 2),
+                45, 300, 700, 14, out(FantasyEarth.AETHER_BATTERY_ITEM::get, 1)));
         recipes.add(r("starter_arcane_dust", Kind.ALCHEMY_TABLE,
                 item(() -> Items.GLOWSTONE_DUST, 1), item(() -> Items.AMETHYST_SHARD, 1),
                 20, 80, out(FantasyEarth.ARCANE_DUST::get, 2)));
@@ -178,16 +187,39 @@ public class MagicMachineBlock extends Block implements EntityBlock {
         recipes.add(r("rune_copper_plate", Kind.RUNE_CARVING_TABLE,
                 tagged(EarthMaterialTags.MANA_CONDUCTORS, () -> Items.COPPER_INGOT, 1),
                 item(FantasyEarth.RUNE_INK::get, 1), 36, 120,
+                0, 6,
                 out(FantasyEarth.RUNE_COPPER_PLATE::get, 2)));
+        recipes.add(r("rune_blank", Kind.RUNE_CARVING_TABLE,
+                item(FantasyEarth.RUNE_STONE_ITEM::get, 1), item(FantasyEarth.RUNE_INK::get, 1),
+                20, 40, 0, 6, out(FantasyEarth.RUNE_BLANK::get, 2)));
+        recipes.add(r("rune_power", Kind.RUNE_CARVING_TABLE,
+                item(FantasyEarth.RUNE_BLANK::get, 1), item(() -> Items.GLOWSTONE_DUST, 1),
+                25, 80, 0, 6, out(FantasyEarth.RUNE_POWER::get, 1)));
+        recipes.add(r("rune_guard", Kind.RUNE_CARVING_TABLE,
+                item(FantasyEarth.RUNE_BLANK::get, 1), item(() -> Items.IRON_INGOT, 1),
+                25, 80, 0, 6, out(FantasyEarth.RUNE_GUARD::get, 1)));
+        recipes.add(r("rune_flow", Kind.RUNE_CARVING_TABLE,
+                item(FantasyEarth.RUNE_BLANK::get, 1), item(() -> Items.COPPER_INGOT, 1),
+                25, 80, 0, 6, out(FantasyEarth.RUNE_FLOW::get, 1)));
+        recipes.add(r("rune_bind", Kind.RUNE_CARVING_TABLE,
+                item(FantasyEarth.RUNE_BLANK::get, 1), item(() -> Items.STRING, 2),
+                25, 80, 0, 6, out(FantasyEarth.RUNE_BIND::get, 1)));
+        recipes.add(r("rune_jade", Kind.RUNE_CARVING_TABLE,
+                tagged(EarthMaterialTags.GEMS_JADEITE, () -> Items.EMERALD, 1),
+                item(FantasyEarth.RUNE_INK::get, 2),
+                35, 120, 0, 6, out(FantasyEarth.RUNE_JADE::get, 1)));
         recipes.add(r("body_ward_notes", Kind.RUNE_CARVING_TABLE,
                 item(FantasyEarth.RUNE_COPPER_PLATE::get, 1), item(FantasyEarth.RUNE_INK::get, 1),
-                38, 160, out(FantasyEarth.ARCANE_BODY_WARD_NOTES::get, 1)));
+                38, 160, 0, 6, out(FantasyEarth.ARCANE_BODY_WARD_NOTES::get, 1)));
         recipes.add(r("breath_ward_notes", Kind.RUNE_CARVING_TABLE,
                 item(FantasyEarth.RUNE_COPPER_PLATE::get, 1), item(FantasyEarth.AETHER_GLASS::get, 1),
-                45, 180, out(FantasyEarth.ARCANE_BREATH_WARD_NOTES::get, 1)));
-        recipes.add(r("inscribed_ritual_core", Kind.RUNE_CARVING_TABLE,
+                45, 180, 0, 6, out(FantasyEarth.ARCANE_BREATH_WARD_NOTES::get, 1)));
+        recipes.add(r("dormant_ritual_core", Kind.RUNE_CARVING_TABLE,
                 item(FantasyEarth.RITUAL_CHALK::get, 1), item(FantasyEarth.RUNE_INK::get, 1),
-                40, 150, out(FantasyEarth.DORMANT_RITUAL_CORE::get, 1)));
+                40, 150, 0, 6, out(FantasyEarth.DORMANT_RITUAL_CORE::get, 1)));
+        recipes.add(r("inscribed_ritual_core", Kind.RUNE_CARVING_TABLE,
+                item(FantasyEarth.DORMANT_RITUAL_CORE::get, 1), item(FantasyEarth.RUNE_POWER::get, 1),
+                42, 240, 0, 6, out(FantasyEarth.INSCRIBED_RITUAL_CORE::get, 1)));
 
         recipes.add(catalyst("core_activation", Kind.RITUAL_PEDESTAL,
                 item(FantasyEarth.DORMANT_RITUAL_CORE::get, 1), item(FantasyEarth.CRYSTALLIZED_MANA_SALT::get, 1),
@@ -196,19 +228,33 @@ public class MagicMachineBlock extends Block implements EntityBlock {
                 tagged(EarthMaterialTags.AETHER_CRYSTAL_SUBSTRATES, () -> Items.AMETHYST_SHARD, 1),
                 item(FantasyEarth.CRYSTALLIZED_MANA_SALT::get, 1), 48, 190,
                 out(FantasyEarth.AETHER_CRYSTAL::get, 2)));
+        recipes.add(r("aether_infusion", Kind.RITUAL_PEDESTAL,
+                item(FantasyEarth.AETHER_CRYSTAL::get, 1), item(FantasyEarth.ARCANE_DUST::get, 4),
+                40, 200, out(FantasyEarth.AETHER_CRYSTAL::get, 1)));
+        recipes.add(r("crystal_growth", Kind.RITUAL_PEDESTAL,
+                item(FantasyEarth.AETHER_SHARD::get, 4), item(FantasyEarth.ARCANE_DUST::get, 2),
+                35, 200, out(FantasyEarth.AETHER_CRYSTAL::get, 2)));
+        recipes.add(r("construct_awakening", Kind.RITUAL_PEDESTAL,
+                item(FantasyEarth.INSCRIBED_RITUAL_CORE::get, 1), item(FantasyEarth.RUNE_GUARD::get, 2),
+                50, 200, out(FantasyEarth.CONSTRUCT_CORE::get, 1)));
         return List.copyOf(recipes);
     }
 
     private static Recipe r(String id, Kind kind, Input primary, Input reagent, int minField,
                             int processTicks, Output... outputs) {
+        return r(id, kind, primary, reagent, minField, processTicks, 0, 0, outputs);
+    }
+
+    private static Recipe r(String id, Kind kind, Input primary, Input reagent, int minField,
+                            int processTicks, int requiredTempK, int eouPerTick, Output... outputs) {
         return new Recipe(id, kind, primary, reagent,
-                "recipe.fantasy_earth.machine." + id, minField, processTicks, List.of(outputs), false);
+                "recipe.fantasy_earth.machine." + id, minField, processTicks, requiredTempK, eouPerTick, List.of(outputs), false);
     }
 
     private static Recipe catalyst(String id, Kind kind, Input primary, Input reagent, int minField,
                                    int processTicks, Output... outputs) {
         return new Recipe(id, kind, primary, reagent,
-                "recipe.fantasy_earth.machine." + id, minField, processTicks, List.of(outputs), true);
+                "recipe.fantasy_earth.machine." + id, minField, processTicks, 0, 0, List.of(outputs), true);
     }
 
     private static Input item(Supplier<? extends ItemLike> item, int count) {
@@ -224,7 +270,8 @@ public class MagicMachineBlock extends Block implements EntityBlock {
     }
 
     public record Recipe(String id, Kind kind, Input primary, Input reagent, String noteKey,
-                         int minField, int processTicks, List<Output> outputs, boolean catalyst) {
+                         int minField, int processTicks, int requiredTempK, int eouPerTick,
+                         List<Output> outputs, boolean catalyst) {
         public boolean matches(ItemStack primaryStack, ItemStack reagentStack) {
             return primary.matchesWithCount(primaryStack) && reagent.matchesWithCount(reagentStack);
         }

@@ -1,0 +1,35 @@
+{
+  "discipline": "earth_lore:mag",
+  "tier": 2,
+  "gate": "theory",
+  "requires": [
+    {
+      "all": "fantasy_earth:mag/arcane_initiation"
+    }
+  ],
+  "item_requires": [],
+  "unlocks": [],
+  "literature": [
+    "notes",
+    "arcane_notes"
+  ],
+  "teachers": [
+    "fantasy_earth:arcane_settler"
+  ],
+  "research": {
+    "items": [
+      {
+        "ingredient": "fantasy_earth:arcane_dust",
+        "count": 4
+      },
+      {
+        "ingredient": "fantasy_earth:aether_shard",
+        "count": 2
+      }
+    ],
+    "ticks": 1200
+  },
+  "fail_codes": [],
+  "name_key": "lore.fantasy_earth.mag.arcane_research_2",
+  "desc_key": "lore.fantasy_earth.mag.arcane_research_2.desc"
+}

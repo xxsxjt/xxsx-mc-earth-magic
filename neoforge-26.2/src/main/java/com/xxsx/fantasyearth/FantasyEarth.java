@@ -1,9 +1,11 @@
 package com.xxsx.fantasyearth;
 
 import com.mojang.logging.LogUtils;
+import com.xxsx.earthlore.registry.LoreContent;
 import com.xxsx.fantasyearth.client.FantasyEarthClient;
 import com.xxsx.fantasyearth.entity.AetherFoxEntity;
 import com.xxsx.fantasyearth.entity.ArcaneSettlerEntity;
+import com.xxsx.fantasyearth.entity.ContractGolemEntity;
 import com.xxsx.fantasyearth.entity.ContractableFamiliarEntity;
 import com.xxsx.fantasyearth.entity.CrystalArmoredSpiderEntity;
 import com.xxsx.fantasyearth.entity.ManaWispEntity;
@@ -13,6 +15,7 @@ import com.xxsx.fantasyearth.settlement.MagicSettlementAnchorBlock;
 import com.xxsx.fantasyearth.settlement.MagicSettlementAnchorBlockEntity;
 import com.xxsx.fantasyearth.settlement.MagicSettlementCatalog;
 import com.xxsx.fantasyearth.settlement.MagicSettlementFeature;
+import net.minecraft.core.component.DataComponentType;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
@@ -65,14 +68,43 @@ public class FantasyEarth {
     public static final DeferredRegister<BlockEntityType<?>> BLOCK_ENTITY_TYPES = DeferredRegister.create(Registries.BLOCK_ENTITY_TYPE, MODID);
     public static final DeferredRegister<MenuType<?>> MENUS = DeferredRegister.create(Registries.MENU, MODID);
     public static final DeferredRegister<Feature<?>> FEATURES = DeferredRegister.create(Registries.FEATURE, MODID);
+    public static final DeferredRegister.DataComponents DATA_COMPONENTS = DeferredRegister.createDataComponents(Registries.DATA_COMPONENT_TYPE, MODID);
     private static final List<ItemLike> TAB_ITEMS = new ArrayList<>();
     private static final List<DeferredBlock<MagicMachineBlock>> MACHINE_BLOCKS = new ArrayList<>();
+
+    public static final DeferredHolder<DataComponentType<?>, DataComponentType<AetherCrystalComponent>> AETHER_CRYSTAL_COMPONENT =
+            DATA_COMPONENTS.registerComponentType("aether_crystal", builder -> builder.persistent(AetherCrystalComponent.CODEC));
+    public static final DeferredHolder<DataComponentType<?>, DataComponentType<RuneItemComponent>> RUNE_ITEM_COMPONENT =
+            DATA_COMPONENTS.registerComponentType("rune_item", builder -> builder.persistent(RuneItemComponent.CODEC));
+    public static final DeferredHolder<DataComponentType<?>, DataComponentType<ArcaneFocusComponent>> ARCANE_FOCUS_COMPONENT =
+            DATA_COMPONENTS.registerComponentType("arcane_focus", builder -> builder.persistent(ArcaneFocusComponent.CODEC));
+    public static final DeferredHolder<DataComponentType<?>, DataComponentType<RitualCoreComponent>> RITUAL_CORE_COMPONENT =
+            DATA_COMPONENTS.registerComponentType("ritual_core", builder -> builder.persistent(RitualCoreComponent.CODEC));
+    public static final DeferredHolder<DataComponentType<?>, DataComponentType<ConstructCoreComponent>> CONSTRUCT_CORE_COMPONENT =
+            DATA_COMPONENTS.registerComponentType("construct_core", builder -> builder.persistent(ConstructCoreComponent.CODEC));
+    public static final DeferredHolder<DataComponentType<?>, DataComponentType<SpellScrollComponent>> SPELL_SCROLL_COMPONENT =
+            DATA_COMPONENTS.registerComponentType("spell_scroll", builder -> builder.persistent(SpellScrollComponent.CODEC));
 
     public static final DeferredBlock<MagicMachineBlock> ALCHEMY_TABLE = machineBlock("alchemy_table", MagicMachineBlock.Kind.ALCHEMY_TABLE, MapColor.WOOD, SoundType.WOOD, 2.5F, "tooltip.fantasy_earth.alchemy_table");
     public static final DeferredBlock<MagicMachineBlock> RUNE_CARVING_TABLE = machineBlock("rune_carving_table", MagicMachineBlock.Kind.RUNE_CARVING_TABLE, MapColor.STONE, SoundType.STONE, 3.0F, "tooltip.fantasy_earth.rune_carving_table");
     public static final DeferredBlock<MagicMachineBlock> RITUAL_PEDESTAL = machineBlock("ritual_pedestal", MagicMachineBlock.Kind.RITUAL_PEDESTAL, MapColor.COLOR_PURPLE, SoundType.STONE, 4.0F, "tooltip.fantasy_earth.ritual_pedestal");
     public static final DeferredBlock<Block> AETHER_CRYSTAL_CLUSTER = simpleBlock("aether_crystal_cluster", MapColor.COLOR_LIGHT_BLUE, SoundType.AMETHYST, 2.0F, "tooltip.fantasy_earth.aether_crystal_cluster");
     public static final DeferredBlock<ArcaneFocusMatBlock> ARCANE_FOCUS_MAT = focusMatBlock("arcane_focus_mat", MapColor.COLOR_PURPLE, SoundType.WOOL, 0.25F, "tooltip.fantasy_earth.arcane_focus_mat");
+    public static final DeferredBlock<AetherBatteryBlock> AETHER_BATTERY = BLOCKS.registerBlock("aether_battery", AetherBatteryBlock::new,
+            () -> BlockBehaviour.Properties.of().mapColor(MapColor.COLOR_LIGHT_BLUE).strength(3.0F, 6.0F).requiresCorrectToolForDrops().sound(SoundType.COPPER));
+    public static final DeferredItem<?> AETHER_BATTERY_ITEM = registerBlockItem("aether_battery", AETHER_BATTERY, "tooltip.fantasy_earth.aether_battery");
+    public static final DeferredBlock<Block> RUNE_STONE = BLOCKS.registerBlock("rune_stone", Block::new,
+            () -> BlockBehaviour.Properties.of().mapColor(MapColor.STONE).strength(3.0F, 6.0F).requiresCorrectToolForDrops().sound(SoundType.STONE));
+    public static final DeferredItem<?> RUNE_STONE_ITEM = registerBlockItem("rune_stone", RUNE_STONE, "tooltip.fantasy_earth.rune_stone");
+    public static final DeferredBlock<RitualCandleBlock> RITUAL_CANDLE = BLOCKS.registerBlock("ritual_candle", RitualCandleBlock::new,
+            () -> BlockBehaviour.Properties.of().mapColor(MapColor.SAND).strength(0.2F, 0.5F).sound(SoundType.CANDLE).noOcclusion().lightLevel(s -> s.getValue(RitualCandleBlock.LIT) ? 12 : 0));
+    public static final DeferredItem<?> RITUAL_CANDLE_ITEM = registerBlockItem("ritual_candle", RITUAL_CANDLE, "tooltip.fantasy_earth.ritual_candle");
+    public static final DeferredBlock<OfferingBowlBlock> OFFERING_BOWL = BLOCKS.registerBlock("offering_bowl", OfferingBowlBlock::new,
+            () -> BlockBehaviour.Properties.of().mapColor(MapColor.STONE).strength(1.5F, 3.0F).sound(SoundType.STONE).noOcclusion());
+    public static final DeferredItem<?> OFFERING_BOWL_ITEM = registerBlockItem("offering_bowl", OFFERING_BOWL, "tooltip.fantasy_earth.offering_bowl");
+    public static final DeferredBlock<RitualCircleMarkerBlock> RITUAL_CIRCLE_MARKER = BLOCKS.registerBlock("ritual_circle_marker", RitualCircleMarkerBlock::new,
+            () -> BlockBehaviour.Properties.of().mapColor(MapColor.QUARTZ).strength(0.1F, 0.2F).sound(SoundType.CALCITE).noOcclusion().noCollision());
+    public static final DeferredItem<?> RITUAL_CIRCLE_MARKER_ITEM = registerBlockItemStacksTo("ritual_circle_marker", RITUAL_CIRCLE_MARKER, "tooltip.fantasy_earth.ritual_circle_marker", 16);
     public static final DeferredHolder<EntityType<?>, EntityType<ArcaneSeatEntity>> ARCANE_SEAT =
             ENTITY_TYPES.register("arcane_seat", () -> EntityType.Builder
                     .of(ArcaneSeatEntity::new, MobCategory.MISC)
@@ -124,6 +156,13 @@ public class FantasyEarth {
                     .eyeHeight(1.62F)
                     .clientTrackingRange(10)
                     .build(ResourceKey.create(Registries.ENTITY_TYPE, id("arcane_settler"))));
+    public static final DeferredHolder<EntityType<?>, EntityType<ContractGolemEntity>> CONTRACT_GOLEM =
+            ENTITY_TYPES.register("contract_golem", () -> EntityType.Builder
+                    .of(ContractGolemEntity::new, MobCategory.CREATURE)
+                    .sized(1.3F, 2.2F)
+                    .eyeHeight(1.85F)
+                    .clientTrackingRange(10)
+                    .build(ResourceKey.create(Registries.ENTITY_TYPE, id("contract_golem"))));
     public static final DeferredBlock<MagicSettlementAnchorBlock> SETTLEMENT_ANCHOR =
             BLOCKS.registerBlock("settlement_anchor", MagicSettlementAnchorBlock::new,
                     () -> BlockBehaviour.Properties.of().mapColor(MapColor.COLOR_PURPLE)
@@ -141,21 +180,47 @@ public class FantasyEarth {
             MENUS.register("magic_machine", () -> IMenuTypeExtension.create(MagicMachineMenu::new));
 
     public static final DeferredItem<ArcaneNotebookItem> FIELD_ARCANE_NOTEBOOK = ITEMS.registerItem("field_arcane_notebook", ArcaneNotebookItem::new, props -> props.stacksTo(1));
-    public static final DeferredItem<ArcaneInitiationNotesItem> ARCANE_INITIATION_NOTES = ITEMS.registerItem("arcane_initiation_notes", ArcaneInitiationNotesItem::new, props -> props.stacksTo(1));
+    public static final DeferredItem<ArcaneInitiationNotesItem> ARCANE_INITIATION_NOTES = ITEMS.registerItem("arcane_initiation_notes", ArcaneInitiationNotesItem::new,
+            props -> props.stacksTo(1).component(LoreContent.LORE_TEXT.get(), ArcaneInitiationNotesItem.defaultLoreText()));
     public static final DeferredItem<ArcaneAdaptationNotesItem> ARCANE_BODY_WARD_NOTES = ITEMS.registerItem("arcane_body_ward_notes",
             props -> new ArcaneAdaptationNotesItem(props.stacksTo(1), ArcaneAdaptationNotesItem.Type.BODY_WARD),
-            props -> props);
+            props -> props.component(LoreContent.LORE_TEXT.get(), ArcaneAdaptationNotesItem.Type.BODY_WARD.defaultLoreText()));
     public static final DeferredItem<ArcaneAdaptationNotesItem> ARCANE_BREATH_WARD_NOTES = ITEMS.registerItem("arcane_breath_ward_notes",
             props -> new ArcaneAdaptationNotesItem(props.stacksTo(1), ArcaneAdaptationNotesItem.Type.BREATH_WARD),
-            props -> props);
+            props -> props.component(LoreContent.LORE_TEXT.get(), ArcaneAdaptationNotesItem.Type.BREATH_WARD.defaultLoreText()));
+    public static final DeferredItem<ArcaneAdaptationNotesItem> EVOCATION_NOTES = ITEMS.registerItem("evocation_notes",
+            props -> new ArcaneAdaptationNotesItem(props.stacksTo(1), ArcaneAdaptationNotesItem.Type.EVOCATION),
+            props -> props.component(LoreContent.LORE_TEXT.get(), ArcaneAdaptationNotesItem.Type.EVOCATION.defaultLoreText()));
+    public static final DeferredItem<ArcaneAdaptationNotesItem> ILLUSION_NOTES = ITEMS.registerItem("illusion_notes",
+            props -> new ArcaneAdaptationNotesItem(props.stacksTo(1), ArcaneAdaptationNotesItem.Type.ILLUSION),
+            props -> props.component(LoreContent.LORE_TEXT.get(), ArcaneAdaptationNotesItem.Type.ILLUSION.defaultLoreText()));
+    public static final DeferredItem<ArcaneAdaptationNotesItem> TRANSLOCATION_NOTES = ITEMS.registerItem("translocation_notes",
+            props -> new ArcaneAdaptationNotesItem(props.stacksTo(1), ArcaneAdaptationNotesItem.Type.TRANSLOCATION),
+            props -> props.component(LoreContent.LORE_TEXT.get(), ArcaneAdaptationNotesItem.Type.TRANSLOCATION.defaultLoreText()));
+    public static final DeferredItem<ArcaneResearchNotesItem> ARCANE_RESEARCH_NOTES = ITEMS.registerItem("arcane_research_notes",
+            ArcaneResearchNotesItem::new, props -> props.stacksTo(1));
     public static final DeferredItem<Item> ARCANE_DUST = materialItem("arcane_dust", "tooltip.fantasy_earth.arcane_dust");
     public static final DeferredItem<Item> RUNE_INK = materialItem("rune_ink", "tooltip.fantasy_earth.rune_ink");
     public static final DeferredItem<Item> RITUAL_CHALK = materialItem("ritual_chalk", "tooltip.fantasy_earth.ritual_chalk");
     public static final DeferredItem<Item> CRYSTALLIZED_MANA_SALT = manaItem("crystallized_mana_salt", "tooltip.fantasy_earth.crystallized_mana_salt", 22.0D);
     public static final DeferredItem<Item> AETHER_GLASS = materialItem("aether_glass", "tooltip.fantasy_earth.aether_glass");
     public static final DeferredItem<Item> RUNE_COPPER_PLATE = materialItem("rune_copper_plate", "tooltip.fantasy_earth.rune_copper_plate");
-    public static final DeferredItem<Item> AETHER_CRYSTAL = manaItem("aether_crystal", "tooltip.fantasy_earth.aether_crystal", 45.0D);
+    public static final DeferredItem<AetherCrystalItem> AETHER_CRYSTAL = registerCrystalItem();
+    public static final DeferredItem<Item> AETHER_SHARD = materialItem("aether_shard", "tooltip.fantasy_earth.aether_shard");
+    public static final DeferredItem<Item> AETHER_LENS = materialItemStacksTo("aether_lens", "tooltip.fantasy_earth.aether_lens", 8);
+    public static final DeferredItem<Item> AETHER_CONDUIT = materialItemStacksTo("aether_conduit", "tooltip.fantasy_earth.aether_conduit", 32);
+    public static final DeferredItem<Item> RUNE_BLANK = materialItemStacksTo("rune_blank", "tooltip.fantasy_earth.rune_blank", 16);
+    public static final DeferredItem<RuneStoneItem> RUNE_POWER = runeItem("rune_power", "power", "tooltip.fantasy_earth.rune_power");
+    public static final DeferredItem<RuneStoneItem> RUNE_GUARD = runeItem("rune_guard", "guard", "tooltip.fantasy_earth.rune_guard");
+    public static final DeferredItem<RuneStoneItem> RUNE_FLOW = runeItem("rune_flow", "flow", "tooltip.fantasy_earth.rune_flow");
+    public static final DeferredItem<RuneStoneItem> RUNE_BIND = runeItem("rune_bind", "bind", "tooltip.fantasy_earth.rune_bind");
+    public static final DeferredItem<RuneStoneItem> RUNE_JADE = runeItem("rune_jade", "jade", "tooltip.fantasy_earth.rune_jade");
+    public static final DeferredItem<Item> JADE_FOCUS_HOUSING = materialItemStacksTo("jade_focus_housing", "tooltip.fantasy_earth.jade_focus_housing", 1);
     public static final DeferredItem<Item> DORMANT_RITUAL_CORE = materialItem("dormant_ritual_core", "tooltip.fantasy_earth.dormant_ritual_core");
+    public static final DeferredItem<Item> INSCRIBED_RITUAL_CORE = materialItemStacksTo("inscribed_ritual_core", "tooltip.fantasy_earth.inscribed_ritual_core", 1);
+    public static final DeferredItem<ConstructCoreItem> CONSTRUCT_CORE = registerConstructCoreItem();
+    public static final DeferredItem<ArcaneFocusItem> ARCANE_FOCUS_ITEM = registerArcaneFocusItem();
+    public static final DeferredItem<SpellScrollItem> SPELL_SCROLL = registerSpellScrollItem();
     public static final DeferredItem<Item> FAMILIAR_CONTRACT = materialItem(
             "familiar_contract", "tooltip.fantasy_earth.familiar_contract");
     public static final DeferredItem<SpawnEggItem> RUNIC_WATCHER_SPAWN_EGG = spawnEgg("runic_watcher_spawn_egg", RUNIC_WATCHER);
@@ -184,6 +249,7 @@ public class FantasyEarth {
 
     public FantasyEarth(IEventBus modBus) {
         registerLegacyAliases();
+        DATA_COMPONENTS.register(modBus);
         BLOCKS.register(modBus);
         ITEMS.register(modBus);
         ENTITY_TYPES.register(modBus);
@@ -191,10 +257,12 @@ public class FantasyEarth {
         MENUS.register(modBus);
         FEATURES.register(modBus);
         FantasyEarthParticles.PARTICLE_TYPES.register(modBus);
+        FantasyLoreIntegration.init();
         modBus.addListener(ArcaneNetwork::registerPayloads);
         modBus.addListener(this::registerEntityAttributes);
         modBus.addListener(this::registerSpawnPlacements);
         NeoForge.EVENT_BUS.addListener(ArcanaEvents::onPlayerClone);
+        NeoForge.EVENT_BUS.addListener(FantasyLoreIntegration::onLoreLearned);
         NeoForge.EVENT_BUS.addListener(ArcanaPassiveEffects::onPlayerTick);
         NeoForge.EVENT_BUS.addListener(ArcanaPassiveEffects::onIncomingDamage);
         NeoForge.EVENT_BUS.addListener(ArcanaPassiveEffects::onFall);
@@ -205,6 +273,10 @@ public class FantasyEarth {
         TAB_ITEMS.add(ARCANE_INITIATION_NOTES);
         TAB_ITEMS.add(ARCANE_BODY_WARD_NOTES);
         TAB_ITEMS.add(ARCANE_BREATH_WARD_NOTES);
+        TAB_ITEMS.add(EVOCATION_NOTES);
+        TAB_ITEMS.add(ILLUSION_NOTES);
+        TAB_ITEMS.add(TRANSLOCATION_NOTES);
+        TAB_ITEMS.add(ARCANE_RESEARCH_NOTES);
         modBus.addListener(this::registerCreativeTab);
         if (FMLEnvironment.getDist() == Dist.CLIENT) {
             FantasyEarthClient.register(modBus);
@@ -254,7 +326,63 @@ public class FantasyEarth {
     }
 
     private static DeferredItem<Item> materialItem(String id, String hintKey) {
-        DeferredItem<Item> item = ITEMS.registerItem(id, props -> new MagicMaterialItem(props, hintKey), props -> props);
+        return materialItemStacksTo(id, hintKey, 64);
+    }
+
+    private static DeferredItem<Item> materialItemStacksTo(String id, String hintKey, int stackSize) {
+        DeferredItem<Item> item = ITEMS.registerItem(id, props -> new MagicMaterialItem(props, hintKey), props -> props.stacksTo(stackSize));
+        TAB_ITEMS.add(item);
+        return item;
+    }
+
+    private static DeferredItem<?> registerBlockItem(String id, DeferredBlock<? extends Block> block, String hintKey) {
+        return registerBlockItemStacksTo(id, block, hintKey, 64);
+    }
+
+    private static DeferredItem<?> registerBlockItemStacksTo(String id, DeferredBlock<? extends Block> block, String hintKey, int stackSize) {
+        DeferredItem<?> item = ITEMS.registerItem(id,
+                props -> new MagicBlockItem(block.get(), props, hintKey),
+                props -> props.stacksTo(stackSize));
+        TAB_ITEMS.add(item);
+        return item;
+    }
+
+    private static DeferredItem<AetherCrystalItem> registerCrystalItem() {
+        DeferredItem<AetherCrystalItem> item = ITEMS.registerItem("aether_crystal",
+                props -> new AetherCrystalItem(props, "tooltip.fantasy_earth.aether_crystal"),
+                props -> props.stacksTo(1));
+        TAB_ITEMS.add(item);
+        return item;
+    }
+
+    private static DeferredItem<RuneStoneItem> runeItem(String id, String runeKind, String hintKey) {
+        DeferredItem<RuneStoneItem> item = ITEMS.registerItem(id,
+                props -> new RuneStoneItem(props, runeKind, hintKey),
+                props -> props.stacksTo(16));
+        TAB_ITEMS.add(item);
+        return item;
+    }
+
+    private static DeferredItem<ConstructCoreItem> registerConstructCoreItem() {
+        DeferredItem<ConstructCoreItem> item = ITEMS.registerItem("construct_core",
+                props -> new ConstructCoreItem(props, "tooltip.fantasy_earth.construct_core"),
+                props -> props.stacksTo(1));
+        TAB_ITEMS.add(item);
+        return item;
+    }
+
+    private static DeferredItem<ArcaneFocusItem> registerArcaneFocusItem() {
+        DeferredItem<ArcaneFocusItem> item = ITEMS.registerItem("arcane_focus",
+                props -> new ArcaneFocusItem(props, "tooltip.fantasy_earth.arcane_focus"),
+                props -> props.stacksTo(1));
+        TAB_ITEMS.add(item);
+        return item;
+    }
+
+    private static DeferredItem<SpellScrollItem> registerSpellScrollItem() {
+        DeferredItem<SpellScrollItem> item = ITEMS.registerItem("spell_scroll",
+                props -> new SpellScrollItem(props, "tooltip.fantasy_earth.spell_scroll"),
+                props -> props.stacksTo(16));
         TAB_ITEMS.add(item);
         return item;
     }
@@ -314,6 +442,7 @@ public class FantasyEarth {
         event.put(CRYSTAL_ARMORED_SPIDER.get(), CrystalArmoredSpiderEntity.createAttributes().build());
         event.put(MANA_WISP.get(), ManaWispEntity.createAttributes().build());
         event.put(ARCANE_SETTLER.get(), ArcaneSettlerEntity.createAttributes().build());
+        event.put(CONTRACT_GOLEM.get(), ContractGolemEntity.createAttributes().build());
     }
 
     private void registerSpawnPlacements(RegisterSpawnPlacementsEvent event) {

@@ -1,0 +1,37 @@
+{
+  "discipline": "earth_lore:mag",
+  "tier": 3,
+  "gate": "soft",
+  "requires": [
+    {
+      "all": "fantasy_earth:mag/arcane_research_2"
+    }
+  ],
+  "item_requires": [],
+  "unlocks": [
+    {
+      "item": "fantasy_earth:evocation_notes"
+    }
+  ],
+  "literature": [
+    "notes",
+    "arcane_notes"
+  ],
+  "teachers": [],
+  "research": {
+    "items": [
+      {
+        "ingredient": "fantasy_earth:aether_crystal",
+        "count": 1
+      },
+      {
+        "ingredient": "fantasy_earth:rune_power",
+        "count": 1
+      }
+    ],
+    "ticks": 2400
+  },
+  "fail_codes": [],
+  "name_key": "lore.fantasy_earth.mag.arcane_research_3",
+  "desc_key": "lore.fantasy_earth.mag.arcane_research_3.desc"
+}

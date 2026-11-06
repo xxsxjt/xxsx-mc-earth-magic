@@ -1,0 +1,25 @@
+{
+  "neoforge:conditions": [
+    {
+      "type": "neoforge:mod_loaded",
+      "modid": "earth_on_minecraft"
+    }
+  ],
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "pattern": [
+    "NJN",
+    "PCP",
+    " N "
+  ],
+  "key": {
+    "N": "#earth_on_minecraft:gems/nephrite",
+    "J": "fantasy_earth:aether_crystal",
+    "P": "fantasy_earth:rune_copper_plate",
+    "C": "fantasy_earth:rune_copper_plate"
+  },
+  "result": {
+    "id": "fantasy_earth:jade_focus_housing",
+    "count": 1
+  }
+}

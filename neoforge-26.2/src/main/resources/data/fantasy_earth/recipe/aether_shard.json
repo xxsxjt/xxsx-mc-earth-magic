@@ -1,0 +1,11 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    "fantasy_earth:aether_crystal"
+  ],
+  "result": {
+    "id": "fantasy_earth:aether_shard",
+    "count": 2
+  }
+}

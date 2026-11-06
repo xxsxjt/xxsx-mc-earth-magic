@@ -4,8 +4,8 @@ license="AGPL-3.0-only"
 
 [[mods]]
 modId="fantasy_earth"
-version="0.7.0-alpha.10"
-displayName="Fantasy Earth / 魔幻地球"
+version="0.8.0"
+displayName="Earth: Magic / 地球：魔法学"
 logoFile="logo.png"
 description='''
 In-development beta for Minecraft 26.1.2 + NeoForge 26.1.2.124.
@@ -48,6 +48,13 @@ modId="minecraft"
 type="required"
 versionRange="[26.1.2]"
 ordering="NONE"
+side="BOTH"
+
+[[dependencies.fantasy_earth]]
+modId="earth_lore"
+type="required"
+versionRange="[0.1.0,)"
+ordering="AFTER"
 side="BOTH"
 
 [[dependencies.fantasy_earth]]

@@ -1,0 +1,40 @@
+{
+  "discipline": "earth_lore:mag",
+  "tier": 5,
+  "gate": "hard",
+  "requires": [
+    {
+      "all": "fantasy_earth:mag/arcane_research_4"
+    },
+    {
+      "all": "fantasy_earth:mag/rune_combination"
+    }
+  ],
+  "item_requires": [],
+  "unlocks": [
+    {
+      "ability": "fantasy_earth:spell_illusion"
+    }
+  ],
+  "literature": [
+    "notes",
+    "arcane_notes"
+  ],
+  "teachers": [],
+  "research": {
+    "items": [
+      {
+        "ingredient": "fantasy_earth:rune_flow",
+        "count": 2
+      },
+      {
+        "ingredient": "minecraft:fermented_spider_eye",
+        "count": 2
+      }
+    ],
+    "ticks": 6000
+  },
+  "fail_codes": [],
+  "name_key": "lore.fantasy_earth.mag.illusion",
+  "desc_key": "lore.fantasy_earth.mag.illusion.desc"
+}

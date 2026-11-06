@@ -26,9 +26,15 @@ public final class ArcanaPower {
     public static final String BODY_TEMPERING_BONUS = "earth_arcana.body_tempering_bonus";
     public static final String ARCANE_BODY_WARD_LEVEL = "earth_arcana.arcane_body_ward_level";
     public static final String ARCANE_BREATH_WARD_LEVEL = "earth_arcana.arcane_breath_ward_level";
+    public static final String EVOCATION_LEVEL = "earth_arcana.evocation_level";
+    public static final String ILLUSION_LEVEL = "earth_arcana.illusion_level";
+    public static final String TRANSLOCATION_LEVEL = "earth_arcana.translocation_level";
     public static final String MAGIC_RESEARCH_XP = "earth_arcana.magic_research_xp";
     public static final String ARCANE_BODY_WARD_XP = "earth_arcana.arcane_body_ward_xp";
     public static final String ARCANE_BREATH_WARD_XP = "earth_arcana.arcane_breath_ward_xp";
+    public static final String EVOCATION_XP = "earth_arcana.evocation_xp";
+    public static final String ILLUSION_XP = "earth_arcana.illusion_xp";
+    public static final String TRANSLOCATION_XP = "earth_arcana.translocation_xp";
     public static final String MAGIC_FOCUS_COOLDOWN_UNTIL = "earth_arcana.magic_focus_cooldown_until";
     public static final String MAGIC_SKILL_COOLDOWN_UNTIL = "earth_arcana.magic_skill_cooldown_until";
     public static final String ARCANE_FOCUS = "earth_arcana.arcane_focus";
@@ -103,11 +109,26 @@ public final class ArcanaPower {
         return Math.max(0, data(player).getIntOr(ARCANE_BREATH_WARD_LEVEL, 0));
     }
 
+    public static int getEvocationLevel(Player player) {
+        return Math.max(0, data(player).getIntOr(EVOCATION_LEVEL, 0));
+    }
+
+    public static int getIllusionLevel(Player player) {
+        return Math.max(0, data(player).getIntOr(ILLUSION_LEVEL, 0));
+    }
+
+    public static int getTranslocationLevel(Player player) {
+        return Math.max(0, data(player).getIntOr(TRANSLOCATION_LEVEL, 0));
+    }
+
     public static int getFocusLevel(Player player, ArcaneFocus focus) {
         return switch (focus) {
             case ATTUNEMENT -> getMagicResearchLevel(player);
             case BODY_WARD -> getArcaneBodyWardLevel(player);
             case BREATH_WARD -> getArcaneBreathWardLevel(player);
+            case EVOCATION -> getEvocationLevel(player);
+            case ILLUSION -> getIllusionLevel(player);
+            case TRANSLOCATION -> getTranslocationLevel(player);
         };
     }
 
@@ -231,11 +252,89 @@ public final class ArcanaPower {
         if (getMagicResearchLevel(player) <= 0 || getArcaneBreathWardLevel(player) > 0) {
             return false;
         }
+        return learnArcaneBreathWardFromLore(player);
+    }
+
+    public static boolean ensureMagicResearchLevelAtLeast(Player player, int minLevel) {
+        CompoundTag tag = data(player);
+        int current = getMagicResearchLevel(player);
+        if (current >= minLevel) {
+            return false;
+        }
+        for (int lv = current + 1; lv <= minLevel; lv++) {
+            if (lv == 1) {
+                add(tag, MAGIC_MANA_BONUS, 30.0D);
+                add(tag, MAGIC_ATTUNEMENT_RATE, 0.08D);
+                add(tag, ENDURANCE_BONUS, 0.03D);
+            } else {
+                applyLevelReward(tag, ArcaneFocus.ATTUNEMENT);
+            }
+        }
+        tag.putInt(MAGIC_RESEARCH_LEVEL, minLevel);
+        setCurrentMana(player, getMaxMana(player));
+        return true;
+    }
+
+    public static boolean learnArcaneBodyWardFromLore(Player player) {
+        CompoundTag tag = data(player);
+        if (getArcaneBodyWardLevel(player) > 0) {
+            return false;
+        }
+        tag.putInt(ARCANE_BODY_WARD_LEVEL, 1);
+        tag.putInt(ARCANE_BODY_WARD_XP, 0);
+        add(tag, ENDURANCE_BONUS, 0.14D);
+        add(tag, BODY_TEMPERING_BONUS, 0.18D);
+        add(tag, MAGIC_MANA_BONUS, 12.0D);
+        setCurrentMana(player, getMaxMana(player));
+        return true;
+    }
+
+    public static boolean learnArcaneBreathWardFromLore(Player player) {
+        CompoundTag tag = data(player);
+        if (getArcaneBreathWardLevel(player) > 0) {
+            return false;
+        }
         tag.putInt(ARCANE_BREATH_WARD_LEVEL, 1);
         tag.putInt(ARCANE_BREATH_WARD_XP, 0);
         add(tag, BREATH_CAPACITY_BONUS, 160.0D);
         add(tag, ENDURANCE_BONUS, 0.06D);
         add(tag, MAGIC_MANA_BONUS, 10.0D);
+        setCurrentMana(player, getMaxMana(player));
+        return true;
+    }
+
+    public static boolean learnEvocationFromLore(Player player) {
+        CompoundTag tag = data(player);
+        if (getEvocationLevel(player) > 0) {
+            return false;
+        }
+        tag.putInt(EVOCATION_LEVEL, 1);
+        tag.putInt(EVOCATION_XP, 0);
+        add(tag, MAGIC_MANA_BONUS, 15.0D);
+        setCurrentMana(player, getMaxMana(player));
+        return true;
+    }
+
+    public static boolean learnIllusionFromLore(Player player) {
+        CompoundTag tag = data(player);
+        if (getIllusionLevel(player) > 0) {
+            return false;
+        }
+        tag.putInt(ILLUSION_LEVEL, 1);
+        tag.putInt(ILLUSION_XP, 0);
+        add(tag, MAGIC_MANA_BONUS, 18.0D);
+        setCurrentMana(player, getMaxMana(player));
+        return true;
+    }
+
+    public static boolean learnTranslocationFromLore(Player player) {
+        CompoundTag tag = data(player);
+        if (getTranslocationLevel(player) > 0) {
+            return false;
+        }
+        tag.putInt(TRANSLOCATION_LEVEL, 1);
+        tag.putInt(TRANSLOCATION_XP, 0);
+        add(tag, MAGIC_MANA_BONUS, 20.0D);
         setCurrentMana(player, getMaxMana(player));
         return true;
     }
@@ -266,8 +365,12 @@ public final class ArcanaPower {
     }
 
     public static void startSkillCooldown(Player player, Level level) {
+        startSkillCooldown(player, level, MAGIC_SKILL_COOLDOWN_TICKS);
+    }
+
+    public static void startSkillCooldown(Player player, Level level, int cooldownTicks) {
         data(player).putLong(MAGIC_SKILL_COOLDOWN_UNTIL,
-                level.getGameTime() + MAGIC_SKILL_COOLDOWN_TICKS);
+                level.getGameTime() + Math.max(20, cooldownTicks));
     }
 
     public static String format(double value) {
@@ -310,6 +413,9 @@ public final class ArcanaPower {
             case ATTUNEMENT -> MAGIC_RESEARCH_LEVEL;
             case BODY_WARD -> ARCANE_BODY_WARD_LEVEL;
             case BREATH_WARD -> ARCANE_BREATH_WARD_LEVEL;
+            case EVOCATION -> EVOCATION_LEVEL;
+            case ILLUSION -> ILLUSION_LEVEL;
+            case TRANSLOCATION -> TRANSLOCATION_LEVEL;
         };
     }
 
@@ -318,6 +424,9 @@ public final class ArcanaPower {
             case ATTUNEMENT -> MAGIC_RESEARCH_XP;
             case BODY_WARD -> ARCANE_BODY_WARD_XP;
             case BREATH_WARD -> ARCANE_BREATH_WARD_XP;
+            case EVOCATION -> EVOCATION_XP;
+            case ILLUSION -> ILLUSION_XP;
+            case TRANSLOCATION -> TRANSLOCATION_XP;
         };
     }
 
@@ -337,6 +446,10 @@ public final class ArcanaPower {
                 add(tag, MAGIC_MANA_BONUS, 4.0D);
                 add(tag, BREATH_CAPACITY_BONUS, 28.0D);
                 add(tag, ENDURANCE_BONUS, 0.018D);
+            }
+            case EVOCATION, ILLUSION, TRANSLOCATION -> {
+                add(tag, MAGIC_MANA_BONUS, 5.0D);
+                add(tag, MAGIC_ATTUNEMENT_RATE, 0.010D);
             }
         }
     }

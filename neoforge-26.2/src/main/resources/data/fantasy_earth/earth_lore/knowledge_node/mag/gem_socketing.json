@@ -1,0 +1,46 @@
+{
+  "discipline": "earth_lore:mag",
+  "tier": 4,
+  "gate": "soft",
+  "requires": [
+    {
+      "all": "fantasy_earth:mag/rune_combination"
+    },
+    {
+      "any": [
+        "earth_on_minecraft:geo/lapidary",
+        "fantasy_earth:mag/aether_sensing"
+      ]
+    }
+  ],
+  "item_requires": [],
+  "unlocks": [
+    {
+      "ability": "fantasy_earth:gem_socketing"
+    }
+  ],
+  "literature": [
+    "notes"
+  ],
+  "teachers": [],
+  "research": {
+    "items": [
+      {
+        "ingredient": "minecraft:amethyst_shard",
+        "count": 4
+      },
+      {
+        "ingredient": "minecraft:emerald",
+        "count": 2
+      },
+      {
+        "ingredient": "fantasy_earth:rune_ink",
+        "count": 2
+      }
+    ],
+    "ticks": 4800
+  },
+  "fail_codes": [],
+  "name_key": "lore.fantasy_earth.mag.gem_socketing",
+  "desc_key": "lore.fantasy_earth.mag.gem_socketing.desc"
+}

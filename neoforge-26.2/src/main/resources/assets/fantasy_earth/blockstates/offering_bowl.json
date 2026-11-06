@@ -1,0 +1,10 @@
+{
+  "variants": {
+    "filled=false": {
+      "model": "fantasy_earth:block/offering_bowl"
+    },
+    "filled=true": {
+      "model": "fantasy_earth:block/offering_bowl"
+    }
+  }
+}

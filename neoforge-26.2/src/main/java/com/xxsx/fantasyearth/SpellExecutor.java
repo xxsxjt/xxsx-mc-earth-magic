@@ -2,6 +2,8 @@ package com.xxsx.fantasyearth;
 
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.item.ItemStack;
 
 /**
  * Server-authoritative planning for fantasy spell graphs.
@@ -15,13 +17,23 @@ public final class SpellExecutor {
     }
 
     public static Plan plan(ServerPlayer player, ServerLevel level, ArcaneFocus focus) {
+        return plan(player, level, focus, false);
+    }
+
+    public static Plan plan(ServerPlayer player, ServerLevel level, ArcaneFocus focus, boolean fromScroll) {
         SpellGraph graph = SpellCatalog.resolve(focus);
         SpellGraph.Validation validation = graph.validate();
         if (!validation.valid()) {
             return Plan.reject("invalid_graph", validation.errorCode() + ": " + validation.message());
         }
         if (!focus.isUnlocked(player)) {
-            return Plan.reject("requires_research", "the selected focus is not researched");
+            return Plan.reject("lore_locked", "the selected school is locked by knowledge prerequisite");
+        }
+        if (!fromScroll) {
+            String runeCheck = checkFocusRuneRequirement(player, focus);
+            if (!runeCheck.isEmpty()) {
+                return Plan.reject(runeCheck, "focus rune requirement not met for " + focus.path());
+            }
         }
         long remaining = ArcanaPower.getSkillCooldownTicks(player, level);
         if (remaining > 0L) {
@@ -41,6 +53,35 @@ public final class SpellExecutor {
             return Plan.reject("mana_low", "at least " + ArcanaPower.format(manaCost) + " mana is required");
         }
         return Plan.ok(graph, aeuCost, manaCost);
+    }
+
+    /** F-SPELL-01: evocation requires rune_power >= 2, illusion requires rune_flow >= 2, translocation requires rune_flow >= 3 in held arcane_focus. */
+    public static String checkFocusRuneRequirement(ServerPlayer player, ArcaneFocus focus) {
+        String requiredKind = switch (focus) {
+            case EVOCATION -> "power";
+            case ILLUSION, TRANSLOCATION -> "flow";
+            default -> "";
+        };
+        int requiredTier = switch (focus) {
+            case EVOCATION, ILLUSION -> 2;
+            case TRANSLOCATION -> 3;
+            default -> 0;
+        };
+        if (requiredTier <= 0) {
+            return "";
+        }
+        ItemStack main = player.getItemInHand(InteractionHand.MAIN_HAND);
+        ItemStack off = player.getItemInHand(InteractionHand.OFF_HAND);
+        ItemStack focusStack = main.is(FantasyEarth.ARCANE_FOCUS_ITEM.get()) ? main
+                : (off.is(FantasyEarth.ARCANE_FOCUS_ITEM.get()) ? off : ItemStack.EMPTY);
+        if (focusStack.isEmpty()) {
+            return "missing_focus";
+        }
+        ArcaneFocusComponent comp = ArcaneFocusComponent.read(focusStack);
+        if (comp.maxRuneTier(requiredKind) < requiredTier) {
+            return "rune_tier_low";
+        }
+        return "";
     }
 
     public record Plan(boolean accepted, SpellGraph graph, double aeuCost, double manaCost,

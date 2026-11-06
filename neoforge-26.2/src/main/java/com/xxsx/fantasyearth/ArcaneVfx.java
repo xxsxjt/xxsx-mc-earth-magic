@@ -53,15 +53,15 @@ public final class ArcaneVfx {
 
     public static void focusCast(ServerLevel level, Vec3 at, ArcaneFocus focus) {
         switch (focus) {
-            case ATTUNEMENT -> {
+            case ATTUNEMENT, EVOCATION -> {
                 moteBurst(level, at.x, at.y + 0.9D, at.z, 26, 0.7D);
                 runeRingAround(level, at, 1.05D, 10, 0.25D);
             }
-            case BODY_WARD -> {
+            case BODY_WARD, ILLUSION -> {
                 sparkBurst(level, at.x, at.y + 0.8D, at.z, 22, 0.55D);
                 runeRingAround(level, at, 0.85D, 8, 1.05D);
             }
-            case BREATH_WARD -> {
+            case BREATH_WARD, TRANSLOCATION -> {
                 moteBurst(level, at.x, at.y + 1.1D, at.z, 20, 0.45D);
                 shardBurst(level, at.x, at.y + 0.6D, at.z, 8, 0.4D);
             }

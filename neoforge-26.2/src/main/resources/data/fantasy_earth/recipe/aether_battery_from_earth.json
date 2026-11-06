@@ -1,0 +1,24 @@
+{
+  "neoforge:conditions": [
+    {
+      "type": "neoforge:mod_loaded",
+      "modid": "earth_on_minecraft"
+    }
+  ],
+  "type": "minecraft:crafting_shaped",
+  "category": "redstone",
+  "pattern": [
+    "PCP",
+    "CEC",
+    "PCP"
+  ],
+  "key": {
+    "C": "fantasy_earth:aether_crystal",
+    "P": "fantasy_earth:rune_copper_plate",
+    "E": "earth_on_minecraft:copper_power_cable"
+  },
+  "result": {
+    "id": "fantasy_earth:aether_battery",
+    "count": 1
+  }
+}

@@ -1,0 +1,12 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    "minecraft:candle",
+    "fantasy_earth:arcane_dust"
+  ],
+  "result": {
+    "id": "fantasy_earth:ritual_candle",
+    "count": 2
+  }
+}

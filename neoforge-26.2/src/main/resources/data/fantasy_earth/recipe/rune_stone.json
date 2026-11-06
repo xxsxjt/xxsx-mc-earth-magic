@@ -1,0 +1,13 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "building",
+  "ingredients": [
+    "minecraft:stone",
+    "minecraft:stone",
+    "fantasy_earth:arcane_dust"
+  ],
+  "result": {
+    "id": "fantasy_earth:rune_stone",
+    "count": 2
+  }
+}

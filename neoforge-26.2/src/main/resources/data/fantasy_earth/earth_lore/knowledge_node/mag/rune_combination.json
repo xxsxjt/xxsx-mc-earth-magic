@@ -1,0 +1,48 @@
+{
+  "discipline": "earth_lore:mag",
+  "tier": 3,
+  "gate": "soft",
+  "requires": [
+    {
+      "all": "fantasy_earth:mag/rune_carving"
+    }
+  ],
+  "item_requires": [],
+  "unlocks": [
+    {
+      "item": "fantasy_earth:rune_power"
+    },
+    {
+      "item": "fantasy_earth:rune_guard"
+    },
+    {
+      "item": "fantasy_earth:rune_flow"
+    },
+    {
+      "item": "fantasy_earth:rune_bind"
+    },
+    {
+      "ability": "fantasy_earth:rune_combination"
+    }
+  ],
+  "literature": [
+    "notes"
+  ],
+  "teachers": [],
+  "research": {
+    "items": [
+      {
+        "ingredient": "fantasy_earth:rune_blank",
+        "count": 4
+      },
+      {
+        "ingredient": "fantasy_earth:rune_ink",
+        "count": 4
+      }
+    ],
+    "ticks": 2400
+  },
+  "fail_codes": [],
+  "name_key": "lore.fantasy_earth.mag.rune_combination",
+  "desc_key": "lore.fantasy_earth.mag.rune_combination.desc"
+}

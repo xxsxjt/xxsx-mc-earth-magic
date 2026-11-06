@@ -1,0 +1,49 @@
+{
+  "discipline": "earth_lore:mag",
+  "tier": 4,
+  "gate": "soft",
+  "requires": [
+    {
+      "all": "fantasy_earth:mag/rune_combination"
+    },
+    {
+      "any": [
+        "earth_on_minecraft:geo/gemology",
+        "fantasy_earth:mag/aether_sensing"
+      ]
+    }
+  ],
+  "item_requires": [],
+  "unlocks": [
+    {
+      "item": "fantasy_earth:rune_jade"
+    },
+    {
+      "item": "fantasy_earth:jade_focus_housing"
+    }
+  ],
+  "literature": [
+    "notes"
+  ],
+  "teachers": [],
+  "research": {
+    "items": [
+      {
+        "ingredient": "fantasy_earth:rune_blank",
+        "count": 4
+      },
+      {
+        "ingredient": "fantasy_earth:rune_ink",
+        "count": 4
+      },
+      {
+        "ingredient": "minecraft:emerald",
+        "count": 1
+      }
+    ],
+    "ticks": 4800
+  },
+  "fail_codes": [],
+  "name_key": "lore.fantasy_earth.mag.jade_runes",
+  "desc_key": "lore.fantasy_earth.mag.jade_runes.desc"
+}

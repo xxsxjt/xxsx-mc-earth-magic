@@ -1,0 +1,10 @@
+{
+  "variants": {
+    "lit=false": {
+      "model": "fantasy_earth:block/ritual_candle"
+    },
+    "lit=true": {
+      "model": "fantasy_earth:block/ritual_candle"
+    }
+  }
+}

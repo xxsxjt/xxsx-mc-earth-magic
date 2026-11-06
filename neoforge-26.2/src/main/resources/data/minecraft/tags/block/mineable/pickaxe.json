@@ -5,6 +5,9 @@
     "fantasy_earth:rune_carving_table",
     "fantasy_earth:ritual_pedestal",
     "fantasy_earth:aether_crystal_cluster",
-    "fantasy_earth:arcane_focus_mat"
+    "fantasy_earth:arcane_focus_mat",
+    "fantasy_earth:aether_battery",
+    "fantasy_earth:rune_stone",
+    "fantasy_earth:offering_bowl"
   ]
 }

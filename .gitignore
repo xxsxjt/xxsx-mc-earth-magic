@@ -14,6 +14,7 @@ __pycache__/
 # Minecraft runs
 runs/
 run/
+logs/
 
 # Local generated assets and temporary experiments
 tmp/

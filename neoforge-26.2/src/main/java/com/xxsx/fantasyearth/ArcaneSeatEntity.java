@@ -67,6 +67,9 @@ public class ArcaneSeatEntity extends Entity {
         }
 
         if (!(this.getFirstPassenger() instanceof ServerPlayer player)) {
+            if (matState.hasProperty(ArcaneFocusMatBlock.OCCUPIED) && matState.getValue(ArcaneFocusMatBlock.OCCUPIED)) {
+                serverLevel.setBlock(this.sourcePos, matState.setValue(ArcaneFocusMatBlock.OCCUPIED, false), net.minecraft.world.level.block.Block.UPDATE_CLIENTS);
+            }
             this.discard();
             return;
         }

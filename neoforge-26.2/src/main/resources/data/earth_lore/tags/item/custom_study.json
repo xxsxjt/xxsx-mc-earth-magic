@@ -1,0 +1,12 @@
+{
+  "replace": false,
+  "values": [
+    "fantasy_earth:arcane_initiation_notes",
+    "fantasy_earth:arcane_body_ward_notes",
+    "fantasy_earth:arcane_breath_ward_notes",
+    "fantasy_earth:evocation_notes",
+    "fantasy_earth:illusion_notes",
+    "fantasy_earth:translocation_notes",
+    "fantasy_earth:arcane_research_notes"
+  ]
+}

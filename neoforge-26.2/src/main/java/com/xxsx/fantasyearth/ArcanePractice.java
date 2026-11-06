@@ -50,7 +50,7 @@ public final class ArcanePractice {
 
     public static boolean perform(ServerLevel level, BlockPos pos, ServerPlayer player,
                                   Support support, boolean quietOutput) {
-        if (ArcanaPower.getMagicResearchLevel(player) <= 0) {
+        if (!FantasyLoreIntegration.knowsInitiation(player)) {
             if (!quietOutput) {
                 player.sendSystemMessage(Component.translatable(
                         "message.fantasy_earth.practice.requires_initiation")
@@ -74,6 +74,7 @@ public final class ArcanePractice {
             case ATTUNEMENT -> 1.0D;
             case BODY_WARD -> 0.72D;
             case BREATH_WARD -> 0.82D;
+            case EVOCATION, ILLUSION, TRANSLOCATION -> 0.85D;
         };
         int usableAether = Math.max(1,
                 (int) Math.round(focusedAether * focusScale * support.efficiency()));
@@ -149,8 +150,8 @@ public final class ArcanePractice {
         double spread = supported ? 0.44D : 0.30D;
         switch (focus) {
             case ATTUNEMENT -> ArcaneVfx.moteBurst(level, x, y, z, count, spread);
-            case BODY_WARD -> ArcaneVfx.sparkBurst(level, x, y, z, count, spread);
-            case BREATH_WARD -> {
+            case BODY_WARD, EVOCATION -> ArcaneVfx.sparkBurst(level, x, y, z, count, spread);
+            case BREATH_WARD, ILLUSION, TRANSLOCATION -> {
                 ArcaneVfx.moteBurst(level, x, y, z, count, spread);
                 ArcaneVfx.shardBurst(level, x, y, z, Math.max(3, count / 3), spread * 0.7D);
             }
@@ -172,11 +173,11 @@ public final class ArcanePractice {
                 ArcaneVfx.runeRingAround(level, new net.minecraft.world.phys.Vec3(x, pos.getY() + 0.1D, z),
                         0.72D, supported ? 8 : 5, 0.0D);
             }
-            case BODY_WARD -> {
+            case BODY_WARD, EVOCATION -> {
                 ArcaneVfx.sparkBurst(level, x, y, z, count, spread);
                 ArcaneVfx.shardBurst(level, x, y, z, Math.max(3, count / 4), spread * 0.6D);
             }
-            case BREATH_WARD -> {
+            case BREATH_WARD, ILLUSION, TRANSLOCATION -> {
                 ArcaneVfx.moteBurst(level, x, y, z, count, spread);
                 ArcaneVfx.shardBurst(level, x, y, z, Math.max(3, count / 4), spread * 0.6D);
             }

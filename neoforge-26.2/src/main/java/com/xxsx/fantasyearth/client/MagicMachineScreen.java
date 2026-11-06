@@ -186,12 +186,16 @@ public class MagicMachineScreen extends AbstractContainerScreen<MagicMachineMenu
             case REDSTONE_PAUSED -> Component.translatable("screen.fantasy_earth.machine.redstone_paused");
             case RUNNING -> recipe.map(value -> Component.translatable(value.noteKey()))
                     .orElseGet(() -> Component.translatable("screen.fantasy_earth.machine.running"));
+            case TOO_COLD -> Component.translatable("screen.fantasy_earth.machine.too_cold",
+                    recipe.map(MagicMachineBlock.Recipe::requiredTempK).orElse(300));
+            case AETHER_LOW -> Component.translatable("screen.fantasy_earth.machine.aether_low");
+            case LORE_LOCKED -> Component.translatable("screen.fantasy_earth.machine.lore_locked");
         };
     }
 
     private int statusColor() {
         return switch (this.menu.processState()) {
-            case INVALID_COMBINATION, FIELD_LOW, OUTPUT_FULL -> WARNING;
+            case INVALID_COMBINATION, FIELD_LOW, OUTPUT_FULL, TOO_COLD, AETHER_LOW, LORE_LOCKED -> WARNING;
             case RUNNING -> OK;
             case MISSING_INPUT, REDSTONE_PAUSED -> MUTED;
         };

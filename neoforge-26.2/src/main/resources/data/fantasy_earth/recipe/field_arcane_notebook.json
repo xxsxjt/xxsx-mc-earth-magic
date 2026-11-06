@@ -1,0 +1,12 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    "minecraft:book",
+    "fantasy_earth:arcane_dust"
+  ],
+  "result": {
+    "id": "fantasy_earth:field_arcane_notebook",
+    "count": 1
+  }
+}

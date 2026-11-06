@@ -1,0 +1,49 @@
+{
+  "discipline": "earth_lore:mag",
+  "tier": 6,
+  "gate": "hard",
+  "requires": [
+    {
+      "all": "fantasy_earth:mag/rituals"
+    },
+    {
+      "all": "fantasy_earth:mag/aether_storage"
+    }
+  ],
+  "item_requires": [
+    {
+      "cond": "aether>=50"
+    }
+  ],
+  "unlocks": [
+    {
+      "item": "fantasy_earth:construct_core"
+    }
+  ],
+  "literature": [
+    "notes"
+  ],
+  "teachers": [],
+  "research": {
+    "items": [
+      {
+        "ingredient": "fantasy_earth:inscribed_ritual_core",
+        "count": 1
+      },
+      {
+        "ingredient": "fantasy_earth:rune_guard",
+        "count": 2
+      },
+      {
+        "ingredient": "minecraft:iron_block",
+        "count": 2
+      }
+    ],
+    "ticks": 7200
+  },
+  "fail_codes": [
+    "aether_low"
+  ],
+  "name_key": "lore.fantasy_earth.mag.constructs",
+  "desc_key": "lore.fantasy_earth.mag.constructs.desc"
+}

@@ -1,0 +1,15 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    "fantasy_earth:dormant_ritual_core",
+    "fantasy_earth:rune_power",
+    "fantasy_earth:rune_flow",
+    "fantasy_earth:rune_ink",
+    "fantasy_earth:rune_ink"
+  ],
+  "result": {
+    "id": "fantasy_earth:inscribed_ritual_core",
+    "count": 1
+  }
+}

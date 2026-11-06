@@ -1,0 +1,57 @@
+{
+  "forms": [
+    {
+      "carrier": "earth_lore:blank_notes",
+      "result": "fantasy_earth:arcane_initiation_notes",
+      "discipline": "earth_lore:mag",
+      "nodes": [
+        "fantasy_earth:mag/arcane_initiation"
+      ]
+    },
+    {
+      "carrier": "earth_lore:blank_notes",
+      "result": "fantasy_earth:arcane_body_ward_notes",
+      "discipline": "earth_lore:mag",
+      "nodes": [
+        "fantasy_earth:mag/body_ward"
+      ]
+    },
+    {
+      "carrier": "earth_lore:blank_notes",
+      "result": "fantasy_earth:arcane_breath_ward_notes",
+      "discipline": "earth_lore:mag",
+      "nodes": [
+        "fantasy_earth:mag/breath_ward"
+      ]
+    },
+    {
+      "carrier": "earth_lore:blank_notes",
+      "result": "fantasy_earth:evocation_notes",
+      "discipline": "earth_lore:mag",
+      "nodes": [
+        "fantasy_earth:mag/evocation"
+      ]
+    },
+    {
+      "carrier": "earth_lore:blank_notes",
+      "result": "fantasy_earth:illusion_notes",
+      "discipline": "earth_lore:mag",
+      "nodes": [
+        "fantasy_earth:mag/illusion"
+      ]
+    },
+    {
+      "carrier": "earth_lore:blank_notes",
+      "result": "fantasy_earth:translocation_notes",
+      "discipline": "earth_lore:mag",
+      "nodes": [
+        "fantasy_earth:mag/translocation"
+      ]
+    },
+    {
+      "carrier": "earth_lore:blank_notes",
+      "result": "fantasy_earth:arcane_research_notes",
+      "discipline": "earth_lore:mag"
+    }
+  ]
+}

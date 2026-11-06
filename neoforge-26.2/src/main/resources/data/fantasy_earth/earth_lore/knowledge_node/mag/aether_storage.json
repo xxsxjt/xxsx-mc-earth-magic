@@ -1,0 +1,48 @@
+{
+  "discipline": "earth_lore:mag",
+  "tier": 4,
+  "gate": "soft",
+  "requires": [
+    {
+      "all": "fantasy_earth:mag/rune_carving"
+    },
+    {
+      "all": "fantasy_earth:mag/alchemy"
+    }
+  ],
+  "item_requires": [],
+  "unlocks": [
+    {
+      "item": "fantasy_earth:aether_lens"
+    },
+    {
+      "item": "fantasy_earth:aether_conduit"
+    },
+    {
+      "block": "fantasy_earth:aether_battery"
+    },
+    {
+      "item": "fantasy_earth:aether_battery"
+    }
+  ],
+  "literature": [
+    "notes"
+  ],
+  "teachers": [],
+  "research": {
+    "items": [
+      {
+        "ingredient": "fantasy_earth:aether_glass",
+        "count": 4
+      },
+      {
+        "ingredient": "fantasy_earth:rune_copper_plate",
+        "count": 2
+      }
+    ],
+    "ticks": 4800
+  },
+  "fail_codes": [],
+  "name_key": "lore.fantasy_earth.mag.aether_storage",
+  "desc_key": "lore.fantasy_earth.mag.aether_storage.desc"
+}

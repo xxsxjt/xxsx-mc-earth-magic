@@ -1,0 +1,58 @@
+{
+  "discipline": "earth_lore:mag",
+  "tier": 1,
+  "gate": "soft",
+  "requires": [],
+  "item_requires": [],
+  "unlocks": [
+    {
+      "item": "fantasy_earth:aether_crystal"
+    },
+    {
+      "block": "fantasy_earth:aether_crystal_cluster"
+    },
+    {
+      "item": "fantasy_earth:aether_crystal_cluster"
+    },
+    {
+      "item": "fantasy_earth:arcane_dust"
+    },
+    {
+      "item": "fantasy_earth:aether_shard"
+    },
+    {
+      "ability": "fantasy_earth:aether_crystal_charge"
+    },
+    {
+      "item": "fantasy_earth:field_arcane_notebook"
+    },
+    {
+      "item": "fantasy_earth:arcane_initiation_notes"
+    },
+    {
+      "item": "fantasy_earth:arcane_research_notes"
+    }
+  ],
+  "literature": [
+    "notes"
+  ],
+  "teachers": [
+    "fantasy_earth:arcane_settler"
+  ],
+  "research": {
+    "items": [
+      {
+        "ingredient": "minecraft:amethyst_shard",
+        "count": 4
+      },
+      {
+        "ingredient": "minecraft:glowstone_dust",
+        "count": 2
+      }
+    ],
+    "ticks": 600
+  },
+  "fail_codes": [],
+  "name_key": "lore.fantasy_earth.mag.aether_crystals",
+  "desc_key": "lore.fantasy_earth.mag.aether_crystals.desc"
+}
