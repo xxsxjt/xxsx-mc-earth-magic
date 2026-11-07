@@ -39,10 +39,10 @@ public class SpellScrollItem extends MagicMaterialItem {
             return InteractionResult.SUCCESS_SERVER;
         }
         if (comp.graphId().isBlank()) {
-            // Default to the player's currently selected focus graph if inscribed on use, or fail empty_graph
-            serverPlayer.sendSystemMessage(Component.translatable("message.fantasy_earth.spell_scroll.empty_graph")
-                    .withStyle(ChatFormatting.RED));
-            return InteractionResult.FAIL;
+            ArcaneFocus defaultFocus = ArcanaPower.getArcaneFocus(serverPlayer);
+            String autoGraph = SpellCatalog.forFocus(defaultFocus).id();
+            comp = comp.withGraph(autoGraph);
+            stack.set(FantasyEarth.SPELL_SCROLL_COMPONENT.get(), comp);
         }
         ArcaneFocus focus = SpellCatalog.focusForGraphId(comp.graphId());
         if (ArcaneSkill.activateWithScroll(serverLevel, serverPlayer, focus)) {

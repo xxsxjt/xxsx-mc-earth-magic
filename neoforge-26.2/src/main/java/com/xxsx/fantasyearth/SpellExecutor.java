@@ -26,7 +26,7 @@ public final class SpellExecutor {
         if (!validation.valid()) {
             return Plan.reject("invalid_graph", validation.errorCode() + ": " + validation.message());
         }
-        if (!focus.isUnlocked(player)) {
+        if (!fromScroll && !focus.isUnlocked(player)) {
             return Plan.reject("lore_locked", "the selected school is locked by knowledge prerequisite");
         }
         if (!fromScroll) {

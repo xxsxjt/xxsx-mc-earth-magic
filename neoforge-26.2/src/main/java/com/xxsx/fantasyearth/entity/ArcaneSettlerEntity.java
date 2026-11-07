@@ -1,7 +1,11 @@
 package com.xxsx.fantasyearth.entity;
 
 import com.xxsx.earthlore.api.LoreApi;
+import com.xxsx.fantasyearth.ArcaneVfx;
+import com.xxsx.fantasyearth.ArcaneFocus;
 import com.xxsx.fantasyearth.FantasyEarth;
+import com.xxsx.fantasyearth.SpellCatalog;
+import com.xxsx.fantasyearth.SpellScrollComponent;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
@@ -13,10 +17,14 @@ import net.minecraft.stats.Stats;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.world.effect.MobEffectInstance;
+import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.AgeableMob;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntitySpawnReason;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.ExperienceOrb;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
@@ -38,11 +46,13 @@ import net.minecraft.world.item.trading.MerchantOffers;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.storage.ValueInput;
 import net.minecraft.world.level.storage.ValueOutput;
+import net.minecraft.world.phys.Vec3;
 import org.jspecify.annotations.Nullable;
 
 public final class ArcaneSettlerEntity extends AbstractVillager {
     private static final EntityDataAccessor<Integer> DATA_ROLE = SynchedEntityData.defineId(
             ArcaneSettlerEntity.class, EntityDataSerializers.INT);
+    private int counterAttackCooldown;
 
     public ArcaneSettlerEntity(EntityType<? extends ArcaneSettlerEntity> type, Level level) {
         super(type, level);
@@ -50,9 +60,60 @@ public final class ArcaneSettlerEntity extends AbstractVillager {
 
     public static AttributeSupplier.Builder createAttributes() {
         return Mob.createMobAttributes()
-                .add(Attributes.MAX_HEALTH, 22.0D)
+                .add(Attributes.MAX_HEALTH, 28.0D)
                 .add(Attributes.MOVEMENT_SPEED, 0.43D)
-                .add(Attributes.FOLLOW_RANGE, 24.0D);
+                .add(Attributes.FOLLOW_RANGE, 24.0D)
+                .add(Attributes.ATTACK_DAMAGE, 5.5D);
+    }
+
+    @Override
+    public void aiStep() {
+        super.aiStep();
+        if (this.counterAttackCooldown > 0) {
+            this.counterAttackCooldown--;
+        }
+    }
+
+    @Override
+    public boolean hurtServer(ServerLevel level, DamageSource source, float amount) {
+        boolean hurt = super.hurtServer(level, source, amount);
+        if (hurt && this.isAlive()) {
+            Entity attackerEntity = source.getEntity();
+            if (attackerEntity instanceof LivingEntity attacker && attacker != this && this.counterAttackCooldown <= 0) {
+                this.counterAttackCooldown = 25;
+                this.addEffect(new MobEffectInstance(MobEffects.RESISTANCE, 80, 0, true, false, true));
+                this.addEffect(new MobEffectInstance(MobEffects.ABSORPTION, 100, 0, true, false, true));
+                float damage = 4.0F + getRole().id() * 1.5F;
+                attacker.hurtServer(level, level.damageSources().magic(), damage);
+                attacker.addEffect(new MobEffectInstance(MobEffects.SLOWNESS, 70, 1, false, true, true));
+                Vec3 knock = attacker.position().subtract(this.position());
+                if (knock.lengthSqr() > 0.001D) {
+                    Vec3 push = knock.normalize().scale(0.65D);
+                    attacker.push(push.x, 0.25D, push.z);
+                }
+                ArcaneVfx.focusCast(level, this.position(), ArcaneFocus.EVOCATION);
+                this.playSound(SoundEvents.ENCHANTMENT_TABLE_USE, 0.9F, 1.2F);
+            }
+        }
+        return hurt;
+    }
+
+    @Override
+    protected void dropCustomDeathLoot(ServerLevel level, DamageSource damageSource, boolean recentlyHit) {
+        super.dropCustomDeathLoot(level, damageSource, recentlyHit);
+        this.spawnAtLocation(level, new ItemStack(FantasyEarth.ARCANE_DUST.get(), 1 + this.random.nextInt(3)));
+        this.spawnAtLocation(level, new ItemStack(FantasyEarth.AETHER_SHARD.get(), 1 + this.random.nextInt(2)));
+        if (this.random.nextBoolean()) {
+            ItemStack scroll = new ItemStack(FantasyEarth.SPELL_SCROLL.get());
+            scroll.set(FantasyEarth.SPELL_SCROLL_COMPONENT.get(),
+                    new SpellScrollComponent(SpellCatalog.EVOCATION.id(), 1));
+            this.spawnAtLocation(level, scroll);
+        } else {
+            this.spawnAtLocation(level, new ItemStack(FantasyEarth.RUNE_BLANK.get(), 1 + this.random.nextInt(2)));
+        }
+        if (getRole() == Role.ACADEMY_RESEARCHER) {
+            this.spawnAtLocation(level, new ItemStack(FantasyEarth.CRYSTALLIZED_MANA_SALT.get(), 1));
+        }
     }
 
     @Override
