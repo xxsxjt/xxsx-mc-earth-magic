@@ -6,6 +6,7 @@ import com.xxsx.fantasyearth.ArcaneFocus;
 import com.xxsx.fantasyearth.FantasyEarth;
 import com.xxsx.fantasyearth.SpellCatalog;
 import com.xxsx.fantasyearth.SpellScrollComponent;
+import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
@@ -32,7 +33,6 @@ import net.minecraft.world.entity.ai.goal.AvoidEntityGoal;
 import net.minecraft.world.entity.ai.goal.FloatGoal;
 import net.minecraft.world.entity.ai.goal.LookAtPlayerGoal;
 import net.minecraft.world.entity.ai.goal.LookAtTradingPlayerGoal;
-import net.minecraft.world.entity.ai.goal.PanicGoal;
 import net.minecraft.world.entity.ai.goal.TradeWithPlayerGoal;
 import net.minecraft.world.entity.ai.goal.WaterAvoidingRandomStrollGoal;
 import net.minecraft.world.entity.monster.Monster;
@@ -52,7 +52,10 @@ import org.jspecify.annotations.Nullable;
 public final class ArcaneSettlerEntity extends AbstractVillager {
     private static final EntityDataAccessor<Integer> DATA_ROLE = SynchedEntityData.defineId(
             ArcaneSettlerEntity.class, EntityDataSerializers.INT);
-    private int counterAttackCooldown;
+    @Nullable
+    private LivingEntity combatTarget;
+    private int aggroTicks;
+    private int attackCooldown;
 
     public ArcaneSettlerEntity(EntityType<? extends ArcaneSettlerEntity> type, Level level) {
         super(type, level);
@@ -69,8 +72,58 @@ public final class ArcaneSettlerEntity extends AbstractVillager {
     @Override
     public void aiStep() {
         super.aiStep();
-        if (this.counterAttackCooldown > 0) {
-            this.counterAttackCooldown--;
+        if (this.attackCooldown > 0) {
+            this.attackCooldown--;
+        }
+        if (this.aggroTicks > 0) {
+            this.aggroTicks--;
+        }
+        if (this.level() instanceof ServerLevel serverLevel) {
+            if (this.combatTarget != null && this.combatTarget.isAlive() && this.aggroTicks > 0
+                    && this.distanceToSqr(this.combatTarget) < 576.0D) {
+                this.getLookControl().setLookAt(this.combatTarget, 30.0F, 30.0F);
+                double distSqr = this.distanceToSqr(this.combatTarget);
+                if (distSqr < 16.0D) {
+                    Vec3 away = this.position().subtract(this.combatTarget.position());
+                    if (away.lengthSqr() > 0.001D) {
+                        Vec3 retreat = this.position().add(away.normalize().scale(4.0D));
+                        this.getNavigation().moveTo(retreat.x, retreat.y, retreat.z, 0.78D);
+                    }
+                } else if (distSqr > 100.0D) {
+                    this.getNavigation().moveTo(this.combatTarget, 0.74D);
+                } else {
+                    this.getNavigation().stop();
+                }
+                if (this.attackCooldown <= 0 && distSqr <= 256.0D) {
+                    this.swing(InteractionHand.MAIN_HAND);
+                    if (distSqr < 16.0D) {
+                        this.combatTarget.addEffect(new MobEffectInstance(MobEffects.SLOWNESS, 70, 1, false, true, true));
+                        serverLevel.sendParticles(ParticleTypes.SNOWFLAKE,
+                                this.getX(), this.getY() + 0.8D, this.getZ(),
+                                16, 1.2D, 0.3D, 1.2D, 0.04D);
+                    }
+                    Vec3 start = this.position().add(0.0D, this.getBbHeight() * 0.68D, 0.0D);
+                    Vec3 end = this.combatTarget.position().add(0.0D, this.combatTarget.getBbHeight() * 0.55D, 0.0D);
+                    Vec3 dir = end.subtract(start);
+                    double len = dir.length();
+                    if (len > 0.1D) {
+                        Vec3 step = dir.normalize().scale(0.55D);
+                        int steps = Math.min(34, (int) (len / 0.55D));
+                        for (int i = 1; i <= steps; i++) {
+                            Vec3 p = start.add(step.scale(i));
+                            serverLevel.sendParticles(ParticleTypes.WITCH, p.x, p.y, p.z, 1, 0.02D, 0.02D, 0.02D, 0.01D);
+                            serverLevel.sendParticles(ParticleTypes.END_ROD, p.x, p.y, p.z, 1, 0.01D, 0.01D, 0.01D, 0.005D);
+                        }
+                    }
+                    float damage = 4.5F + getRole().id();
+                    this.combatTarget.hurtServer(serverLevel, serverLevel.damageSources().indirectMagic(this, this), damage);
+                    ArcaneVfx.focusCast(serverLevel, this.position(), ArcaneFocus.EVOCATION);
+                    this.playSound(SoundEvents.ENCHANTMENT_TABLE_USE, 0.95F, 1.25F);
+                    this.attackCooldown = 34;
+                }
+            } else if (this.aggroTicks <= 0 || (this.combatTarget != null && !this.combatTarget.isAlive())) {
+                this.combatTarget = null;
+            }
         }
     }
 
@@ -79,20 +132,25 @@ public final class ArcaneSettlerEntity extends AbstractVillager {
         boolean hurt = super.hurtServer(level, source, amount);
         if (hurt && this.isAlive()) {
             Entity attackerEntity = source.getEntity();
-            if (attackerEntity instanceof LivingEntity attacker && attacker != this && this.counterAttackCooldown <= 0) {
-                this.counterAttackCooldown = 25;
+            if (attackerEntity instanceof LivingEntity attacker && attacker != this
+                    && !(attacker instanceof ArcaneSettlerEntity)) {
+                this.combatTarget = attacker;
+                this.aggroTicks = 400;
+                if (this.attackCooldown <= 0) {
+                    this.attackCooldown = 12;
+                }
                 this.addEffect(new MobEffectInstance(MobEffects.RESISTANCE, 80, 0, true, false, true));
                 this.addEffect(new MobEffectInstance(MobEffects.ABSORPTION, 100, 0, true, false, true));
-                float damage = 4.0F + getRole().id() * 1.5F;
-                attacker.hurtServer(level, level.damageSources().magic(), damage);
-                attacker.addEffect(new MobEffectInstance(MobEffects.SLOWNESS, 70, 1, false, true, true));
-                Vec3 knock = attacker.position().subtract(this.position());
-                if (knock.lengthSqr() > 0.001D) {
-                    Vec3 push = knock.normalize().scale(0.65D);
-                    attacker.push(push.x, 0.25D, push.z);
-                }
                 ArcaneVfx.focusCast(level, this.position(), ArcaneFocus.EVOCATION);
                 this.playSound(SoundEvents.ENCHANTMENT_TABLE_USE, 0.9F, 1.2F);
+                for (ArcaneSettlerEntity ally : level.getEntitiesOfClass(
+                        ArcaneSettlerEntity.class, this.getBoundingBox().inflate(16.0D))) {
+                    if (ally != this && ally.isAlive() && ally.combatTarget == null) {
+                        ally.combatTarget = attacker;
+                        ally.aggroTicks = 300;
+                        ally.attackCooldown = 16;
+                    }
+                }
             }
         }
         return hurt;
@@ -140,7 +198,6 @@ public final class ArcaneSettlerEntity extends AbstractVillager {
         goalSelector.addGoal(1, new TradeWithPlayerGoal(this));
         goalSelector.addGoal(1, new LookAtTradingPlayerGoal(this));
         goalSelector.addGoal(2, new AvoidEntityGoal<>(this, Monster.class, 9.0F, 0.7D, 0.8D));
-        goalSelector.addGoal(3, new PanicGoal(this, 0.8D));
         goalSelector.addGoal(7, new WaterAvoidingRandomStrollGoal(this, 0.62D));
         goalSelector.addGoal(8, new LookAtPlayerGoal(this, Player.class, 8.0F));
     }
