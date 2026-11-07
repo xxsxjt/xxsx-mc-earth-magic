@@ -72,6 +72,9 @@ public class ConstructCoreItem extends MagicMaterialItem {
     public InteractionResult useOn(UseOnContext context) {
         Level level = context.getLevel();
         if (level.isClientSide()) {
+            if (context.getPlayer() != null) {
+                context.getPlayer().swing(context.getHand());
+            }
             return InteractionResult.SUCCESS;
         }
         if (!(level instanceof ServerLevel serverLevel) || !(context.getPlayer() instanceof ServerPlayer serverPlayer)) {
@@ -100,6 +103,10 @@ public class ConstructCoreItem extends MagicMaterialItem {
         if (!serverPlayer.getAbilities().instabuild) {
             stack.shrink(1);
         }
+        serverPlayer.swing(context.getHand(), true);
+        ArcaneNetwork.broadcastVisual(serverPlayer, ArcaneVisualAction.forFocus(ArcaneFocus.EVOCATION));
+        ArcaneVfx.runeRing(serverLevel, golem.position(), 1.25D, 12);
+        ArcaneVfx.sparkBurst(serverLevel, golem.getX(), golem.getY() + 1.1D, golem.getZ(), 20, 0.55D);
         serverLevel.playSound(null, spawnPos, SoundEvents.IRON_GOLEM_REPAIR, SoundSource.PLAYERS, 0.9F, 0.9F);
         serverPlayer.sendSystemMessage(Component.translatable("message.fantasy_earth.construct_core.summoned")
                 .withStyle(ChatFormatting.LIGHT_PURPLE));

@@ -5,6 +5,8 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
@@ -36,17 +38,18 @@ public class AetherBatteryBlock extends Block {
 
     @Override
     protected InteractionResult useWithoutItem(BlockState state, Level level, BlockPos pos, Player player, BlockHitResult hitResult) {
-        return handleInteract(state, level, pos, player, ItemStack.EMPTY);
+        return handleInteract(state, level, pos, player, InteractionHand.MAIN_HAND, ItemStack.EMPTY);
     }
 
     @Override
     protected InteractionResult useItemOn(ItemStack stack, BlockState state, Level level, BlockPos pos, Player player,
                                           InteractionHand hand, BlockHitResult hitResult) {
-        return handleInteract(state, level, pos, player, stack);
+        return handleInteract(state, level, pos, player, hand, stack);
     }
 
-    private InteractionResult handleInteract(BlockState state, Level level, BlockPos pos, Player player, ItemStack stack) {
+    private InteractionResult handleInteract(BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, ItemStack stack) {
         if (level.isClientSide()) {
+            player.swing(hand);
             return InteractionResult.SUCCESS;
         }
         int step = state.getValue(CHARGE_STEP);
@@ -70,6 +73,11 @@ public class AetherBatteryBlock extends Block {
                 level.setBlock(pos, state.setValue(CHARGE_STEP, step + 1), Block.UPDATE_CLIENTS);
                 stored = (step + 1) * 40.0D;
             }
+        }
+        player.swing(hand, true);
+        if (level instanceof ServerLevel serverLevel) {
+            ArcaneVfx.moteBurst(serverLevel, pos.getX() + 0.5D, pos.getY() + 0.8D, pos.getZ() + 0.5D, 8, 0.3D);
+            serverLevel.playSound(null, pos, SoundEvents.AMETHYST_BLOCK_CHIME, SoundSource.BLOCKS, 0.7F, 1.1F);
         }
         if (player instanceof ServerPlayer serverPlayer) {
             serverPlayer.sendSystemMessage(Component.translatable("message.fantasy_earth.aether_battery.status",

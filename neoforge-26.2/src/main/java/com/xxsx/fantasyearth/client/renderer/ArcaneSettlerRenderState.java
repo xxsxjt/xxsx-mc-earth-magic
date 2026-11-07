@@ -5,4 +5,6 @@ import net.minecraft.client.renderer.entity.state.LivingEntityRenderState;
 public final class ArcaneSettlerRenderState extends LivingEntityRenderState {
     public int role;
     public boolean trading;
+    public boolean casting;
+    public float attackProgress;
 }

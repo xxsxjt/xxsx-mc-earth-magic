@@ -2,6 +2,7 @@ package com.xxsx.fantasyearth.client;
 
 import com.xxsx.fantasyearth.client.model.AetherFoxModel;
 import com.xxsx.fantasyearth.client.model.ArcaneSettlerModel;
+import com.xxsx.earthlore.client.LoreTreeScreen;
 import com.xxsx.fantasyearth.client.model.CrystalSpiderModel;
 import com.xxsx.fantasyearth.client.model.ManaWispModel;
 import com.xxsx.fantasyearth.client.model.RuneWolfModel;
@@ -16,6 +17,7 @@ import com.xxsx.fantasyearth.client.particle.CrystalShardParticle;
 import com.xxsx.fantasyearth.client.particle.RuneSparkParticle;
 import com.xxsx.fantasyearth.client.particle.WardRuneParticle;
 import com.xxsx.fantasyearth.FantasyEarth;
+import com.xxsx.fantasyearth.FantasyLoreIntegration;
 import com.xxsx.fantasyearth.ArcaneActionPayload;
 import com.xxsx.fantasyearth.ArcaneFocus;
 import com.xxsx.fantasyearth.ArcaneStatusPayload;
@@ -23,6 +25,7 @@ import com.xxsx.fantasyearth.ArcaneVisualPayload;
 import com.mojang.blaze3d.platform.InputConstants;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.screens.Screen;
 import com.xxsx.fantasyearth.FantasyEarthParticles;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.neoforge.client.event.ClientTickEvent;
@@ -180,5 +183,26 @@ public final class FantasyEarthClient {
             requestAttunementRefresh();
         }
         Minecraft.getInstance().setScreen(new MagicHandbookScreen());
+    }
+
+    public static void openLoreTree(Screen parent) {
+        if (Minecraft.getInstance().getConnection() != null) {
+            requestAttunementRefresh();
+        }
+        Minecraft.getInstance().setScreen(new LoreTreeScreen(FantasyLoreIntegration.DISCIPLINE_MAG));
+    }
+
+    public static void openCultivationHub(Screen parent) {
+        if (Minecraft.getInstance().getConnection() != null) {
+            requestAttunementRefresh();
+        }
+        try {
+            Class.forName("com.xxsx.earthhuman.client.EarthHumanClient")
+                    .getMethod("openCultivationHub", Screen.class)
+                    .invoke(null, parent);
+            return;
+        } catch (ReflectiveOperationException | LinkageError ignored) {
+        }
+        openHandbook();
     }
 }

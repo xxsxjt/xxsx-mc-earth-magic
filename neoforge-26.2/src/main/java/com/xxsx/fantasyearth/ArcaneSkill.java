@@ -30,14 +30,22 @@ public final class ArcaneSkill {
     }
 
     public static boolean activate(ServerLevel level, ServerPlayer player) {
-        return execute(level, player, ArcanaPower.getArcaneFocus(player), false);
+        return activate(level, player, InteractionHand.MAIN_HAND);
+    }
+
+    public static boolean activate(ServerLevel level, ServerPlayer player, InteractionHand hand) {
+        return execute(level, player, ArcanaPower.getArcaneFocus(player), false, hand);
     }
 
     public static boolean activateWithScroll(ServerLevel level, ServerPlayer player, ArcaneFocus focus) {
-        return execute(level, player, focus, true);
+        return activateWithScroll(level, player, focus, InteractionHand.MAIN_HAND);
     }
 
-    private static boolean execute(ServerLevel level, ServerPlayer player, ArcaneFocus focus, boolean fromScroll) {
+    public static boolean activateWithScroll(ServerLevel level, ServerPlayer player, ArcaneFocus focus, InteractionHand hand) {
+        return execute(level, player, focus, true, hand);
+    }
+
+    private static boolean execute(ServerLevel level, ServerPlayer player, ArcaneFocus focus, boolean fromScroll, InteractionHand hand) {
         SpellExecutor.Plan plan = SpellExecutor.plan(player, level, focus, fromScroll);
         if (!plan.accepted()) {
             String key = switch (plan.errorCode()) {
@@ -96,9 +104,15 @@ public final class ArcaneSkill {
                 player.setAirSupply(player.getMaxAirSupply()
                         + (int) Math.round(ArcanaPower.getBreathCapacityBonus(player)));
                 EarthHumanCompat.treatFractureAndCleanseAir(player, 0.0D, 1.5D, 100.0D, 20.0D, 12.0D);
+                level.sendParticles(ParticleTypes.BUBBLE_POP, player.getX(), player.getY() + 1.0D, player.getZ(),
+                        20, 0.65D, 0.45D, 0.65D, 0.03D);
+                level.playSound(null, player.blockPosition(), SoundEvents.BUBBLE_COLUMN_UPWARDS_AMBIENT,
+                        SoundSource.PLAYERS, 0.85F, 1.15F);
             }
             case EVOCATION -> {
                 castArcaneMissiles(level, player, levelValue);
+                level.playSound(null, player.blockPosition(), SoundEvents.EVOKER_CAST_SPELL,
+                        SoundSource.PLAYERS, 0.9F, 1.15F);
             }
             case ILLUSION -> {
                 player.addEffect(new MobEffectInstance(MobEffects.INVISIBILITY, 120, 0, true, false, true));
@@ -109,8 +123,15 @@ public final class ArcaneSkill {
                     target.addEffect(new MobEffectInstance(MobEffects.SLOWNESS, 100, 2, false, true, true));
                     target.addEffect(new MobEffectInstance(MobEffects.WEAKNESS, 100, 1, false, true, true));
                 }
+                level.sendParticles(ParticleTypes.PORTAL, player.getX(), player.getY() + 0.9D, player.getZ(),
+                        28, 0.7D, 0.6D, 0.7D, 0.15D);
+                level.playSound(null, player.blockPosition(), SoundEvents.ILLUSIONER_MIRROR_MOVE,
+                        SoundSource.PLAYERS, 0.9F, 1.1F);
             }
             case TRANSLOCATION -> {
+                Vec3 origin = player.position();
+                level.sendParticles(ParticleTypes.PORTAL, origin.x, origin.y + 0.9D, origin.z,
+                        24, 0.55D, 0.6D, 0.55D, 0.18D);
                 Vec3 look = player.getLookAngle().normalize();
                 Vec3 dest = player.position();
                 for (int step = 1; step <= 10; step++) {
@@ -125,13 +146,17 @@ public final class ArcaneSkill {
                 }
                 player.teleportTo(dest.x, dest.y, dest.z);
                 player.resetFallDistance();
+                level.sendParticles(ParticleTypes.REVERSE_PORTAL, dest.x, dest.y + 0.9D, dest.z,
+                        26, 0.5D, 0.6D, 0.5D, 0.06D);
+                level.playSound(null, BlockPos.containing(dest), SoundEvents.ENDERMAN_TELEPORT,
+                        SoundSource.PLAYERS, 0.9F, 1.15F);
             }
         }
 
         if (plan.aeuCost() > 0.0D) {
             AetherChunkField.disturbAeu(level, player.blockPosition(), plan.aeuCost());
         }
-        player.swing(InteractionHand.MAIN_HAND, true);
+        player.swing(hand, true);
         int cdTicks = switch (focus) {
             case EVOCATION -> 200;
             case ILLUSION -> 300;
@@ -141,6 +166,10 @@ public final class ArcaneSkill {
         ArcanaPower.startSkillCooldown(player, level, cdTicks);
         ArcaneNetwork.broadcastVisual(player, ArcaneVisualAction.forFocus(focus));
         ArcaneVfx.focusCast(level, player.position(), focus);
+        if (fromScroll) {
+            level.playSound(null, player.blockPosition(), SoundEvents.BOOK_PAGE_TURN,
+                    SoundSource.PLAYERS, 0.85F, 1.15F);
+        }
         level.playSound(null, player.blockPosition(), SoundEvents.ENCHANTMENT_TABLE_USE,
                 SoundSource.PLAYERS, 0.85F, 0.92F + focus.id() * 0.12F);
         player.sendSystemMessage(Component.translatable(

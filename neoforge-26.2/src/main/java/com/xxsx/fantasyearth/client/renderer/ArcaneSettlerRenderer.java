@@ -21,7 +21,8 @@ public final class ArcaneSettlerRenderer extends MobRenderer<ArcaneSettlerEntity
         super(context, new ArcaneSettlerModel(context.bakeLayer(ArcaneSettlerModel.LAYER_LOCATION)), 0.48F);
         this.addLayer(new LivingEntityEmissiveLayer<>(this,
                 state -> TEXTURES[Math.max(0, Math.min(TEXTURES.length - 1, state.role))],
-                (state, age) -> 0.03F + (state.trading ? 0.05F : 0.0F),
+                (state, age) -> 0.03F + (state.trading ? 0.05F : 0.0F)
+                        + (state.casting ? 0.08F : 0.0F) + state.attackProgress * 0.12F,
                 this.getModel(), RenderTypes::entityTranslucentEmissive, false));
     }
 
@@ -35,6 +36,8 @@ public final class ArcaneSettlerRenderer extends MobRenderer<ArcaneSettlerEntity
         super.extractRenderState(entity, state, partialTick);
         state.role = entity.getRole().id();
         state.trading = entity.isTrading();
+        state.casting = entity.isCasting();
+        state.attackProgress = entity.getAttackAnim(partialTick);
     }
 
     @Override

@@ -1,6 +1,7 @@
 package com.xxsx.fantasyearth;
 
 import net.minecraft.core.BlockPos;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionHand;
@@ -40,21 +41,26 @@ public class RitualCandleBlock extends Block {
 
     @Override
     protected InteractionResult useWithoutItem(BlockState state, Level level, BlockPos pos, Player player, BlockHitResult hitResult) {
-        return toggleLit(state, level, pos);
+        return toggleLit(state, level, pos, player, InteractionHand.MAIN_HAND);
     }
 
     @Override
     protected InteractionResult useItemOn(ItemStack stack, BlockState state, Level level, BlockPos pos, Player player,
                                           InteractionHand hand, BlockHitResult hitResult) {
-        return toggleLit(state, level, pos);
+        return toggleLit(state, level, pos, player, hand);
     }
 
-    private InteractionResult toggleLit(BlockState state, Level level, BlockPos pos) {
+    private InteractionResult toggleLit(BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand) {
         if (level.isClientSide()) {
+            player.swing(hand);
             return InteractionResult.SUCCESS;
         }
         boolean next = !state.getValue(LIT);
         level.setBlock(pos, state.setValue(LIT, next), Block.UPDATE_CLIENTS);
+        player.swing(hand, true);
+        if (next && level instanceof ServerLevel serverLevel) {
+            ArcaneVfx.sparkBurst(serverLevel, pos.getX() + 0.5D, pos.getY() + 0.7D, pos.getZ() + 0.5D, 6, 0.15D);
+        }
         level.playSound(null, pos, next ? SoundEvents.FLINTANDSTEEL_USE : SoundEvents.CANDLE_EXTINGUISH,
                 SoundSource.BLOCKS, 0.7F, 1.1F);
         return InteractionResult.SUCCESS_SERVER;

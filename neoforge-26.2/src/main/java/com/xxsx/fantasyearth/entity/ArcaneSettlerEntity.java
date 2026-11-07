@@ -52,6 +52,8 @@ import org.jspecify.annotations.Nullable;
 public final class ArcaneSettlerEntity extends AbstractVillager {
     private static final EntityDataAccessor<Integer> DATA_ROLE = SynchedEntityData.defineId(
             ArcaneSettlerEntity.class, EntityDataSerializers.INT);
+    private static final EntityDataAccessor<Boolean> DATA_CASTING = SynchedEntityData.defineId(
+            ArcaneSettlerEntity.class, EntityDataSerializers.BOOLEAN);
     @Nullable
     private LivingEntity combatTarget;
     private int aggroTicks;
@@ -79,8 +81,12 @@ public final class ArcaneSettlerEntity extends AbstractVillager {
             this.aggroTicks--;
         }
         if (this.level() instanceof ServerLevel serverLevel) {
-            if (this.combatTarget != null && this.combatTarget.isAlive() && this.aggroTicks > 0
-                    && this.distanceToSqr(this.combatTarget) < 576.0D) {
+            boolean activeCombat = this.combatTarget != null && this.combatTarget.isAlive()
+                    && this.aggroTicks > 0 && this.distanceToSqr(this.combatTarget) < 576.0D;
+            if (this.entityData.get(DATA_CASTING) != activeCombat) {
+                this.entityData.set(DATA_CASTING, activeCombat);
+            }
+            if (activeCombat) {
                 this.getLookControl().setLookAt(this.combatTarget, 30.0F, 30.0F);
                 double distSqr = this.distanceToSqr(this.combatTarget);
                 if (distSqr < 16.0D) {
@@ -118,6 +124,7 @@ public final class ArcaneSettlerEntity extends AbstractVillager {
                     float damage = 4.5F + getRole().id();
                     this.combatTarget.hurtServer(serverLevel, serverLevel.damageSources().indirectMagic(this, this), damage);
                     ArcaneVfx.focusCast(serverLevel, this.position(), ArcaneFocus.EVOCATION);
+                    this.playSound(SoundEvents.EVOKER_CAST_SPELL, 0.85F, 1.15F);
                     this.playSound(SoundEvents.ENCHANTMENT_TABLE_USE, 0.95F, 1.25F);
                     this.attackCooldown = 34;
                 }
@@ -178,6 +185,11 @@ public final class ArcaneSettlerEntity extends AbstractVillager {
     protected void defineSynchedData(SynchedEntityData.Builder builder) {
         super.defineSynchedData(builder);
         builder.define(DATA_ROLE, Role.HEDGE_WITCH.id());
+        builder.define(DATA_CASTING, false);
+    }
+
+    public boolean isCasting() {
+        return entityData.get(DATA_CASTING);
     }
 
     @Override
@@ -197,7 +209,17 @@ public final class ArcaneSettlerEntity extends AbstractVillager {
         goalSelector.addGoal(0, new FloatGoal(this));
         goalSelector.addGoal(1, new TradeWithPlayerGoal(this));
         goalSelector.addGoal(1, new LookAtTradingPlayerGoal(this));
-        goalSelector.addGoal(2, new AvoidEntityGoal<>(this, Monster.class, 9.0F, 0.7D, 0.8D));
+        goalSelector.addGoal(2, new AvoidEntityGoal<>(this, Monster.class, 9.0F, 0.7D, 0.8D) {
+            @Override
+            public boolean canUse() {
+                return !ArcaneSettlerEntity.this.isCasting() && super.canUse();
+            }
+
+            @Override
+            public boolean canContinueToUse() {
+                return !ArcaneSettlerEntity.this.isCasting() && super.canContinueToUse();
+            }
+        });
         goalSelector.addGoal(7, new WaterAvoidingRandomStrollGoal(this, 0.62D));
         goalSelector.addGoal(8, new LookAtPlayerGoal(this, Player.class, 8.0F));
     }
@@ -214,6 +236,11 @@ public final class ArcaneSettlerEntity extends AbstractVillager {
             if (getOffers().isEmpty()) {
                 return InteractionResult.CONSUME;
             }
+            this.swing(InteractionHand.MAIN_HAND);
+            this.playSound(SoundEvents.AMETHYST_BLOCK_CHIME, 0.65F, 1.15F);
+            if (level() instanceof ServerLevel serverLevel) {
+                ArcaneVfx.moteBurst(serverLevel, getX(), getY() + 1.1D, getZ(), 8, 0.35D);
+            }
             setTradingPlayer(player);
             openTradingScreen(player, Component.translatable(getRole().translationKey()), 1);
         }
@@ -228,19 +255,32 @@ public final class ArcaneSettlerEntity extends AbstractVillager {
                 add(offers, Items.EMERALD, 2, new ItemStack(FantasyEarth.ARCANE_DUST.get(), 3), 12, 2);
                 add(offers, Items.EMERALD, 3, new ItemStack(FantasyEarth.RUNE_INK.get(), 2), 10, 3);
                 add(offers, Items.GLOWSTONE_DUST, 6, new ItemStack(FantasyEarth.CRYSTALLIZED_MANA_SALT.get()), 8, 5);
+                add(offers, Items.EMERALD, 3, new ItemStack(FantasyEarth.AETHER_SHARD.get(), 2), 10, 4);
+                add(offers, Items.EMERALD, 5, createScrollOffer(SpellCatalog.WARD.id()), 6, 6);
             }
             case GOBLIN_APPRAISER -> {
                 add(offers, Items.COPPER_INGOT, 5, new ItemStack(FantasyEarth.RUNE_COPPER_PLATE.get()), 12, 3);
                 add(offers, Items.EMERALD, 4, new ItemStack(FantasyEarth.AETHER_GLASS.get(), 2), 8, 4);
                 add(offers, Items.GOLD_INGOT, 3, new ItemStack(FantasyEarth.FAMILIAR_CONTRACT.get()), 6, 6);
+                add(offers, Items.EMERALD, 3, new ItemStack(FantasyEarth.AETHER_SHARD.get(), 2), 10, 4);
+                add(offers, Items.EMERALD, 5, createScrollOffer(SpellCatalog.ATTUNEMENT.id()), 6, 6);
             }
             case ACADEMY_RESEARCHER -> {
                 add(offers, Items.EMERALD, 8, new ItemStack(FantasyEarth.ARCANE_INITIATION_NOTES.get()), 4, 8);
                 add(offers, Items.EMERALD, 7, new ItemStack(FantasyEarth.ARCANE_BODY_WARD_NOTES.get()), 4, 8);
+                add(offers, Items.EMERALD, 7, new ItemStack(FantasyEarth.ARCANE_BREATH_WARD_NOTES.get()), 4, 8);
                 add(offers, Items.AMETHYST_SHARD, 8, new ItemStack(FantasyEarth.AETHER_CRYSTAL.get()), 6, 6);
+                add(offers, Items.EMERALD, 6, createScrollOffer(SpellCatalog.EVOCATION.id()), 6, 7);
             }
         }
         offers.addAll(LoreApi.teachingOffers(level, getType()));
+    }
+
+    private static ItemStack createScrollOffer(String graphId) {
+        ItemStack scroll = new ItemStack(FantasyEarth.SPELL_SCROLL.get());
+        scroll.set(FantasyEarth.SPELL_SCROLL_COMPONENT.get(),
+                new SpellScrollComponent(graphId, 1));
+        return scroll;
     }
 
     private static void add(MerchantOffers offers, net.minecraft.world.level.ItemLike cost, int count,
@@ -250,6 +290,11 @@ public final class ArcaneSettlerEntity extends AbstractVillager {
 
     @Override
     protected void rewardTradeXp(MerchantOffer offer) {
+        this.swing(InteractionHand.MAIN_HAND);
+        this.playSound(SoundEvents.ENCHANTMENT_TABLE_USE, 0.7F, 1.25F);
+        if (level() instanceof ServerLevel serverLevel) {
+            ArcaneVfx.sparkBurst(serverLevel, getX(), getY() + 1.1D, getZ(), 10, 0.4D);
+        }
         if (offer.shouldRewardExp()) {
             level().addFreshEntity(new ExperienceOrb(level(), getX(), getY() + 0.5D, getZ(),
                     3 + random.nextInt(4)));

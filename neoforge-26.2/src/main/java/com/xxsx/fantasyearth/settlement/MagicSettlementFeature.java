@@ -2,9 +2,13 @@ package com.xxsx.fantasyearth.settlement;
 
 import com.mojang.serialization.Codec;
 import com.xxsx.fantasyearth.FantasyEarth;
+import com.xxsx.fantasyearth.SpellCatalog;
+import com.xxsx.fantasyearth.SpellGraph;
+import com.xxsx.fantasyearth.SpellScrollComponent;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.Identifier;
+import net.minecraft.tags.BlockTags;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.Container;
 import net.minecraft.world.item.ItemStack;
@@ -29,6 +33,8 @@ import java.util.List;
  */
 public final class MagicSettlementFeature extends Feature<NoneFeatureConfiguration> {
     private static final int UPDATE_FLAGS = 2;
+    public static final int MAX_SLOPE_DELTA = com.xxsx.fantasyearth.ArcanaBalance.MAX_SETTLEMENT_SLOPE_DELTA;
+    public static final int MAX_FOUNDATION_DEPTH = 12;
     private final Type type;
 
     public MagicSettlementFeature(Codec<NoneFeatureConfiguration> codec, Type type) {
@@ -41,11 +47,15 @@ public final class MagicSettlementFeature extends Feature<NoneFeatureConfigurati
         WorldGenLevel level = context.level();
         RandomSource random = context.random();
         BlockPos center = context.origin();
-        while (level.isEmptyBlock(center) && center.getY() > level.getMinY() + 2) {
+        while (center.getY() > level.getMinY() + 4 && isReplaceableOrFoliage(level, center)) {
             center = center.below();
         }
+        BlockState surface = level.getBlockState(center);
+        if (isFluidOrIce(surface) || !surface.isSolidRender()) {
+            return false;
+        }
         center = center.above();
-        if (level.isEmptyBlock(center.below())) {
+        if (!canPlaceSite(level, center, type.radius())) {
             return false;
         }
         Pose pose = new Pose(center, random.nextInt(4));
@@ -67,15 +77,104 @@ public final class MagicSettlementFeature extends Feature<NoneFeatureConfigurati
         return true;
     }
 
+    public static boolean isSiteTerrainValid(int minY, int maxY, boolean hasFluid, int invalidColumns) {
+        return com.xxsx.fantasyearth.ArcanaBalance.isSettlementSiteValid(minY, maxY, hasFluid, invalidColumns);
+    }
+
+    private static boolean canPlaceSite(WorldGenLevel level, BlockPos center, int radius) {
+        int minSurfaceY = Integer.MAX_VALUE;
+        int maxSurfaceY = Integer.MIN_VALUE;
+        int invalidColumns = 0;
+        int baseY = center.getY() - 1;
+
+        for (int x = -radius; x <= radius; x++) {
+            for (int z = -radius; z <= radius; z++) {
+                for (int checkY = baseY - 1; checkY <= baseY + 4; checkY++) {
+                    BlockState checkState = level.getBlockState(new BlockPos(center.getX() + x, checkY, center.getZ() + z));
+                    if (isFluidOrIce(checkState)) {
+                        return isSiteTerrainValid(minSurfaceY, maxSurfaceY, true, invalidColumns);
+                    }
+                }
+                int columnGroundY = Integer.MIN_VALUE;
+                for (int y = baseY + 5; y >= Math.max(level.getMinY() + 2, baseY - 7); y--) {
+                    BlockPos samplePos = new BlockPos(center.getX() + x, y, center.getZ() + z);
+                    BlockState state = level.getBlockState(samplePos);
+                    if (isReplaceableOrFoliage(level, samplePos)) {
+                        continue;
+                    }
+                    if (isFluidOrIce(state)) {
+                        return isSiteTerrainValid(minSurfaceY, maxSurfaceY, true, invalidColumns);
+                    }
+                    if (state.isSolidRender()) {
+                        columnGroundY = y;
+                        break;
+                    }
+                }
+                if (columnGroundY == Integer.MIN_VALUE) {
+                    invalidColumns++;
+                } else {
+                    minSurfaceY = Math.min(minSurfaceY, columnGroundY);
+                    maxSurfaceY = Math.max(maxSurfaceY, columnGroundY);
+                }
+            }
+        }
+        return isSiteTerrainValid(minSurfaceY, maxSurfaceY, false, invalidColumns);
+    }
+
+    private static boolean isFluidOrIce(BlockState state) {
+        return !state.getFluidState().isEmpty()
+                || state.is(Blocks.WATER)
+                || state.is(Blocks.LAVA)
+                || state.is(Blocks.ICE)
+                || state.is(Blocks.PACKED_ICE)
+                || state.is(Blocks.BLUE_ICE)
+                || state.is(Blocks.FROSTED_ICE);
+    }
+
+    private static boolean isReplaceableOrFoliage(WorldGenLevel level, BlockPos pos) {
+        if (level.isEmptyBlock(pos)) {
+            return true;
+        }
+        BlockState state = level.getBlockState(pos);
+        if (!state.getFluidState().isEmpty()) {
+            return false;
+        }
+        return state.is(BlockTags.LEAVES)
+                || state.is(BlockTags.LOGS)
+                || state.is(BlockTags.REPLACEABLE)
+                || state.is(BlockTags.FLOWERS)
+                || state.is(BlockTags.SAPLINGS)
+                || state.is(Blocks.SNOW)
+                || state.is(Blocks.VINE);
+    }
+
     private static void prepareSite(WorldGenLevel level, BlockPos center, int radius) {
         for (int x = -radius; x <= radius; x++) {
             for (int z = -radius; z <= radius; z++) {
                 level.setBlock(center.offset(x, -1, z), Blocks.STONE_BRICKS.defaultBlockState(), UPDATE_FLAGS);
+                for (int depth = 2; depth <= MAX_FOUNDATION_DEPTH; depth++) {
+                    BlockPos supportPos = center.offset(x, -depth, z);
+                    if (supportPos.getY() <= level.getMinY() + 1) {
+                        break;
+                    }
+                    BlockState belowState = level.getBlockState(supportPos);
+                    if (belowState.isSolidRender() && !isReplaceableOrFoliage(level, supportPos) && !isFluidOrIce(belowState)) {
+                        break;
+                    }
+                    level.setBlock(supportPos, Blocks.STONE_BRICKS.defaultBlockState(), UPDATE_FLAGS);
+                }
                 for (int y = 0; y <= 7; y++) {
                     level.setBlock(center.offset(x, y, z), Blocks.AIR.defaultBlockState(), UPDATE_FLAGS);
                 }
             }
         }
+    }
+
+    public static ItemStack createInscribedScroll(SpellGraph graph, int count) {
+        ItemStack scroll = new ItemStack(FantasyEarth.SPELL_SCROLL.get(), Math.max(1, count));
+        scroll.set(FantasyEarth.SPELL_SCROLL_COMPONENT.get(),
+                new SpellScrollComponent(graph.id(), 1));
+        return scroll;
     }
 
     private void buildWitchHamlet(WorldGenLevel level, Pose pose, int variant, Palette palette, RandomSource random) {
@@ -104,16 +203,22 @@ public final class MagicSettlementFeature extends Feature<NoneFeatureConfigurati
         }
         perimeterFence(level, pose, 4, palette, random, 3);
         paths(level, pose, palette, random);
+        level.setBlock(pose.at(0, -2), FantasyEarth.AETHER_CRYSTAL_CLUSTER.get().defaultBlockState(), UPDATE_FLAGS);
         if (variant != 1) {
             level.setBlock(pose.at(-2, 1), FantasyEarth.ARCANE_FOCUS_MAT.get().defaultBlockState(), UPDATE_FLAGS);
         }
         stock(level, pose.at(-4, 2), random,
                 new ItemStack(FantasyEarth.ARCANE_DUST.get(), 6 + random.nextInt(8)),
+                new ItemStack(FantasyEarth.AETHER_SHARD.get(), 2 + random.nextInt(4)),
                 new ItemStack(FantasyEarth.RUNE_INK.get(), 4 + random.nextInt(6)),
-                new ItemStack(FantasyEarth.CRYSTALLIZED_MANA_SALT.get(), 1 + random.nextInt(3)));
+                new ItemStack(FantasyEarth.CRYSTALLIZED_MANA_SALT.get(), 2 + random.nextInt(3)),
+                new ItemStack(FantasyEarth.ARCANE_INITIATION_NOTES.get(), 1),
+                createInscribedScroll(SpellCatalog.WARD, 1 + random.nextInt(2)));
         stock(level, pose.at(4, 2), random,
                 new ItemStack(FantasyEarth.RITUAL_CHALK.get(), 4 + random.nextInt(6)),
                 new ItemStack(FantasyEarth.AETHER_GLASS.get(), 1 + random.nextInt(4)),
+                new ItemStack(FantasyEarth.ARCANE_BODY_WARD_NOTES.get(), 1),
+                createInscribedScroll(SpellCatalog.BREATH_WARD, 1),
                 new ItemStack(Items.AMETHYST_SHARD, 2 + random.nextInt(5)));
         placeBoard(level, pose.at(0, -4));
         cornerLights(level, pose, 4, palette.light());
@@ -147,13 +252,19 @@ public final class MagicSettlementFeature extends Feature<NoneFeatureConfigurati
         level.setBlock(pose.at(0, -2), FantasyEarth.AETHER_CRYSTAL_CLUSTER.get().defaultBlockState(), UPDATE_FLAGS);
         stock(level, pose.at(-3, 2), random,
                 new ItemStack(FantasyEarth.RUNE_COPPER_PLATE.get(), 2 + random.nextInt(4)),
-                new ItemStack(FantasyEarth.ARCANE_DUST.get(), 4 + random.nextInt(6)));
+                new ItemStack(FantasyEarth.AETHER_SHARD.get(), 3 + random.nextInt(4)),
+                new ItemStack(FantasyEarth.ARCANE_DUST.get(), 4 + random.nextInt(6)),
+                createInscribedScroll(SpellCatalog.ATTUNEMENT, 1 + random.nextInt(2)));
         stock(level, pose.at(0, 2), random,
                 new ItemStack(FantasyEarth.AETHER_CRYSTAL.get(), 1 + random.nextInt(3)),
-                new ItemStack(FantasyEarth.FAMILIAR_CONTRACT.get(), 1 + random.nextInt(2)));
+                new ItemStack(FantasyEarth.ARCANE_INITIATION_NOTES.get(), 1),
+                new ItemStack(FantasyEarth.FAMILIAR_CONTRACT.get(), 1 + random.nextInt(2)),
+                createInscribedScroll(SpellCatalog.ILLUSION, 1));
         stock(level, pose.at(3, 2), random,
                 new ItemStack(FantasyEarth.RUNE_INK.get(), 3 + random.nextInt(5)),
-                new ItemStack(FantasyEarth.CRYSTALLIZED_MANA_SALT.get(), 1 + random.nextInt(3)));
+                new ItemStack(FantasyEarth.AETHER_SHARD.get(), 2 + random.nextInt(3)),
+                new ItemStack(FantasyEarth.CRYSTALLIZED_MANA_SALT.get(), 2 + random.nextInt(3)),
+                new ItemStack(FantasyEarth.ARCANE_BREATH_WARD_NOTES.get(), 1));
         placeBoard(level, pose.at(0, -4));
         cornerLights(level, pose, 4, palette.light());
     }
@@ -192,10 +303,16 @@ public final class MagicSettlementFeature extends Feature<NoneFeatureConfigurati
         level.setBlock(pose.at(0, -1), FantasyEarth.AETHER_CRYSTAL_CLUSTER.get().defaultBlockState(), UPDATE_FLAGS);
         stock(level, pose.at(-4, 0), random,
                 new ItemStack(FantasyEarth.ARCANE_DUST.get(), 8 + random.nextInt(8)),
-                new ItemStack(FantasyEarth.ARCANE_INITIATION_NOTES.get(), 1));
+                new ItemStack(FantasyEarth.AETHER_SHARD.get(), 3 + random.nextInt(4)),
+                new ItemStack(FantasyEarth.ARCANE_INITIATION_NOTES.get(), 1),
+                new ItemStack(FantasyEarth.EVOCATION_NOTES.get(), 1),
+                createInscribedScroll(SpellCatalog.EVOCATION, 1 + random.nextInt(2)));
         stock(level, pose.at(4, 0), random,
                 new ItemStack(FantasyEarth.RITUAL_CHALK.get(), 6 + random.nextInt(6)),
-                new ItemStack(FantasyEarth.AETHER_CRYSTAL.get(), 1 + random.nextInt(3)));
+                new ItemStack(FantasyEarth.CRYSTALLIZED_MANA_SALT.get(), 2 + random.nextInt(3)),
+                new ItemStack(FantasyEarth.AETHER_CRYSTAL.get(), 1 + random.nextInt(3)),
+                new ItemStack(FantasyEarth.ARCANE_BODY_WARD_NOTES.get(), 1),
+                createInscribedScroll(SpellCatalog.TRANSLOCATION, 1));
         placeBoard(level, pose.at(4, -4));
         cornerLights(level, pose, 5, palette.light());
     }
@@ -230,10 +347,16 @@ public final class MagicSettlementFeature extends Feature<NoneFeatureConfigurati
         level.setBlock(pose.at(-4, -3), FantasyEarth.AETHER_CRYSTAL_CLUSTER.get().defaultBlockState(), UPDATE_FLAGS);
         stock(level, pose.at(-4, 2), random,
                 new ItemStack(FantasyEarth.RUNE_COPPER_PLATE.get(), 2 + random.nextInt(4)),
-                new ItemStack(FantasyEarth.ARCANE_DUST.get(), 6 + random.nextInt(6)));
+                new ItemStack(FantasyEarth.AETHER_SHARD.get(), 4 + random.nextInt(4)),
+                new ItemStack(FantasyEarth.ARCANE_DUST.get(), 6 + random.nextInt(6)),
+                new ItemStack(FantasyEarth.ARCANE_BODY_WARD_NOTES.get(), 1),
+                createInscribedScroll(SpellCatalog.WARD, 1 + random.nextInt(2)));
         stock(level, pose.at(4, 2), random,
                 new ItemStack(FantasyEarth.CRYSTALLIZED_MANA_SALT.get(), 2 + random.nextInt(4)),
-                new ItemStack(FantasyEarth.AETHER_GLASS.get(), 2 + random.nextInt(3)));
+                new ItemStack(FantasyEarth.AETHER_GLASS.get(), 2 + random.nextInt(3)),
+                new ItemStack(FantasyEarth.AETHER_CRYSTAL.get(), 1 + random.nextInt(2)),
+                new ItemStack(FantasyEarth.ARCANE_INITIATION_NOTES.get(), 1),
+                createInscribedScroll(SpellCatalog.EVOCATION, 1));
         placeBoard(level, pose.at(0, -4));
         cornerLights(level, pose, 5, palette.light());
     }
@@ -265,9 +388,15 @@ public final class MagicSettlementFeature extends Feature<NoneFeatureConfigurati
         level.setBlock(pose.at(-3, 3), FantasyEarth.AETHER_CRYSTAL_CLUSTER.get().defaultBlockState(), UPDATE_FLAGS);
         stock(level, pose.at(-4, 1), random,
                 new ItemStack(FantasyEarth.ARCANE_DUST.get(), 6 + random.nextInt(6)),
-                new ItemStack(FantasyEarth.AETHER_GLASS.get(), 2 + random.nextInt(4)));
+                new ItemStack(FantasyEarth.AETHER_SHARD.get(), 3 + random.nextInt(4)),
+                new ItemStack(FantasyEarth.AETHER_GLASS.get(), 2 + random.nextInt(4)),
+                new ItemStack(FantasyEarth.ARCANE_BREATH_WARD_NOTES.get(), 1),
+                createInscribedScroll(SpellCatalog.BREATH_WARD, 1 + random.nextInt(2)));
         stock(level, pose.at(4, 1), random,
                 new ItemStack(FantasyEarth.CRYSTALLIZED_MANA_SALT.get(), 2 + random.nextInt(3)),
+                new ItemStack(FantasyEarth.AETHER_CRYSTAL.get(), 1 + random.nextInt(2)),
+                new ItemStack(FantasyEarth.ILLUSION_NOTES.get(), 1),
+                createInscribedScroll(SpellCatalog.ILLUSION, 1 + random.nextInt(2)),
                 new ItemStack(Items.AMETHYST_SHARD, 3 + random.nextInt(6)));
         placeBoard(level, pose.at(0, -4));
         cornerLights(level, pose, 5, palette.light());
@@ -499,7 +628,7 @@ public final class MagicSettlementFeature extends Feature<NoneFeatureConfigurati
 
     private static void scatterGrowth(WorldGenLevel level, Pose pose, int radius, RandomSource random) {
         Block[] plants = {Blocks.SHORT_GRASS, Blocks.FERN, Blocks.POPPY, Blocks.DANDELION, Blocks.AZURE_BLUET,
-                Blocks.OXEYE_DAISY, Blocks.CORNFLOWER};
+                Blocks.OXEYE_DAISY, Blocks.CORNFLOWER, Blocks.BLUE_ORCHID, Blocks.ALLIUM, Blocks.LILY_OF_THE_VALLEY};
         for (int index = 0; index < radius * 4; index++) {
             int dx = random.nextInt(radius * 4 + 1) - radius * 2;
             int dz = random.nextInt(radius * 4 + 1) - radius * 2;
@@ -508,7 +637,10 @@ public final class MagicSettlementFeature extends Feature<NoneFeatureConfigurati
             }
             BlockPos pos = pose.at(dx, dz);
             if (level.isEmptyBlock(pos) && level.getBlockState(pos.below()).isSolidRender()) {
-                level.setBlock(pos, plants[random.nextInt(plants.length)].defaultBlockState(), UPDATE_FLAGS);
+                Block chosen = index == 0
+                        ? FantasyEarth.AETHER_CRYSTAL_CLUSTER.get()
+                        : plants[random.nextInt(plants.length)];
+                level.setBlock(pos, chosen.defaultBlockState(), UPDATE_FLAGS);
             }
         }
     }
@@ -544,7 +676,7 @@ public final class MagicSettlementFeature extends Feature<NoneFeatureConfigurati
         level.setBlock(pos, Blocks.BARREL.defaultBlockState(), UPDATE_FLAGS);
         if (level.getBlockEntity(pos) instanceof Container container) {
             for (int slot = 0; slot < Math.min(container.getContainerSize(), items.length); slot++) {
-                if (random.nextInt(4) != 0) {
+                if (slot < 3 || random.nextInt(4) != 0) {
                     container.setItem(slot, items[slot].copy());
                 }
             }

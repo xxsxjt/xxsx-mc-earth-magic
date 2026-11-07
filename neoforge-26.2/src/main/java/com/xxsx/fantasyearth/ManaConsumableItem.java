@@ -2,7 +2,10 @@ package com.xxsx.fantasyearth;
 
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
@@ -34,6 +37,13 @@ public class ManaConsumableItem extends MagicMaterialItem {
             }
             if (restored > 0.0D) {
                 AetherChunkField.disturb(level, player.blockPosition(), restored * 0.25D);
+            }
+            player.swing(hand, true);
+            if (level instanceof ServerLevel serverLevel) {
+                ArcaneVfx.moteBurst(serverLevel, player.getX(), player.getY() + 1.0D, player.getZ(), 16, 0.45D);
+                ArcaneVfx.sparkBurst(serverLevel, player.getX(), player.getY() + 0.9D, player.getZ(), 10, 0.35D);
+                serverLevel.playSound(null, player.blockPosition(), SoundEvents.AMETHYST_BLOCK_CHIME,
+                        SoundSource.PLAYERS, 0.8F, 1.25F);
             }
             if (player instanceof ServerPlayer serverPlayer) {
                 ArcaneNetwork.broadcastVisual(serverPlayer, ArcaneVisualAction.MANA_RECOVERY);

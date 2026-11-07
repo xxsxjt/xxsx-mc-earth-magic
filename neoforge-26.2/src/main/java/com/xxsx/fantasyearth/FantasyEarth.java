@@ -304,6 +304,7 @@ public class FantasyEarth {
                 .mapColor(color)
                 .strength(strength, strength * 2.0F)
                 .requiresCorrectToolForDrops()
+                .lightLevel(s -> 9)
                 .sound(sound));
         DeferredItem<?> item = ITEMS.registerItem(id,
                 props -> new MagicBlockItem(block.get(), props, hintKey),

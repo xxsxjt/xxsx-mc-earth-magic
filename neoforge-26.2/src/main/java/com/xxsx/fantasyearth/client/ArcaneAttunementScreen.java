@@ -30,6 +30,8 @@ public class ArcaneAttunementScreen extends Screen {
     private final Map<ArcaneFocus, Button> focusButtons = new EnumMap<>(ArcaneFocus.class);
     private Button primaryActionButton;
     private Button spellButton;
+    private Button hubNavButton;
+    private Button loreTreeNavButton;
     private int refreshTicks;
 
     public ArcaneAttunementScreen() {
@@ -39,31 +41,55 @@ public class ArcaneAttunementScreen extends Screen {
     @Override
     protected void init() {
         focusButtons.clear();
-        int left = panelLeft();
-        int top = panelTop();
-        int buttonWidth = navigationWidth() - 20;
-        int y = top + 37;
-        for (ArcaneFocus focus : ArcaneFocus.values()) {
-            Button button = addRenderableWidget(Button.builder(Component.translatable(focus.titleKey()),
+        LayoutMetrics layout = computeLayout(width, height);
+        int left = layout.left();
+        int top = layout.top();
+        int w = layout.panelWidth();
+        int h = layout.panelHeight();
+        int buttonAreaWidth = layout.navButtonAreaWidth();
+        int cellWidth = layout.focusCellWidth();
+
+        ArcaneFocus[] values = ArcaneFocus.values();
+        for (int idx = 0; idx < values.length; idx++) {
+            ArcaneFocus focus = values[idx];
+            int col = idx % 2;
+            int row = idx / 2;
+            int bx = left + 8 + col * (cellWidth + 4);
+            int by = top + 38 + row * 20;
+            Component label = fitted(Component.translatable(focus.titleKey()), Math.max(24, cellWidth - 6));
+            Button button = addRenderableWidget(Button.builder(label,
                             ignored -> FantasyEarthClient.requestArcaneFocus(focus))
-                    .bounds(left + 10, y, buttonWidth, 18)
+                    .bounds(bx, by, cellWidth, 18)
                     .build());
             button.setTooltip(Tooltip.create(Component.translatable(focus.descriptionKey())));
             focusButtons.put(focus, button);
-            y += 20;
         }
         spellButton = addRenderableWidget(Button.builder(
                         Component.translatable("screen.fantasy_earth.attunement.skill"),
                         ignored -> FantasyEarthClient.requestActivateArcaneSkill())
-                .bounds(left + 10, top + panelHeight() - 50, buttonWidth, 18)
+                .bounds(left + 8, layout.spellButtonY(), buttonAreaWidth, 18)
                 .build());
         primaryActionButton = addRenderableWidget(Button.builder(
                         Component.translatable("screen.fantasy_earth.attunement.practice"),
                         ignored -> performPrimaryAction())
-                .bounds(left + 10, top + panelHeight() - 28, buttonWidth, 20)
+                .bounds(left + 8, layout.primaryActionButtonY(), buttonAreaWidth, 18)
                 .build());
+        hubNavButton = addRenderableWidget(Button.builder(
+                        Component.translatable("screen.fantasy_earth.attunement.nav.hub"),
+                        ignored -> FantasyEarthClient.openCultivationHub(this))
+                .bounds(layout.hubButtonX(), top + 8, layout.hubButtonWidth(), 18)
+                .build());
+        hubNavButton.setTooltip(Tooltip.create(
+                Component.translatable("screen.fantasy_earth.attunement.nav.hub.tooltip")));
+        loreTreeNavButton = addRenderableWidget(Button.builder(
+                        Component.translatable("screen.fantasy_earth.attunement.nav.lore_tree"),
+                        ignored -> FantasyEarthClient.openLoreTree(this))
+                .bounds(layout.loreTreeButtonX(), top + 8, layout.loreTreeButtonWidth(), 18)
+                .build());
+        loreTreeNavButton.setTooltip(Tooltip.create(
+                Component.translatable("screen.fantasy_earth.attunement.nav.lore_tree.tooltip")));
         addRenderableWidget(Button.builder(Component.literal("X"), ignored -> onClose())
-                .bounds(left + panelWidth() - 28, top + 8, 18, 18)
+                .bounds(layout.closeButtonX(), top + 8, 18, 18)
                 .build());
         updateButtons();
     }
@@ -104,8 +130,11 @@ public class ArcaneAttunementScreen extends Screen {
         Component support = Component.translatable(status.seated()
                 ? "screen.fantasy_earth.attunement.support.focus_mat"
                 : "screen.fantasy_earth.attunement.support.free");
-        g.text(font, fitted(support, Math.max(60, w - navW - 46)), left + navW + 8, top + 11,
-                status.seated() ? ACCENT : MUTED, false);
+        int supportMaxWidth = (left + w - 144) - (left + navW + 8);
+        if (supportMaxWidth >= 48) {
+            g.text(font, fitted(support, supportMaxWidth), left + navW + 8, top + 11,
+                    status.seated() ? ACCENT : MUTED, false);
+        }
 
         List<FormattedCharSequence> description = font.split(Component.translatable(focus.descriptionKey()),
                 Math.max(80, contentW));
@@ -273,8 +302,9 @@ public class ArcaneAttunementScreen extends Screen {
 
     private void drawAmbientMotif(GuiGraphicsExtractor g, int left, int top, int width) {
         long time = Minecraft.getInstance().level == null ? 0L : Minecraft.getInstance().level.getGameTime();
-        for (int i = 0; i < 8; i++) {
-            int px = left + width - 98 + i * 10;
+        int startX = left + Math.max(76, navigationWidth() - 36);
+        for (int i = 0; i < 4; i++) {
+            int px = startX + i * 8;
             int py = top + 8 + (int) Math.round(Math.cos((time + i * 9) * 0.11D) * 3.0D);
             g.fill(px, py, px + 2, py + 2, i % 2 == 0 ? ACCENT : 0xFFE4DEFF);
         }
@@ -295,15 +325,15 @@ public class ArcaneAttunementScreen extends Screen {
     }
 
     private int panelWidth() {
-        return Math.min(430, Math.max(304, width - 16));
+        return computePanelWidth(width);
     }
 
     private int panelHeight() {
-        return Math.min(238, Math.max(166, height - 16));
+        return computePanelHeight(height);
     }
 
     private int navigationWidth() {
-        return Math.min(118, Math.max(104, panelWidth() / 4 + 12));
+        return computeNavigationWidth(panelWidth());
     }
 
     private int panelLeft() {
@@ -312,5 +342,73 @@ public class ArcaneAttunementScreen extends Screen {
 
     private int panelTop() {
         return (height - panelHeight()) / 2;
+    }
+
+    public static int computePanelWidth(int screenWidth) {
+        return Math.min(430, Math.max(304, screenWidth - 16));
+    }
+
+    public static int computePanelHeight(int screenHeight) {
+        return Math.min(238, Math.max(188, screenHeight - 16));
+    }
+
+    public static int computeNavigationWidth(int panelWidth) {
+        return Math.min(134, Math.max(118, panelWidth / 3));
+    }
+
+    public static LayoutMetrics computeLayout(int screenWidth, int screenHeight) {
+        int panelW = computePanelWidth(screenWidth);
+        int panelH = computePanelHeight(screenHeight);
+        int left = (screenWidth - panelW) / 2;
+        int top = (screenHeight - panelH) / 2;
+        int navW = computeNavigationWidth(panelW);
+        int navAreaW = navW - 16;
+        int cellW = (navAreaW - 4) / 2;
+        int rows = (ArcaneFocus.values().length + 1) / 2;
+        int focusStartY = top + 38;
+        int focusBottomY = focusStartY + (rows - 1) * 20 + 18;
+        int spellY = top + panelH - 48;
+        int practiceY = top + panelH - 26;
+        int closeX = left + panelW - 26;
+        int loreW = 54;
+        int loreX = closeX - 4 - loreW;
+        int hubW = 50;
+        int hubX = loreX - 4 - hubW;
+        return new LayoutMetrics(
+                left, top, panelW, panelH, navW, navAreaW, cellW,
+                focusStartY, focusBottomY, spellY, practiceY,
+                hubX, hubW, loreX, loreW, closeX
+        );
+    }
+
+    public record LayoutMetrics(
+            int left,
+            int top,
+            int panelWidth,
+            int panelHeight,
+            int navWidth,
+            int navButtonAreaWidth,
+            int focusCellWidth,
+            int focusStartY,
+            int focusBottomY,
+            int spellButtonY,
+            int primaryActionButtonY,
+            int hubButtonX,
+            int hubButtonWidth,
+            int loreTreeButtonX,
+            int loreTreeButtonWidth,
+            int closeButtonX
+    ) {
+        public boolean hasNoVerticalOverlap() {
+            return focusBottomY + 4 <= spellButtonY
+                    && spellButtonY + 18 + 2 <= primaryActionButtonY
+                    && primaryActionButtonY + 18 <= top + panelHeight - 4;
+        }
+
+        public boolean hasNoHeaderOverlap() {
+            return hubButtonX > left + 64
+                    && hubButtonX + hubButtonWidth + 2 <= loreTreeButtonX
+                    && loreTreeButtonX + loreTreeButtonWidth + 2 <= closeButtonX;
+        }
     }
 }

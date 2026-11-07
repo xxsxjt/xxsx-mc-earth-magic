@@ -1,6 +1,8 @@
 package com.xxsx.fantasyearth;
 
 public final class ArcanaBalance {
+    public static final int MAX_SETTLEMENT_SLOPE_DELTA = 5;
+
     private ArcanaBalance() {
     }
 
@@ -34,6 +36,13 @@ public final class ArcanaBalance {
 
     public static boolean canContractWithAffinity(int affinity) {
         return affinity >= 30;
+    }
+
+    public static boolean isSettlementSiteValid(int minY, int maxY, boolean hasFluid, int invalidColumns) {
+        if (hasFluid || invalidColumns > 0 || maxY < minY) {
+            return false;
+        }
+        return (maxY - minY) <= MAX_SETTLEMENT_SLOPE_DELTA;
     }
 
     static double clamp(double value, double min, double max) {

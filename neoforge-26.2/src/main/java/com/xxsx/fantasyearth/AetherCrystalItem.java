@@ -2,6 +2,7 @@ package com.xxsx.fantasyearth;
 
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
@@ -25,6 +26,7 @@ public class AetherCrystalItem extends MagicMaterialItem {
     public InteractionResult use(Level level, Player player, InteractionHand hand) {
         ItemStack stack = player.getItemInHand(hand);
         if (level.isClientSide()) {
+            player.swing(hand);
             return InteractionResult.SUCCESS;
         }
         AetherCrystalComponent comp = AetherCrystalComponent.read(stack);
@@ -46,6 +48,13 @@ public class AetherCrystalItem extends MagicMaterialItem {
             }
             stack.set(FantasyEarth.AETHER_CRYSTAL_COMPONENT.get(),
                     comp.withCharge(comp.chargeAeu() - requiredAeu, comp.signature()));
+            player.swing(hand, true);
+            if (level instanceof ServerLevel serverLevel) {
+                ArcaneVfx.moteBurst(serverLevel, player.getX(), player.getY() + 1.0D, player.getZ(), 16, 0.45D);
+                ArcaneVfx.shardBurst(serverLevel, player.getX(), player.getY() + 0.9D, player.getZ(), 10, 0.35D);
+                serverLevel.playSound(null, player.blockPosition(), SoundEvents.AMETHYST_BLOCK_RESONATE,
+                        SoundSource.PLAYERS, 0.85F, 1.25F);
+            }
             if (player instanceof ServerPlayer serverPlayer) {
                 ArcaneNetwork.broadcastVisual(serverPlayer, ArcaneVisualAction.MANA_RECOVERY);
                 MagicJourney.complete(serverPlayer, MagicJourney.Milestone.MANA_RECOVERY);
@@ -81,6 +90,14 @@ public class AetherCrystalItem extends MagicMaterialItem {
         String sig = AetherCrystalComponent.computeSignature(level, player.blockPosition(), reading.mainSourceKey());
         AetherCrystalComponent updated = comp.withCharge(comp.chargeAeu() + accepted, sig);
         stack.set(FantasyEarth.AETHER_CRYSTAL_COMPONENT.get(), updated);
+        player.swing(hand, true);
+        if (level instanceof ServerLevel serverLevel) {
+            ArcaneVfx.moteBurst(serverLevel, player.getX(), player.getY() + 1.0D, player.getZ(), 14, 0.4D);
+            ArcaneVfx.shardBurst(serverLevel, player.getX(), player.getY() + 1.0D, player.getZ(), 8, 0.35D);
+        }
+        if (player instanceof ServerPlayer serverPlayer) {
+            ArcaneNetwork.broadcastVisual(serverPlayer, ArcaneVisualAction.AETHER_PULSE);
+        }
         level.playSound(null, player.blockPosition(), SoundEvents.AMETHYST_BLOCK_CHIME, SoundSource.PLAYERS, 0.7F, 1.2F);
         player.sendSystemMessage(Component.translatable("message.fantasy_earth.aether_crystal.charged",
                 ArcanaPower.format(updated.chargeAeu()), ArcanaPower.format(updated.capacityAeu()))

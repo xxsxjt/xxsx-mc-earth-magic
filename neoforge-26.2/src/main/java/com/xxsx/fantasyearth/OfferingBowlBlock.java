@@ -1,6 +1,7 @@
 package com.xxsx.fantasyearth;
 
 import net.minecraft.core.BlockPos;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionHand;
@@ -40,11 +41,16 @@ public class OfferingBowlBlock extends Block {
     @Override
     protected InteractionResult useWithoutItem(BlockState state, Level level, BlockPos pos, Player player, BlockHitResult hitResult) {
         if (level.isClientSide()) {
+            player.swing(InteractionHand.MAIN_HAND);
             return InteractionResult.SUCCESS;
         }
         if (state.getValue(FILLED)) {
             level.setBlock(pos, state.setValue(FILLED, false), Block.UPDATE_CLIENTS);
             player.getInventory().placeItemBackInInventory(new ItemStack(FantasyEarth.ARCANE_DUST.get()));
+            player.swing(InteractionHand.MAIN_HAND, true);
+            if (level instanceof ServerLevel serverLevel) {
+                ArcaneVfx.moteBurst(serverLevel, pos.getX() + 0.5D, pos.getY() + 0.45D, pos.getZ() + 0.5D, 6, 0.2D);
+            }
             level.playSound(null, pos, SoundEvents.ITEM_FRAME_REMOVE_ITEM, SoundSource.BLOCKS, 0.7F, 1.0F);
         }
         return InteractionResult.SUCCESS_SERVER;
@@ -54,6 +60,7 @@ public class OfferingBowlBlock extends Block {
     protected InteractionResult useItemOn(ItemStack stack, BlockState state, Level level, BlockPos pos, Player player,
                                           InteractionHand hand, BlockHitResult hitResult) {
         if (level.isClientSide()) {
+            player.swing(hand);
             return InteractionResult.SUCCESS;
         }
         if (!state.getValue(FILLED) && !stack.isEmpty()) {
@@ -61,6 +68,10 @@ public class OfferingBowlBlock extends Block {
                 stack.shrink(1);
             }
             level.setBlock(pos, state.setValue(FILLED, true), Block.UPDATE_CLIENTS);
+            player.swing(hand, true);
+            if (level instanceof ServerLevel serverLevel) {
+                ArcaneVfx.sparkBurst(serverLevel, pos.getX() + 0.5D, pos.getY() + 0.45D, pos.getZ() + 0.5D, 8, 0.22D);
+            }
             level.playSound(null, pos, SoundEvents.ITEM_FRAME_ADD_ITEM, SoundSource.BLOCKS, 0.7F, 1.0F);
             return InteractionResult.SUCCESS_SERVER;
         }

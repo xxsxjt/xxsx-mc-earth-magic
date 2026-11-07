@@ -10,6 +10,7 @@ import com.xxsx.earthlore.core.GraphValidator;
 import com.xxsx.earthlore.core.NodeDef;
 import com.xxsx.earthlore.core.Prereq;
 import com.xxsx.earthlore.core.Reachability;
+import com.xxsx.fantasyearth.client.ArcaneAttunementScreen;
 import net.minecraft.resources.Identifier;
 import org.junit.jupiter.api.Test;
 
@@ -123,6 +124,67 @@ class FantasyLoreIntegrationTest {
 
         assertFalse(ArcanaBalance.canContractWithAffinity(20));
         assertTrue(ArcanaBalance.canContractWithAffinity(30));
+    }
+
+    @Test
+    void arcaneAttunementScreenLayoutNeverOverlapsAtAnyResolution() throws IOException {
+        int[][] resolutions = {
+                {320, 180},
+                {360, 200},
+                {427, 240},
+                {640, 360},
+                {854, 480},
+                {1280, 720},
+                {1920, 1080}
+        };
+        for (int[] res : resolutions) {
+            ArcaneAttunementScreen.LayoutMetrics layout =
+                    ArcaneAttunementScreen.computeLayout(res[0], res[1]);
+            assertTrue(layout.hasNoVerticalOverlap(),
+                    "Focus buttons overlapped bottom action buttons at " + res[0] + "x" + res[1] + ": " + layout);
+            assertTrue(layout.hasNoHeaderOverlap(),
+                    "Top navigation buttons overlapped at " + res[0] + "x" + res[1] + ": " + layout);
+            assertTrue(layout.focusCellWidth() >= 48,
+                    "Focus cell width too narrow at " + res[0] + "x" + res[1] + ": " + layout.focusCellWidth());
+        }
+
+        for (String langFile : List.of(
+                "src/main/resources/assets/fantasy_earth/lang/zh_cn.json",
+                "src/main/resources/assets/fantasy_earth/lang/en_us.json")) {
+            JsonObject lang = JsonParser.parseString(
+                    Files.readString(Path.of(langFile), StandardCharsets.UTF_8)).getAsJsonObject();
+            assertTrue(lang.has("screen.fantasy_earth.attunement.nav.hub"),
+                    "Missing hub nav key in " + langFile);
+            assertTrue(lang.has("screen.fantasy_earth.attunement.nav.lore_tree"),
+                    "Missing lore_tree nav key in " + langFile);
+        }
+    }
+
+    @Test
+    void settlementTerrainValidationAndAetherCrystalClusterLoopAreClosed() throws IOException {
+        assertTrue(ArcanaBalance.isSettlementSiteValid(64, 66, false, 0));
+        assertTrue(ArcanaBalance.isSettlementSiteValid(64, 64 + ArcanaBalance.MAX_SETTLEMENT_SLOPE_DELTA, false, 0));
+        assertFalse(ArcanaBalance.isSettlementSiteValid(64, 64 + ArcanaBalance.MAX_SETTLEMENT_SLOPE_DELTA + 1, false, 0),
+                "Steep slope must be rejected");
+        assertFalse(ArcanaBalance.isSettlementSiteValid(64, 64, true, 0),
+                "Water/fluid site must be rejected");
+        assertFalse(ArcanaBalance.isSettlementSiteValid(64, 65, false, 1),
+                "Site with missing ground column must be rejected");
+
+        JsonObject placed = JsonParser.parseString(Files.readString(
+                Path.of("src/main/resources/data/fantasy_earth/worldgen/placed_feature/aether_crystal_cluster.json"),
+                StandardCharsets.UTF_8)).getAsJsonObject();
+        assertEquals("fantasy_earth:aether_crystal_cluster", placed.get("feature").getAsString());
+        JsonObject firstPlacement = placed.getAsJsonArray("placement").get(0).getAsJsonObject();
+        assertEquals("minecraft:count", firstPlacement.get("type").getAsString());
+        assertTrue(firstPlacement.get("count").getAsInt() >= 4);
+
+        JsonObject loot = JsonParser.parseString(Files.readString(
+                Path.of("src/main/resources/data/fantasy_earth/loot_table/blocks/aether_crystal_cluster.json"),
+                StandardCharsets.UTF_8)).getAsJsonObject();
+        JsonObject entry = loot.getAsJsonArray("pools").get(0).getAsJsonObject()
+                .getAsJsonArray("entries").get(0).getAsJsonObject();
+        assertEquals("fantasy_earth:aether_shard", entry.get("name").getAsString());
     }
 
     private static List<NodeDef> loadMagNodes() throws IOException {

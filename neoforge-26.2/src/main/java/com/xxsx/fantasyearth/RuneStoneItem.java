@@ -2,6 +2,10 @@ package com.xxsx.fantasyearth;
 
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
@@ -29,6 +33,7 @@ public class RuneStoneItem extends MagicMaterialItem {
     public InteractionResult use(Level level, Player player, InteractionHand hand) {
         ItemStack stack = player.getItemInHand(hand);
         if (level.isClientSide()) {
+            player.swing(hand);
             return InteractionResult.SUCCESS;
         }
         RuneItemComponent comp = RuneItemComponent.read(stack, runeKind);
@@ -44,6 +49,14 @@ public class RuneStoneItem extends MagicMaterialItem {
                 }
                 RuneItemComponent upgraded = comp.withTier(comp.tier() + 1);
                 stack.set(FantasyEarth.RUNE_ITEM_COMPONENT.get(), upgraded);
+                player.swing(hand, true);
+                if (player instanceof ServerPlayer serverPlayer && level instanceof ServerLevel serverLevel) {
+                    ArcaneNetwork.broadcastVisual(serverPlayer, ArcaneVisualAction.ATTUNEMENT);
+                    ArcaneVfx.sparkBurst(serverLevel, player.getX(), player.getY() + 1.0D, player.getZ(), 18, 0.45D);
+                    ArcaneVfx.shardBurst(serverLevel, player.getX(), player.getY() + 1.0D, player.getZ(), 10, 0.35D);
+                    serverLevel.playSound(null, player.blockPosition(), SoundEvents.ENCHANTMENT_TABLE_USE,
+                            SoundSource.PLAYERS, 0.85F, 1.2F + upgraded.tier() * 0.08F);
+                }
                 player.sendSystemMessage(Component.translatable("message.fantasy_earth.rune.upgraded", upgraded.tier())
                         .withStyle(ChatFormatting.LIGHT_PURPLE));
                 return InteractionResult.SUCCESS_SERVER;

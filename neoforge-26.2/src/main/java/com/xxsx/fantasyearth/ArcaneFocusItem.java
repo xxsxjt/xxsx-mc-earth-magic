@@ -5,6 +5,8 @@ import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
@@ -28,6 +30,7 @@ public class ArcaneFocusItem extends MagicMaterialItem {
     public InteractionResult use(Level level, Player player, InteractionHand hand) {
         ItemStack focusStack = player.getItemInHand(hand);
         if (level.isClientSide()) {
+            player.swing(hand);
             return InteractionResult.SUCCESS;
         }
         if (!(level instanceof ServerLevel serverLevel) || !(player instanceof ServerPlayer serverPlayer)) {
@@ -54,6 +57,12 @@ public class ArcaneFocusItem extends MagicMaterialItem {
                 if (!player.getAbilities().instabuild) {
                     offhand.shrink(1);
                 }
+                serverPlayer.swing(hand, true);
+                ArcaneNetwork.broadcastVisual(serverPlayer, ArcaneVisualAction.ATTUNEMENT);
+                ArcaneVfx.sparkBurst(serverLevel, serverPlayer.getX(), serverPlayer.getY() + 1.0D, serverPlayer.getZ(), 18, 0.45D);
+                ArcaneVfx.runeRingAround(serverLevel, serverPlayer.position(), 0.85D, 8, 0.9D);
+                serverLevel.playSound(null, serverPlayer.blockPosition(), SoundEvents.ENCHANTMENT_TABLE_USE,
+                        SoundSource.PLAYERS, 0.85F, 1.25F);
                 serverPlayer.sendSystemMessage(Component.translatable("message.fantasy_earth.focus.rune_slotted", spec)
                         .withStyle(ChatFormatting.LIGHT_PURPLE));
                 return InteractionResult.SUCCESS_SERVER;
@@ -63,6 +72,12 @@ public class ArcaneFocusItem extends MagicMaterialItem {
                 if (!player.getAbilities().instabuild) {
                     offhand.shrink(1);
                 }
+                serverPlayer.swing(hand, true);
+                ArcaneNetwork.broadcastVisual(serverPlayer, ArcaneVisualAction.ATTUNEMENT);
+                ArcaneVfx.shardBurst(serverLevel, serverPlayer.getX(), serverPlayer.getY() + 1.0D, serverPlayer.getZ(), 16, 0.45D);
+                ArcaneVfx.moteBurst(serverLevel, serverPlayer.getX(), serverPlayer.getY() + 1.0D, serverPlayer.getZ(), 14, 0.4D);
+                serverLevel.playSound(null, serverPlayer.blockPosition(), SoundEvents.AMETHYST_BLOCK_RESONATE,
+                        SoundSource.PLAYERS, 0.9F, 1.15F);
                 serverPlayer.sendSystemMessage(Component.translatable("message.fantasy_earth.focus.jade_installed")
                         .withStyle(ChatFormatting.GREEN));
                 return InteractionResult.SUCCESS_SERVER;
@@ -70,6 +85,8 @@ public class ArcaneFocusItem extends MagicMaterialItem {
             String gemSpecies = resolveGemSpecies(offhand);
             if (gemSpecies != null) {
                 if (comp.hasDuplicateGemSpecies(gemSpecies)) {
+                    serverLevel.playSound(null, serverPlayer.blockPosition(), SoundEvents.AMETHYST_BLOCK_HIT,
+                            SoundSource.PLAYERS, 0.7F, 0.7F);
                     serverPlayer.sendSystemMessage(Component.translatable("message.fantasy_earth.focus.duplicate_gem")
                             .withStyle(ChatFormatting.RED));
                     return InteractionResult.FAIL;
@@ -87,6 +104,12 @@ public class ArcaneFocusItem extends MagicMaterialItem {
                 if (!player.getAbilities().instabuild) {
                     offhand.shrink(1);
                 }
+                serverPlayer.swing(hand, true);
+                ArcaneNetwork.broadcastVisual(serverPlayer, ArcaneVisualAction.ATTUNEMENT);
+                ArcaneVfx.shardBurst(serverLevel, serverPlayer.getX(), serverPlayer.getY() + 1.0D, serverPlayer.getZ(), 18, 0.45D);
+                ArcaneVfx.sparkBurst(serverLevel, serverPlayer.getX(), serverPlayer.getY() + 1.0D, serverPlayer.getZ(), 12, 0.4D);
+                serverLevel.playSound(null, serverPlayer.blockPosition(), SoundEvents.AMETHYST_BLOCK_CHIME,
+                        SoundSource.PLAYERS, 0.95F, 1.3F);
                 serverPlayer.sendSystemMessage(Component.translatable("message.fantasy_earth.focus.gem_slotted", gemSpecies)
                         .withStyle(ChatFormatting.AQUA));
                 return InteractionResult.SUCCESS_SERVER;
@@ -94,11 +117,13 @@ public class ArcaneFocusItem extends MagicMaterialItem {
         }
 
         if (comp.durability() <= 0) {
+            serverLevel.playSound(null, serverPlayer.blockPosition(), SoundEvents.ITEM_BREAK.value(),
+                    SoundSource.PLAYERS, 0.7F, 0.9F);
             serverPlayer.sendSystemMessage(Component.translatable("message.fantasy_earth.focus.broken")
                     .withStyle(ChatFormatting.RED));
             return InteractionResult.FAIL;
         }
-        if (ArcaneSkill.activate(serverLevel, serverPlayer)) {
+        if (ArcaneSkill.activate(serverLevel, serverPlayer, hand)) {
             focusStack.set(FantasyEarth.ARCANE_FOCUS_COMPONENT.get(), comp.withDurability(comp.durability() - 1));
         }
         return InteractionResult.SUCCESS_SERVER;

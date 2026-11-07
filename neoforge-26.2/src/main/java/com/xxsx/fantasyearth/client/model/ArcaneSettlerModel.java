@@ -198,11 +198,26 @@ public final class ArcaneSettlerModel extends EntityModel<ArcaneSettlerRenderSta
         this.grimoire.zRot += CreatureMotion.wave(age, 0.06F, 0.3F) * 0.04F;
         this.waistVial.zRot -= CreatureMotion.wave(age, 0.07F, 1.4F) * 0.05F;
 
-        if (state.trading) {
-            this.rightArm.xRot += -0.66F;
-            this.leftArm.xRot += -0.66F;
+        float wind = CreatureMotion.windUp(state.attackProgress);
+        float strike = CreatureMotion.strike(state.attackProgress);
+        if (state.attackProgress > 0.001F || state.casting) {
+            float castLift = state.casting ? -0.58F : -0.25F;
+            float chantWave = CreatureMotion.wave(age, 0.22F, 0.0F) * (state.casting ? 0.12F : 0.0F);
+            this.rightArm.xRot += castLift - wind * 1.18F + strike * 0.52F + chantWave;
+            this.leftArm.xRot += castLift * 0.85F - wind * 0.92F + strike * 0.42F - chantWave;
+            this.rightArm.yRot += -0.22F + strike * 0.18F;
+            this.leftArm.yRot += 0.22F - strike * 0.18F;
+            this.rightArm.zRot += 0.18F + strike * 0.22F;
+            this.leftArm.zRot += -0.18F - strike * 0.22F;
+            this.body.xRot -= strike * 0.08F;
+            this.head.xRot -= wind * 0.15F - strike * 0.08F;
+        } else if (state.trading) {
+            float offerWave = CreatureMotion.wave(age, 0.09F, 0.0F) * 0.08F;
+            this.rightArm.xRot += -0.66F + offerWave;
+            this.leftArm.xRot += -0.66F - offerWave;
             this.rightArm.yRot += -0.28F;
             this.leftArm.yRot += 0.28F;
+            this.head.xRot += 0.08F;
         } else {
             this.rightArm.xRot += this.leftLeg.xRot * 0.65F;
             this.leftArm.xRot += this.rightLeg.xRot * 0.65F;
