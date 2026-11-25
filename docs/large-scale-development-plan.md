@@ -21,7 +21,7 @@
 
 ### 2.2 生态联动
 
-- 与 `earth_on_minecraft`、`earth_human`、`xuanhuan_earth` 通过公开 API、标签和共享协议联动。
+- 与 `earth_core`、`earth_human`、`earth_xuanxue` 通过公开 API、标签和共享协议联动。
 - 不直接写相邻模组私有 NBT，不硬绑定对方实现类。
 - 缺少可选模组时使用原版退化配方和独立数据，不能阻止启动或创建世界。
 - 本仓库只修改自身；发现相邻项目问题时记录，不跨项目直接修复。

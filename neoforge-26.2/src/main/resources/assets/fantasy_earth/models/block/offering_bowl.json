@@ -1,6 +1,0 @@
-{
-  "parent": "minecraft:block/cube_all",
-  "textures": {
-    "all": "fantasy_earth:block/offering_bowl"
-  }
-}

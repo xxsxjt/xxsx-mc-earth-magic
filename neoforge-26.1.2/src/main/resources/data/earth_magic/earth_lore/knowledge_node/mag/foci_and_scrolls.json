@@ -1,0 +1,55 @@
+{
+  "discipline": "earth_lore:mag",
+  "tier": 5,
+  "gate": "soft",
+  "requires": [
+    {
+      "all": "earth_magic:mag/arcane_research_2"
+    },
+    {
+      "all": "earth_magic:mag/aether_storage"
+    }
+  ],
+  "item_requires": [],
+  "unlocks": [
+    {
+      "block": "earth_magic:arcane_focus_mat"
+    },
+    {
+      "item": "earth_magic:arcane_focus_mat"
+    },
+    {
+      "item": "earth_magic:arcane_focus"
+    },
+    {
+      "item": "earth_magic:spell_scroll"
+    },
+    {
+      "ability": "earth_magic:spell_graph_custom"
+    }
+  ],
+  "literature": [
+    "notes"
+  ],
+  "teachers": [],
+  "research": {
+    "items": [
+      {
+        "ingredient": "earth_magic:aether_lens",
+        "count": 1
+      },
+      {
+        "ingredient": "earth_magic:rune_copper_plate",
+        "count": 2
+      },
+      {
+        "ingredient": "minecraft:paper",
+        "count": 4
+      }
+    ],
+    "ticks": 6000
+  },
+  "fail_codes": [],
+  "name_key": "lore.earth_magic.mag.foci_and_scrolls",
+  "desc_key": "lore.earth_magic.mag.foci_and_scrolls.desc"
+}

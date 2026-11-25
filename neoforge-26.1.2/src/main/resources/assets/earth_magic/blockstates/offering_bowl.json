@@ -1,0 +1,10 @@
+{
+  "variants": {
+    "filled=false": {
+      "model": "earth_magic:block/offering_bowl"
+    },
+    "filled=true": {
+      "model": "earth_magic:block/offering_bowl"
+    }
+  }
+}

@@ -1,0 +1,61 @@
+{
+  "discipline": "earth_lore:mag",
+  "tier": 2,
+  "gate": "soft",
+  "requires": [
+    {
+      "all": "earth_magic:mag/aether_crystals"
+    }
+  ],
+  "item_requires": [],
+  "unlocks": [
+    {
+      "item": "earth_magic:rune_ink"
+    },
+    {
+      "item": "earth_magic:rune_copper_plate"
+    },
+    {
+      "block": "earth_magic:rune_stone"
+    },
+    {
+      "item": "earth_magic:rune_stone"
+    },
+    {
+      "item": "earth_magic:rune_blank"
+    },
+    {
+      "block": "earth_magic:rune_carving_table"
+    },
+    {
+      "item": "earth_magic:rune_carving_table"
+    },
+    {
+      "ability": "earth_magic:rune_carving"
+    }
+  ],
+  "literature": [
+    "notes"
+  ],
+  "teachers": [],
+  "research": {
+    "items": [
+      {
+        "ingredient": "minecraft:stone",
+        "count": 8
+      },
+      {
+        "ingredient": "earth_magic:arcane_dust",
+        "count": 4
+      },
+      {
+        "ingredient": "minecraft:ink_sac",
+        "count": 2
+      }
+    ],
+    "ticks": 1200
+  },
+  "fail_codes": [],
+  "name_key": "lore.earth_magic.mag.rune_carving",
+  "desc_key": "lore.earth_magic.mag.rune_carving.desc"
+}

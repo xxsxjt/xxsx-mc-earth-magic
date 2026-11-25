@@ -1,0 +1,55 @@
+{
+  "discipline": "earth_lore:mag",
+  "tier": 3,
+  "gate": "soft",
+  "requires": [
+    {
+      "all": "earth_magic:mag/aether_crystals"
+    },
+    {
+      "any": [
+        "earth_core:che/inorganic_chemistry",
+        "earth_magic:mag/aether_sensing"
+      ]
+    }
+  ],
+  "item_requires": [],
+  "unlocks": [
+    {
+      "item": "earth_magic:crystallized_mana_salt"
+    },
+    {
+      "item": "earth_magic:aether_glass"
+    },
+    {
+      "block": "earth_magic:alchemy_table"
+    },
+    {
+      "item": "earth_magic:alchemy_table"
+    }
+  ],
+  "literature": [
+    "notes"
+  ],
+  "teachers": [],
+  "research": {
+    "items": [
+      {
+        "ingredient": "earth_magic:arcane_dust",
+        "count": 4
+      },
+      {
+        "ingredient": "minecraft:glass",
+        "count": 4
+      },
+      {
+        "ingredient": "minecraft:redstone",
+        "count": 4
+      }
+    ],
+    "ticks": 2400
+  },
+  "fail_codes": [],
+  "name_key": "lore.earth_magic.mag.alchemy",
+  "desc_key": "lore.earth_magic.mag.alchemy.desc"
+}

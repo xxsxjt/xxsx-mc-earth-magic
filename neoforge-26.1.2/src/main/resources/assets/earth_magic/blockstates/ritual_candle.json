@@ -1,0 +1,10 @@
+{
+  "variants": {
+    "lit=false": {
+      "model": "earth_magic:block/ritual_candle"
+    },
+    "lit=true": {
+      "model": "earth_magic:block/ritual_candle"
+    }
+  }
+}

@@ -15,7 +15,7 @@ from PIL import Image, ImageDraw
 from entity_uv import BoxSpec, PartSpec, allocate_and_paint, hex_rgb, lerp_rgb, rgba
 
 ROOT = Path(__file__).resolve().parents[1]
-ASSETS = ROOT / "neoforge-26.2" / "src" / "main" / "resources" / "assets" / "fantasy_earth"
+ASSETS = ROOT / "neoforge-26.1.2" / "src" / "main" / "resources" / "assets" / "earth_magic"
 ENTITY_DIR = ASSETS / "textures" / "entity"
 ITEM_DIR = ASSETS / "textures" / "item"
 

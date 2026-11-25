@@ -1,0 +1,47 @@
+{
+  "discipline": "earth_lore:mag",
+  "tier": 5,
+  "gate": "soft",
+  "requires": [
+    {
+      "all": "earth_magic:mag/arcane_research_4"
+    }
+  ],
+  "item_requires": [
+    {
+      "cond": "aether>=60"
+    }
+  ],
+  "unlocks": [
+    {
+      "item": "earth_magic:translocation_notes"
+    }
+  ],
+  "literature": [
+    "notes",
+    "arcane_notes"
+  ],
+  "teachers": [],
+  "research": {
+    "items": [
+      {
+        "ingredient": "earth_magic:aether_crystal",
+        "count": 2
+      },
+      {
+        "ingredient": "earth_magic:rune_flow",
+        "count": 2
+      },
+      {
+        "ingredient": "earth_magic:aether_lens",
+        "count": 1
+      }
+    ],
+    "ticks": 6000
+  },
+  "fail_codes": [
+    "aether_low"
+  ],
+  "name_key": "lore.earth_magic.mag.arcane_research_5",
+  "desc_key": "lore.earth_magic.mag.arcane_research_5.desc"
+}

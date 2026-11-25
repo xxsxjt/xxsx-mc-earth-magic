@@ -1,0 +1,12 @@
+{
+  "replace": false,
+  "values": [
+    "earth_magic:arcane_initiation_notes",
+    "earth_magic:arcane_body_ward_notes",
+    "earth_magic:arcane_breath_ward_notes",
+    "earth_magic:evocation_notes",
+    "earth_magic:illusion_notes",
+    "earth_magic:translocation_notes",
+    "earth_magic:arcane_research_notes"
+  ]
+}

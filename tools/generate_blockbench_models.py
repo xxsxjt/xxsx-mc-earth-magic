@@ -30,8 +30,8 @@ import bb_mcp_client as bb  # noqa: E402
 from build_ecosystem_textures import ASSETS, ENTITY_DIR, ROOT, build_all_textures  # noqa: E402
 from entity_uv import BoxSpec, PartSpec  # noqa: E402
 
-JAVA_MODEL_DIR = ROOT / "neoforge-26.2" / "src" / "main" / "java" / "com" / "xxsx" / "fantasyearth" / "client" / "model"
-PRIV_ROOT = Path(r"D:\PRIVATE_RESTRICTED\Assets\Blockbench\fantasy_earth")
+JAVA_MODEL_DIR = ROOT / "neoforge-26.1.2" / "src" / "main" / "java" / "com" / "xxsx" / "earth" / "magic" / "client" / "model"
+PRIV_ROOT = Path(r"D:\PRIVATE_RESTRICTED\Assets\Blockbench\earth_magic")
 PRIV_ENTITIES = PRIV_ROOT / "entities"
 PRIV_PREVIEWS = PRIV_ROOT / "previews"
 
@@ -121,7 +121,7 @@ def patch_java_model(java_path: Path, new_method: str) -> None:
 
 
 def make_uuid(seed: str) -> str:
-    return str(uuid.uuid5(uuid.NAMESPACE_DNS, f"fantasy_earth.{seed}"))
+    return str(uuid.uuid5(uuid.NAMESPACE_DNS, f"earth_magic.{seed}"))
 
 
 def box_faces_uv(u: int, v: int, w: int, h: int, d: int) -> dict:
@@ -235,7 +235,7 @@ def build_bbmodel_dict(
             "relative_path": "",
             "name": tname,
             "folder": "entity",
-            "namespace": "fantasy_earth",
+            "namespace": "earth_magic",
             "id": str(idx),
             "group": "",
             "width": res[0],

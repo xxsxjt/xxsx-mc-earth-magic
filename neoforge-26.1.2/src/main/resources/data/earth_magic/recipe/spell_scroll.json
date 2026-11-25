@@ -1,0 +1,14 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "equipment",
+  "ingredients": [
+    "minecraft:paper",
+    "minecraft:paper",
+    "earth_magic:rune_ink",
+    "earth_magic:aether_shard"
+  ],
+  "result": {
+    "id": "earth_magic:spell_scroll",
+    "count": 2
+  }
+}

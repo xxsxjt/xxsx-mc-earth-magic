@@ -1,0 +1,37 @@
+{
+  "discipline": "earth_lore:mag",
+  "tier": 4,
+  "gate": "soft",
+  "requires": [
+    {
+      "all": "earth_magic:mag/arcane_research_3"
+    }
+  ],
+  "item_requires": [],
+  "unlocks": [
+    {
+      "item": "earth_magic:illusion_notes"
+    }
+  ],
+  "literature": [
+    "notes",
+    "arcane_notes"
+  ],
+  "teachers": [],
+  "research": {
+    "items": [
+      {
+        "ingredient": "earth_magic:aether_crystal",
+        "count": 2
+      },
+      {
+        "ingredient": "earth_magic:rune_flow",
+        "count": 1
+      }
+    ],
+    "ticks": 4800
+  },
+  "fail_codes": [],
+  "name_key": "lore.earth_magic.mag.arcane_research_4",
+  "desc_key": "lore.earth_magic.mag.arcane_research_4.desc"
+}

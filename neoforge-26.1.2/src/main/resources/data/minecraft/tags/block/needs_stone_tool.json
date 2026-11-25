@@ -1,0 +1,10 @@
+{
+  "replace": false,
+  "values": [
+    "earth_magic:rune_carving_table",
+    "earth_magic:ritual_pedestal",
+    "earth_magic:aether_crystal_cluster",
+    "earth_magic:aether_battery",
+    "earth_magic:rune_stone"
+  ]
+}
