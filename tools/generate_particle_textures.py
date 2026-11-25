@@ -14,7 +14,7 @@ import os
 from PIL import Image
 
 OUT_DIR = os.path.join(
-    "neoforge-26.2", "src", "main", "resources", "assets", "fantasy_earth",
+    "neoforge-26.1.2", "src", "main", "resources", "assets", "earth_magic",
     "textures", "particle",
 )
 

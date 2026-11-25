@@ -1,0 +1,6 @@
+{
+  "model": {
+    "type": "minecraft:model",
+    "model": "earth_magic:item/spell_scroll"
+  }
+}

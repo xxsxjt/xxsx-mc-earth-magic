@@ -1,0 +1,12 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    "minecraft:book",
+    "earth_magic:arcane_dust",
+    "minecraft:amethyst_shard"
+  ],
+  "result": {
+    "id": "earth_magic:arcane_initiation_notes"
+  }
+}

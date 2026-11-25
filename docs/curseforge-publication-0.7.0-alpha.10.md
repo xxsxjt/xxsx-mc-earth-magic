@@ -3,7 +3,7 @@
 - Project: Fantasy Earth
 - Project ID: 1617750
 - File ID: 8876890
-- Artifact: fantasy-earth-neoforge-26.2-0.7.0-alpha.10.jar
+- Artifact: earth-magic-neoforge-26.1.2-0.7.0-alpha.10.jar
 - SHA256: A94A70DF190CFAC9A64E5641DBAFD5C36424197E172DFC1FAF65661350313611
 - Target: Minecraft 26.2 / NeoForge 26.2.0.7-beta / Client + Server / Java 25
 - Submitted: 2026-09-14 11:33:33 +08:00

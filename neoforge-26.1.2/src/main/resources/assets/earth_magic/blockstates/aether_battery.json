@@ -1,0 +1,25 @@
+{
+  "variants": {
+    "charge_step=0": {
+      "model": "earth_magic:block/aether_battery"
+    },
+    "charge_step=1": {
+      "model": "earth_magic:block/aether_battery"
+    },
+    "charge_step=2": {
+      "model": "earth_magic:block/aether_battery"
+    },
+    "charge_step=3": {
+      "model": "earth_magic:block/aether_battery"
+    },
+    "charge_step=4": {
+      "model": "earth_magic:block/aether_battery"
+    },
+    "charge_step=5": {
+      "model": "earth_magic:block/aether_battery"
+    },
+    "charge_step=6": {
+      "model": "earth_magic:block/aether_battery"
+    }
+  }
+}

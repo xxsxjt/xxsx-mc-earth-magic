@@ -1,0 +1,40 @@
+{
+  "discipline": "earth_lore:mag",
+  "tier": 4,
+  "gate": "hard",
+  "requires": [
+    {
+      "all": "earth_magic:mag/arcane_research_3"
+    },
+    {
+      "all": "earth_magic:mag/rune_combination"
+    }
+  ],
+  "item_requires": [],
+  "unlocks": [
+    {
+      "ability": "earth_magic:spell_evocation"
+    }
+  ],
+  "literature": [
+    "notes",
+    "arcane_notes"
+  ],
+  "teachers": [],
+  "research": {
+    "items": [
+      {
+        "ingredient": "earth_magic:rune_power",
+        "count": 2
+      },
+      {
+        "ingredient": "minecraft:blaze_powder",
+        "count": 2
+      }
+    ],
+    "ticks": 4800
+  },
+  "fail_codes": [],
+  "name_key": "lore.earth_magic.mag.evocation",
+  "desc_key": "lore.earth_magic.mag.evocation.desc"
+}

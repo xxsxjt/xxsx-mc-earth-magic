@@ -1,0 +1,6 @@
+{
+  "parent": "minecraft:item/generated",
+  "textures": {
+    "layer0": "earth_magic:item/jade_focus_housing"
+  }
+}

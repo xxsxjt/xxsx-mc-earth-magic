@@ -1,0 +1,18 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "pattern": [
+    " G ",
+    "GSG",
+    " P "
+  ],
+  "key": {
+    "G": "earth_magic:aether_glass",
+    "S": "earth_magic:aether_shard",
+    "P": "earth_magic:rune_copper_plate"
+  },
+  "result": {
+    "id": "earth_magic:aether_lens",
+    "count": 1
+  }
+}

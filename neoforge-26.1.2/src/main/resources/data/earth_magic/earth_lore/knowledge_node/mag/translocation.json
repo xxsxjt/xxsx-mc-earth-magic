@@ -1,0 +1,40 @@
+{
+  "discipline": "earth_lore:mag",
+  "tier": 6,
+  "gate": "hard",
+  "requires": [
+    {
+      "all": "earth_magic:mag/arcane_research_5"
+    },
+    {
+      "all": "earth_magic:mag/rune_combination"
+    }
+  ],
+  "item_requires": [],
+  "unlocks": [
+    {
+      "ability": "earth_magic:spell_translocation"
+    }
+  ],
+  "literature": [
+    "notes",
+    "arcane_notes"
+  ],
+  "teachers": [],
+  "research": {
+    "items": [
+      {
+        "ingredient": "earth_magic:rune_flow",
+        "count": 2
+      },
+      {
+        "ingredient": "minecraft:ender_pearl",
+        "count": 4
+      }
+    ],
+    "ticks": 7200
+  },
+  "fail_codes": [],
+  "name_key": "lore.earth_magic.mag.translocation",
+  "desc_key": "lore.earth_magic.mag.translocation.desc"
+}

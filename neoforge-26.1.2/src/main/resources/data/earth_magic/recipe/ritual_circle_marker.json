@@ -1,0 +1,11 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    "earth_magic:ritual_chalk"
+  ],
+  "result": {
+    "id": "earth_magic:ritual_circle_marker",
+    "count": 2
+  }
+}

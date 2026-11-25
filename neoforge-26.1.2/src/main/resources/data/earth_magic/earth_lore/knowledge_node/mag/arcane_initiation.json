@@ -1,0 +1,53 @@
+{
+  "discipline": "earth_lore:mag",
+  "tier": 1,
+  "gate": "hard",
+  "requires": [],
+  "item_requires": [
+    {
+      "cond": "aether>=20"
+    }
+  ],
+  "unlocks": [
+    {
+      "ability": "earth_magic:spell_attunement"
+    },
+    {
+      "ability": "earth_magic:spell_casting"
+    },
+    {
+      "ability": "earth_magic:spell_graph_builtin"
+    },
+    {
+      "item": "earth_magic:arcane_body_ward_notes"
+    },
+    {
+      "item": "earth_magic:arcane_breath_ward_notes"
+    }
+  ],
+  "literature": [
+    "notes",
+    "arcane_notes"
+  ],
+  "teachers": [
+    "earth_magic:arcane_settler"
+  ],
+  "research": {
+    "items": [
+      {
+        "ingredient": "earth_magic:arcane_dust",
+        "count": 2
+      },
+      {
+        "ingredient": "minecraft:book",
+        "count": 1
+      }
+    ],
+    "ticks": 600
+  },
+  "fail_codes": [
+    "aether_low"
+  ],
+  "name_key": "lore.earth_magic.mag.arcane_initiation",
+  "desc_key": "lore.earth_magic.mag.arcane_initiation.desc"
+}

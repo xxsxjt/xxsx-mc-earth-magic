@@ -1,0 +1,13 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    "earth_magic:aether_glass",
+    "minecraft:copper_ingot",
+    "earth_magic:rune_ink"
+  ],
+  "result": {
+    "id": "earth_magic:aether_conduit",
+    "count": 2
+  }
+}

@@ -1,0 +1,85 @@
+{
+  "discipline": "earth_lore:mag",
+  "tier": 3,
+  "gate": "soft",
+  "requires": [
+    {
+      "all": "earth_magic:mag/aether_crystals"
+    },
+    {
+      "all": "earth_magic:mag/rune_carving"
+    }
+  ],
+  "item_requires": [
+    {
+      "cond": "night"
+    }
+  ],
+  "unlocks": [
+    {
+      "item": "earth_magic:ritual_chalk"
+    },
+    {
+      "block": "earth_magic:ritual_pedestal"
+    },
+    {
+      "item": "earth_magic:ritual_pedestal"
+    },
+    {
+      "item": "earth_magic:dormant_ritual_core"
+    },
+    {
+      "item": "earth_magic:inscribed_ritual_core"
+    },
+    {
+      "block": "earth_magic:ritual_candle"
+    },
+    {
+      "item": "earth_magic:ritual_candle"
+    },
+    {
+      "block": "earth_magic:offering_bowl"
+    },
+    {
+      "item": "earth_magic:offering_bowl"
+    },
+    {
+      "block": "earth_magic:ritual_circle_marker"
+    },
+    {
+      "item": "earth_magic:ritual_circle_marker"
+    },
+    {
+      "ability": "earth_magic:ritual_formation"
+    },
+    {
+      "ability": "earth_magic:ritual_execution"
+    }
+  ],
+  "literature": [
+    "notes"
+  ],
+  "teachers": [],
+  "research": {
+    "items": [
+      {
+        "ingredient": "minecraft:candle",
+        "count": 4
+      },
+      {
+        "ingredient": "earth_magic:arcane_dust",
+        "count": 4
+      },
+      {
+        "ingredient": "minecraft:calcite",
+        "count": 4
+      }
+    ],
+    "ticks": 2400
+  },
+  "fail_codes": [
+    "needs_night"
+  ],
+  "name_key": "lore.earth_magic.mag.rituals",
+  "desc_key": "lore.earth_magic.mag.rituals.desc"
+}

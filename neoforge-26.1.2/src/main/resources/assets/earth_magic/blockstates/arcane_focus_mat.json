@@ -1,0 +1,34 @@
+{
+  "variants": {
+    "facing=north,occupied=false": {
+      "model": "earth_magic:block/arcane_focus_mat"
+    },
+    "facing=east,occupied=false": {
+      "model": "earth_magic:block/arcane_focus_mat",
+      "y": 90
+    },
+    "facing=south,occupied=false": {
+      "model": "earth_magic:block/arcane_focus_mat",
+      "y": 180
+    },
+    "facing=west,occupied=false": {
+      "model": "earth_magic:block/arcane_focus_mat",
+      "y": 270
+    },
+    "facing=north,occupied=true": {
+      "model": "earth_magic:block/arcane_focus_mat"
+    },
+    "facing=east,occupied=true": {
+      "model": "earth_magic:block/arcane_focus_mat",
+      "y": 90
+    },
+    "facing=south,occupied=true": {
+      "model": "earth_magic:block/arcane_focus_mat",
+      "y": 180
+    },
+    "facing=west,occupied=true": {
+      "model": "earth_magic:block/arcane_focus_mat",
+      "y": 270
+    }
+  }
+}

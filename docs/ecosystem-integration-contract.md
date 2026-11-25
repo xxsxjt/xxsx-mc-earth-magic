@@ -2,9 +2,9 @@
 
 ## Verified projects
 
-- `earth_on_minecraft`: realistic materials and geology core, reviewed at `0.1.16` source.
+- `earth_core`: realistic materials and geology core, reviewed at `0.1.16` source.
 - `earth_human`: independent human-status mod, reviewed at `0.1.15`.
-- `xuanhuan_earth`: independently playable Xuanhuan Earth; shares the mana pool when installed together.
+- `earth_xuanxue`: independently playable Xuanhuan Earth; shares the mana pool when installed together.
 
 Every integration remains optional. Fantasy Earth must retain a complete vanilla fallback when every other ecosystem mod is absent.
 
@@ -16,10 +16,10 @@ Both Earth on Minecraft `0.1.16` and Fantasy Earth now target Minecraft 26.1.2 /
 
 Arcane facilities and recipes consume these item tags without linking core Java classes:
 
-- `#earth_on_minecraft:spiritual_mineral_substrates`
-- `#earth_on_minecraft:arcana_geology_catalysts`
-- `#earth_on_minecraft:mana_conductors`
-- `#earth_on_minecraft:aether_crystal_substrates`
+- `#earth_core:spiritual_mineral_substrates`
+- `#earth_core:arcana_geology_catalysts`
+- `#earth_core:mana_conductors`
+- `#earth_core:aether_crystal_substrates`
 
 When a tag is empty, its enhanced facility recipe is omitted from JEI and vanilla fallback routes remain available.
 
@@ -27,10 +27,10 @@ When a tag is empty, its enhanced facility recipe is omitted from JEI and vanill
 
 Fantasy Earth keeps its own settlement generation, anchors, stations and residents. When Earth on Minecraft is present, the same blocks are recognized through registry ids and persistent keys only:
 
-- Anchor block id `fantasy_earth:settlement_anchor`; Earth on Minecraft maps it to the `earth_on_minecraft:arcane_settlement` profile.
+- Anchor block id `earth_magic:settlement_anchor`; Earth on Minecraft maps it to the `earth_core:arcane_settlement` profile.
 - Stations `alchemy_table`, `rune_carving_table`, `ritual_pedestal` and `arcane_focus_mat` register as arcane facilities.
-- Residents write `EarthOnMinecraftResidentRole` (`fantasy_earth:hedge_witch`, `fantasy_earth:goblin_appraiser`, `fantasy_earth:academy_researcher`), `EarthOnMinecraftSettlementProfile` and `EarthOnMinecraftSettlementAnchorX/Y/Z`.
-- Settlement boards are placed only when the `earth_on_minecraft:settlement_board` block is registered.
+- Residents write `EarthOnMinecraftResidentRole` (`earth_magic:hedge_witch`, `earth_magic:goblin_appraiser`, `earth_magic:academy_researcher`), `EarthOnMinecraftSettlementProfile` and `EarthOnMinecraftSettlementAnchorX/Y/Z`.
+- Settlement boards are placed only when the `earth_core:settlement_board` block is registered.
 
 Without Earth on Minecraft the anchor, stations and residents keep working as plain Fantasy Earth content.
 
